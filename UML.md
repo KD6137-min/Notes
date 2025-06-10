@@ -1,0 +1,1 @@
+![UML Components-20250115160012-7rf7qrg](F:\Typora_Notes\UML.assets\UML Components-20250115160012-7rf7qrg-1749541888449-2.png)
