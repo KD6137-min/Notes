@@ -7,9 +7,9 @@
 
 ## Git工作流程图
 
-![Git工作流程图](F:\Typora_Notes\辅助\Git.assets\1.png)
+![Git工作流程图](../assets/1.png)
 
-![2](F:\Typora_Notes\辅助\Git.assets\2.png)
+![2](../assets/2.png)
 
 ## 实现原理
 
@@ -252,7 +252,7 @@ git merge --no-ff feature 		// --no-ff, 保留了分支的历史结构
 
 合并树可能变得混乱复杂, 可使用变基
 
-![3](F:\Typora_Notes\辅助\Git.assets\3.png)
+![3](../assets/3.png)
 
 ```bash
 git rebase master 	// 系统首先计算dev和master的差集, 将其应用到dev分支
@@ -483,7 +483,7 @@ git config --global pull.rebsase true
 
 三个短线分支: feature、release、hotfix
 
-![4](F:\Typora_Notes\辅助\Git.assets\4.png)
+![4](../assets/4.png)
 
 ### 1. Production/master
 

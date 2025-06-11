@@ -1,0 +1,195 @@
+# python开发, 技术面
+
+# 概述
+
+- 基础知识: 包括可变与不可变数据类型、装饰器、GIL、列表推导式、深拷贝与浅拷贝等问题, 考察候选人对语言特性的理解
+- 数据结构与算法: 反转字符串、检测重复、链表问题、两数之和、二叉树遍历, 测试算法能力、编码习惯和效率
+- 面向对象编程: 涵盖类与实例的区别、继承、多态、抽象类等概念
+- 高级特性: 包括生成器与迭代器的区别、垃圾回收机制、多线程与多进程、闭包、元类等, 考察对Python深层次机制的理解
+- 框架和工具: 涉及Django vs Flask、虚拟环境、ORM、RESTful API、单元测试等
+- 系统设计: 如设计URL缩短服务, 考察候选人的架构设计能力和问题解决思路, 没有标准答案, 但能看出候选人的经验深浅
+
+---
+
+# **一、基础知识**
+
+#### 1. **Python中可变(mutable)和不可变(immutable)类型的区别是什么？举例说明。**
+
+- **参考答案**: 
+
+  - 不可变类型: 值不可修改(如`int`​, `float`​, `str`​, `tuple`​)。修改时会创建新对象。
+  - 可变类型: 值可原地修改(如`list`​, `dict`​, `set`​)。
+  - 示例: `a = 5`​, 修改`a`​会生成新对象；`lst = [1,2]`​, `lst.append(3)`​会直接修改原列表
+
+#### 2. **解释装饰器(Decorator)的作用, 并写一个简单的装饰器示例。**
+
+- **参考答案**: 
+
+  ```python
+  def log_time(func):
+      import time
+      def wrapper(*args, **kwargs):
+          start = time.time()
+          result = func(*args, **kwargs)
+          print(f"Time taken: {time.time() - start:.2f}s")
+          return result
+      return wrapper
+
+  @log_time
+  def my_function():
+      # 模拟耗时操作
+      time.sleep(1)
+  ```
+
+#### 3. **Python的GIL(全局解释器锁)是什么？它对多线程有什么影响？**
+
+- **参考答案**: 
+
+  - GIL是CPython解释器的机制, 确保同一时刻只有一个线程执行字节码。
+  - 影响: CPU密集型任务中多线程无法利用多核优势, 但I/O密集型任务中多线程仍有效。
+
+---
+
+# **二、数据结构与算法**
+
+#### 1. **反转字符串(简单)**
+
+- **题目**: 编写一个函数, 反转输入的字符串(如输入`"hello"`​, 输出`"olleh"`​)。
+- **参考答案**: 
+
+  ```python
+  def reverse_string(s):
+      return s[::-1]
+  ```
+
+#### 2. **检测链表中的环(中等)**
+
+- **题目**: 判断一个单链表是否有环, 要求空间复杂度O(1)。
+- **参考答案**(快慢指针法): 
+
+  ```python
+  class ListNode:
+      def __init__(self, val=0):
+          self.val = val
+          self.next = None
+
+  def has_cycle(head):
+      slow = fast = head
+      while fast and fast.next:
+          slow = slow.next
+          fast = fast.next.next
+          if slow == fast:
+              return True
+      return False
+  ```
+
+#### 3. **两数之和(中等)**
+
+- **题目**: 给定一个整数数组和一个目标值, 找出和为目标值的两个数的索引。
+- **参考答案**: 
+
+  ```python
+  def two_sum(nums, target):
+      seen = {}
+      for i, num in enumerate(nums):
+          complement = target - num
+          if complement in seen:
+              return [seen[complement], i]
+          seen[num] = i
+      return []
+  ```
+
+---
+
+# **三、面向对象编程**
+
+#### 1. **类(Class)和实例(Instance)的区别是什么？**
+
+- **参考答案**: 
+
+  - 类是对象的蓝图, 定义属性和方法；实例是根据类创建的具体对象。
+  - 示例: `class Dog`​是类, `my_dog = Dog()`​是实例。
+
+#### 2. **解释继承(Inheritance)和多态(Polymorphism)在Python中的实现。**
+
+- **参考答案**: 
+
+  - 继承: 子类继承父类的属性和方法(如`class Child(Parent):`​)。
+  - 多态: 不同类的对象对同一方法调用产生不同行为(通过方法重写实现)。
+
+---
+
+# **四、高级特性**
+
+#### 1. **生成器(Generator)和迭代器(Iterator)的区别是什么？**
+
+- **参考答案**: 
+
+  - 迭代器: 实现`__iter__`​和`__next__`​方法的对象。
+  - 生成器: 用`yield`​关键字简化迭代器创建的函数, 自动实现迭代器协议。
+
+#### 2. **Python的垃圾回收机制如何工作？**
+
+- **参考答案**: 
+
+  - 引用计数为主, 当对象引用计数归零时立即回收。
+  - 循环垃圾检测(通过标记-清除或分代回收)处理循环引用。
+
+---
+
+# **五、框架与工具**
+
+#### 1. **Django和Flask的主要区别是什么？**
+
+- **参考答案**: 
+
+  - Django: 全栈框架, 内置ORM、Admin、模板引擎等, 适合复杂项目。
+  - Flask: 轻量级框架, 灵活但需自行集成组件, 适合小型项目或API开发。
+
+#### 2. **如何用Python实现一个RESTful API？**
+
+- **参考答案**(使用Flask): 
+
+  ```python
+  from flask import Flask, jsonify, request
+  app = Flask(__name__)
+
+  @app.route('/api/data', methods=['GET'])
+  def get_data():
+      return jsonify({"data": "Hello, World!"})
+  ```
+
+---
+
+# **六、系统设计**
+
+#### 1. **设计一个URL缩短服务(如TinyURL)**
+
+- **考察点**: 
+
+  - 如何生成短码(哈希或自增ID)。
+  - 存储设计(数据库选型, 键值存储)。
+  - 如何处理高并发和缓存(如Redis)。
+- **参考答案**: 
+
+  - 短码生成: 使用Base62编码(哈希或分布式ID)。
+  - 存储: MySQL或Redis存储映射关系。
+  - 缓存: 用Redis缓存高频访问的URL。
+
+---
+
+# **七、反问环节**
+
+面试官通常会问: "你有什么问题想问我们？"
+**建议提问方向**: 
+
+- 团队当前的技术栈和项目方向。
+- 公司对Python开发者的成长支持(如培训、技术分享)。
+
+---
+
+# **注意事项**
+
+1. **代码风格**: 注意变量命名、注释和PEP8规范。
+2. **测试用例**: 对算法题主动提供测试案例(如边界条件)。
+3. **沟通逻辑**: 先解释思路, 再写代码。
