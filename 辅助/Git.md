@@ -11,10 +11,8 @@
 - 完整性：所有数据在存储前都计算校验和（用SHA-1散列机制），不可能在Git 不知情时更改任何内容
 - 难删改：Git 操作几乎只往 Git 数据库中 **添加** 数据，几乎不会执行任何可能导致文件不可恢复的操作
 
-- 分支: 在 Git 中是一个指向特定提交的可移动指针, 创建一个新分支实际上是在创建新指针, 它指向当前的提交, 在这个分支上进行新的提交, 这个指针会向前移动到最新的提交
-- HEAD指针: `HEAD`指向当前所处的分支的最新提交, 它可以用来表示当前工作状态
 
-![image-20250616105723458](./../assets/image-20250616105723458.png)
+![image-20250616105723458](../assets/image-20250616105723458.png)
 
 ## Git工作流程图
 
@@ -24,87 +22,82 @@
 
 
 
-
-
 ------
 
 
 
-# 二、基本配置
+# 二、配置与帮助
 
-## 查看用户信息
+## `git config`：设置控制Git外观和行为
 
-```bash
-git config --global user.name
-git config --global usre.email
+git配置优先级：**local > globla > system**，局部配置会覆盖全局配置
+
+`git config <key>`：检查某一配置
+
+- `git config --show-origin <key>`：显示最终配置文件及变量
+
+- `git config --global <key>`：指定操作**全局级别**的配置（.gitconfig文件），省略则默认为当前仓库的本地配置（.git/config文件）
+
+- `git config --list`：列出**所有配置项**
+
+- `git config --get <key>`：精确获得**单个配置项**的值，默认返回当前生效的配置（根据优先级）
+
+  - 省略`--get`时行为等同于`--get`，但加上`--get`可读性高
+
+- 用户信息：设置用户名和邮件，写入每一次提交中，不可更改，若使用`--global`则该命令只需运行一次，成为默认，不使用则只用于特定项目
+
+  ```shell
+  # 查看
+  git config --global user.name
+  git config --global usre.email
+  
+  # 设置
+  git config --global user.name "NewName"
+  git config --global usre.email "newEmail@server.com"
+  ```
+
+- 设置git命令别名：`git config --global alias.别名 实际执行的操作(无git前缀)`
+
+  ```shell
+  # eg.
+  git config --global alias.co checkout
+  git config --global alias.br branch
+  git config --global alias.ci commit 	# 以后只需输入git ci
+  git config --global alias.last 'log -1 HEAD'
+  ```
+
+- 其他常用配置：
+
+  ```shell
+  # git命令输出显示在终端
+  git config --global core.pager cat
+  
+  # 文本编辑器
+  git config --global core.editor
+  
+  # 解决输入汉字乱码问题
+  git config --global i18n.commitEncoding utf-8
+  git config --global i18n.logOutputEncoding utf-8
+  ```
+
+## 帮助：三种方式
+
+```shell
+git help <verb>
+git <verb> --help # 或-h
+man git-<verb>
 ```
 
-## 设置用户信息
+## 系统配置
 
-```bash
-git config --global user.name "NewName"
-git config --global usre.email "newEmail@server.com"
-```
+为常用指令及参数配置别名，在`vim ~/.zshrc` 添加如下内容后执行`source ~/.zshrc`
 
-## 为常用指令及参数配置别名
-
-vim ~/.zshrc 添加如下:
-
-```bash
+```shell
 #用于输出git提交日志
 alias git-log='git log --pretty=oneline --all --graph --abbrev-commit'
 #用于输出当前目录所有文件及基本信息
 alias ll='ls -al'
 ```
-
-source ~/.zshrc
-
-## 解决输入汉字乱码问题
-
-检查当前配置
-
-```bash
-git config --global --get i18n.commitEncoding
-git config --global --get i18n.logOutputEncoding
-```
-
-若无输出, 则可设置为UTF-8
-
-```bash
-git config --global i18n.commitEncoding utf-8
-git config --global i18n.logOutputEncoding utf-8
-```
-
-## git命令输出显示在终端
-
-```bash
-git config --global core.pager cat
-```
-
-## 忽略列表
-
-无需纳入Git管理且不希望出现在未跟踪文件列表的文件
-
-工作目录中创建.gitignore文件(名称固定), 列出要忽略的文件模式
-
-示例:
-
-```txt
-# no .a files
-*.a
-# but do track lib.a 
-!lib.a
-# only ignore the TODO file in the current directory, not subdir/TODO
-/TODO
-# ignore all files in the build/ directory
-build/
-# ignore doc/notes.txt, but not doc/server/arch.txt
-doc/*.txt
-# ignore all pdf files in the doc/ directory
-doc/**/*.pdf
-```
-
-[专门生成.gitignore文件的网站](http://gitignore.io)
 
 
 
@@ -116,103 +109,232 @@ doc/**/*.pdf
 
 ## 获取本地仓库
 
-在任意位置创建空目录, 作为本地Git仓库, cd到该目录, 执行:
+- 本地目录转仓库：cd到空目录/项目目录, 执行`git init`，完成后生成一个`.git`子目录
+- 从远端clone：`git clone <url>`，自动在当前目录初始化`.git`目录，默认与远端仓库同名，可用`git clone <url> myName`指定新目录名
 
-```bash
-git init
-```
+## 检查文件状态：`git status`
 
-完成后生成一个.git文件夹
+`git status --short`或`-s`：以简洁方式输出，新增未add文件标记为`??`，新增add文件标记为`A`，修改过的文件标记为`M`
 
-## 基本操作命令
+## 跟踪文件：`git add`
 
-```bash
-git add			 // 工作区-->暂存区
-git add 单个文件名｜通配符
-git add . 		// 将所有修改加入暂存区
+`git add 单文件/通配符`，文件从**工作区-->暂存区**，为文件计算校验和并将当前版本文件快照保存到git仓库，将校验和加入暂存区等待提交
 
-git commit		 // 暂存区-->本地仓库(保存修改的各个历史版本)
-git commit -m "注释内容"
+- 常用`git add .`或`git add -A`将所有修改加入暂存区
 
-git status 		 // 查看修改的状态
-git revert 	 	 // 撤回提交信息
-```
+- 配置**忽略列表**`.gitignore`：无需纳入Git管理且不希望出现在未跟踪文件列表的文件；在工作目录中创建.gitignore文件(名称固定), 列出要忽略的文件模式，一开始就要设置好
 
-## 查看日志
+  - [专门生成.gitignore文件的网站](http://gitignore.io)
+  - 格式规范：
+    - 所有空行或者以 `#` 开头的行都会被 Git 忽略
+    - 可以使用标准的 glob 模式匹配，它会递归地应用在整个工作区中
+    - 匹配模式可以以`/`开头防止递归
+    - 匹配模式可以以`/`结尾指定目录
+    - 要忽略指定模式以外的文件或目录，可以在模式前加上叹号`!`取反
 
-git log 用于查看版本控制历史记录, 了解项目变更, 查找特定提交, 图形化显示和定制输出格式(如 --pretty、--oneline、--stat 自定义日志的输出格式)
+  ```plaintext
+  # 忽略所有的 .a 文件 
+  *.a  
+  # 但跟踪所有的 lib.a,即便你在前面忽略了 .a 文件 
+  !lib.a  
+  # 只忽略当前目录下的 TODO 文件,而不忽略 subdir/TODO 
+  /TODO  
+  # 忽略任何目录下名为 build 的文件夹 
+  build/  
+  # 忽略 doc/notes.txt,但不忽略 doc/server/arch.txt 
+  doc/*.txt  
+  # 忽略 doc/ 目录及其所有子目录下的 .pdf 文件 
+  doc/**/*.pdf
+  ```
 
-```bash
-git log [option]
-```
+## 查看文件修改：`git diff`
 
-- options:
-  - --all : 显示所有分支
-  - --pretty=oneline : 将提交信息显示为一行
-  - --oneline : 简洁显示每次提交的摘要
-  - --abbrev-commit : 使输出的commitID更简短
-  - --graph : 图形化表示
-  - -n 5 : 限制显示最近的提交数量
+以文件补丁的格式显示**行级**差异，输出:  +: 新增的行 -: 删除的行
 
-HEAD -> : head指向谁, 谁就是当前的分支
+`git diff --word-diff`
 
-单独页面中, 按q退出日志
+1. 查看**工作区与暂存区**的差异：`git diff`，默认
 
-## 版本回退
+2. 查看暂存区与上次提交之间的差异：`git diff --cached/--staged`，staged和cached功能完全相同，但staged可读性好，符合现代习惯
 
-```bash
-git reset --hard commitID 	// commitID可用git log查看
-git reset commitID --hard 	// 同上
+3. 查看工作目录与最后一次提交之间的差异：`git diff HEAD`，包括已暂存和未暂存与HEAD间差异
 
-git reflog 		// 查看已经删除的提交记录
+4. 查看两个提交之间的差异：`git diff <commit1> <commit2>`
 
-git restore 	// 用暂存区恢复工作区
-```
+5. 查看两个分支之间的差异：`git diff <branch1> <branch2>`
 
-git reset有三种模式:
+选项`--word-diff`：显示**单词级**差异，新增单词用 `{+ +}` 包裹，删除单词用 `[- -]` 包裹
 
-- --soft: 更新分支(本地仓库)
-- --mixed: 默认, 更新分支(本地仓库), 重置暂存区
-- --hard: 更新分支(本地仓库), 重置暂存区, 重置工作区
+## 提交文件：`git commit [-m "注释内容"]`
 
-## 移除文件
+文件从暂存区-->本地仓库
 
-```bash
-git rm --cached <file> 	// 从暂存区中移除文件, 但保留工作目录中的文件
-```
+- 跳过使用暂存区：`git commit -a`/--all，自动把所有**已跟踪过的文件**(被git add过)暂存起来一并提交从而跳过`git add`，但不会提交未被git add过的文件
+- 可使用`git aadd . && git commit`一次性提交所有变更（包括新文件）
+
+原理：提交时git先计算每个子目录的校验和，将其保存为树对象，然后创造一个提交对象，包含指向树对象的指针、指向暂存内容快照的指针、指向父对象的指针、作者姓名邮箱、提交信息
+
+首次提交对象及其树结构：
+
+![首次提交对象及其树结构](./../assets/image-20250622221323653.png)
+
+修改后提交，有了父对象：
+
+![image-20250622221439018](./../assets/image-20250622221439018.png)
+
+## 移除文件：`git rm`
+
+从Git中移除文件必须从已跟踪文件清单中移除，即从暂存区移除，然后**提交**
+
+- `git rm <file>`：文件被完全删除，从git的跟踪列表（暂存区）和磁盘中移除，不可逆，只能通过`git checkout`或文件恢复工具找回
+- `git rm --cached <file>`：仅停止跟踪，文件仍在磁盘中
+- `git rm -f <file>`：文件已暂存且被修改时，需加-f强制删除；仅看**工作区与暂存区是否一致**
+- `rm <file>`：系统命令，仅物理删除，需手动`git add/rm`更新 git状态
+- 可使用`glob`模式：`git rm /*~`
+
+## 移动/重命名文件：`git mv`
+
+`git mv <from_path>/<file_name> <to_path>/<new_name>`
+
+- 省略path时为只重命名：`git mv <name> <new_name>`
+
+## 查看日志：`git log`
+
+按时间先后顺序列出所有提交，单独页面中按q退出日志
+
+- 限制格式参数：
+
+  - `-p/--patch`：按补丁格式显示每个提交引入的差异
+
+  - `--stat`：显示每次提交的文件修改**统计信息**
+
+    - `--shortstat`：只显示`--stat`中最后的行数修改添加移除统计
+
+  - `--name-only`：仅在提交信息后显示已修改的文件清单
+
+  - `--name-status`：显示新增、修改、删除的文件清单
+
+  - `--abbrev-commit`：仅显示 SHA-1 校验和所有 40 个字符中的前几个字符
+
+  - `--relative-date`：使用较短的相对时间而不是完整格式显示日期(比如“2 weeks ago”)
+
+  - `--decorate`：查看各个分支当前所指的对象
+
+  - `--graph`：在日志旁以 ASCII 图形显示分支与合并历史
+
+  - `--pretty`：使用其他格式显示历史提交信息
+
+    - `--pretty=oneline`：每个提交一行，暗含了`--abbrev-commit`
+
+    - `--pretty=short/full/fuller`：详略程度不一
+
+    - `--pretty=format:""`：定义自己的格式，常和`--graph`结合使用，如`git log --pretty=format:"%h - %an, %ar : %s" --graph`
+
+      | 占位符    | 说明                                       | 示例值或备注                    |
+      | --------- | ------------------------------------------ | ------------------------------- |
+      | `%H`      | 提交的完整哈希值（40位）                   | `e2d3a4b1c5d6...`               |
+      | `%h`      | 提交的简写哈希值（前7位）                  | `a1b2c3d`                       |
+      | `%T`      | 树的完整哈希值                             | `8e7d6f5g4h3...`                |
+      | `%t`      | 树的简写哈希值                             | `1k2j3i4h`                      |
+      | `%P`      | 父提交的完整哈希值（多个父提交用空格分隔） | `c3d4e5f6... d7e8f9g0...`       |
+      | `%p`      | 父提交的简写哈希值                         | `b2c3d4e f5g6h7i`               |
+      | `%an`     | 作者名字                                   | `John Doe`                      |
+      | `%ae`     | 作者的电子邮件地址                         | `john@example.com`              |
+      | `%ad`     | 作者修订日期（可通过 `--date=` 定制格式）  | `Thu Aug 3 10:33:01 2023 +0800` |
+      | `%ar`     | 作者修订日期（相对时间格式）               | `2 weeks ago`                   |
+      | `%cn`     | 提交者的名字                               | `Jane Smith`                    |
+      | `%ce`     | 提交者的电子邮件地址                       | `jane@example.com`              |
+      | `%cd`     | 提交日期（格式同 `%ad`）                   | `Thu Aug 3 10:33:01 2023 +0800` |
+      | `%cr`     | 提交日期（相对时间格式）                   | `3 days ago`                    |
+      | `%s`      | 提交说明（单行）                           | `Fix login bug`                 |
+      | `%b`      | 提交说明的正文（多行）                     | 包含换行的详细描述              |
+      | `%C(...)` | 设置颜色（如 `%C(red)text%Creset`）        | 需配合 `%Creset` 重置颜色       |
+      | `%d`      | 引用名称（分支、标签，带括号）             | `(HEAD -> main)`                |
+      | `%D`      | 引用名称（不带括号）                       | `HEAD -> main`                  |
+
+- 限制长度参数：
+
+  - `--all` : 显示所有分支
+  - `-<n>`：n表示想要展示的提交数量
+  - `--since`，`--after`：仅显示指定时间之后的提交
+  - `--until`，`--before`：仅显示指定时间之前的提交
+  - `--author`：仅显示作者匹配指定字符串的提交
+  - `--committer`：仅显示提交者匹配指定字符串的提交
+  - `--grep`：仅显示提交说明中包含指定字符串的提交
+  - `-S`：仅显示添加或删除内容匹配指定字符串的提交
+  - `--no-merges`：不显示合并提交
+
+## 撤销操作
+
+任何 **已提交** 的东西几乎总是可以恢复的（甚至那些被删除的分支中的提交或使用 --amend 选项覆盖的提交） 
+
+任何未提交的东西丢失后很可能再也找不到了
+
+### 修改提交：`git commit --amend`
+
+**将暂存区的文件提交**，覆盖上一次的提交（最终只有一次提交），若两次提交之间无修改则只修改提交信息，本质是用新的提交替换旧的，旧的提交不会出现在仓库历史中
+
+### `git reset`
+
+移动分支指针并控制暂存区/工作区的状态，会重写本地历史，误用`--hard`后可用`git reflog`找回丢失的提交
+
+若已推送到远程仓库，需强制推送`git push -f`（可能影响团队协作），建议使用`git revert`
+
+**三功能**：
+
+- 取消暂存（默认--mixed模式）：`git reset HEAD <file>`，将`<file>`从暂存区移出，但保留工作区的修改，即取消`git add`的效果，若省略`<file>`则取消所有文件的暂存
+- 撤销提交：三种模式撤销本地提交，并决定是否保留修改
+  - `--soft`：仅移动HEAD指针，保留暂存区和工作区的修改
+  - `-- mixed`：默认，移动HEAD并重置暂存区，但保留工作区修改
+  - `--hard`：丢弃提交和所有未提交的修改，慎用`git reset --hard <commit-hash>`
+- 版本回退：将分支指针移动到任意历史提交，可选择保留/丢弃更改
+
+### 生成反向提交，不修改历史：`git revert`
+
+## 用暂存区恢复工作区：`git restore`
 
 ## 标签
 
-标签与特定提交绑定, 需先提交, 再打标签
+与特定提交绑定, 需先提交
 
-两类:
+- 创：
 
-- 轻量标签: 只是对某提交的引用, 无附加信息, 类似书签
+  - 轻量标签: lightweight，只是对某提交的引用, 无附加信息, 类似书签，本质是只将校验和存储到一个文件中
 
-  ```bash
-  git commit -m "add ..."
-  git tag <tag_name>  	// 创建一个轻量标签并指向当前提交
-  ```
+    ```shell
+    git commit -m "add ..."
+    git tag <tag_name> [<commit-hash>] 	// 创建一个轻量标签并指向当前提交
+    # eg.
+    git tag v1.0
+    ```
 
-- 附注标签: 对某提交的完整对象, 包括标签名、时间、标签者、邮件地址、标签说明
+  - 附注标签: annotated，存储在git数据库中的完整对象，可被校验, 包含标签名、时间、标签者、邮件地址、标签说明，`-m`指定了存储在标签中的信息，必须有
 
-  ```bash
-  git commit -m "add ..."
-  git tag -a <tag_name> -m "Tag message"
-  ```
+    ```shell
+    git commit -m "add ..."
+    git tag -a <tag_name> [<commit-hash>] -m "Tag message"
+    # eg.
+    git tag -a v1.0 -m "Release version 1.0"
+    ```
 
-常见tag命令:
+- 查：
 
-```bash
-git tag // 列出所有标签
-git tag v1.0	// 创建轻量标签
-git tag -a v1.0 -m "Release version 1.0" 	// 创建附注标签
-git show <tag_name> 	// 查看指定标签的详细信息
-git tag -d <tag_name> 	// 删除本地标签
-git push origin <tag_name> // 推送单个标签
-git push origin --tags 		// 推送所有标签
-git checkout <tag_name> 	// 检查特定标签对应的提交
-```
+  - `git tag`：列出所有标签，或`git tag -l/--list`
+  - `git show <tag_name>`：查看指定标签的详细信息
+  - 通配符查找：`git tag -l "pattern"`，此时的`-l`/`--list`不可省略，如只查看v1.8.5可用`git tag -l "v1.8.5*"`
+
+- 改：
+
+  - `git push origin <tag_name>`：推送单个标签，`git push`**默认不推送标签到远端**，必须显式推送标签
+  - `git push origin --tags`：推送所有标签（所有不在远端的标签，不区分标签种类）
+  - `git checkout <tag_name>`：检出特定标签对应的提交，进入HEAD分离状态
+    - 常用`git checkout -b version2 v2.0.0`开创新分支修复旧版本的错误
+
+- 删：`git tag -d <tag_name>`，不会从远端移除，需手动更新远端:
+
+  - `git push <remote> :refs/tags/<tag_name>`，将冒号前的空值推送到远端标签名，达到删除效果
+  - `git push origin --delete <tag_name>`，更直观
+
 
 
 
@@ -220,111 +342,137 @@ git checkout <tag_name> 	// 检查特定标签对应的提交
 
 
 
-# 四、分支
+# 四、Remote
 
-把工作从开发主线上分离, 来进行Bug修改、开发新功能, 不影响开发主线
+## 配置SSH公钥
 
-```bash
-git branch				// 查看分支
-git branch -a 			// 查看所有分支
-git branch 分支名		// 创建分支
-git branch 新分支名 master	// 基于master创建新分支
-
-git branch -d 分支名 	// 删除分支, 删前做各种检查
-git branch -D 分支名		// 强制删除, 不做任何检查
-
-git checkout 分支名 		// 切换分支
-git checkout -b 分支名 	// 创建并切换分支
-
-git switch 分支名 		// 切换分支
-```
-
-## 合并
+SSH公钥理解为设备识别码，让设备有权限更改remote仓库
 
 ```bash
-git merge 分支名			// 合并分支, 将分支中所有提交合并到当前分支中
+ssh-keygen -t rsa 		// 使用rsa算法，不断回车即可, 若已存在公钥, 则覆盖
 ```
 
-merge自动合并不同行, 若同时修改了同一文件的同一行, 则需要手动解决冲突, 然后再用git add和commit
-
-快进模式: `Fast Forward`, 一种合并策略, 当前分支(如feature分支)在main分支基础上进行了线性的开发, 且合并时main没有新的提交时, main分支将直接指向feature分支的最新提交, 而不需要创建一个新的合并提交
-
-强制创建一个合并提交, 不使用快进模式:
+显示公钥:
 
 ```bash
-git merge --no-ff feature 		// --no-ff, 保留了分支的历史结构
+cat ~/.ssh/id_rsa.pub
 ```
 
-## 变基
+复制公钥内容到网站, 添加成功后:
 
-合并树可能变得混乱复杂, 可使用变基
+```bash
+ssh -T git@gitee.com
+```
+
+输入yes, 连接成功
+
+## 基础操作
+
+- 增：`git remote add <别名> <URL>`，建立别名和远程的关联，使用别名即可操作远程仓库
+- 删：`git remote remove <别名>`或`git remote rm <别名>`
+- 改：
+  - `git remote set-url <别名> <new_url>`
+  - `git remote rename <old_name> <new_name>`，重命名
+- 查：
+  - `git remote show <别名>`，显示远程仓库的分支和跟踪关系
+  - `git remote`：列出远程仓库的简写，origin是远程仓库的默认名称
+  - `git remote -v`：列出远程仓库的别名/名称、URL、对应的操作类型（fetch/push）
+
+## 克隆
+
+`git clone <url> [locla_path]`：若本地目录省略则自动生成一个新目录
+
+选项`--depth=1`：克隆深度为1，只克隆最新的版本
+
+## 抓取&拉取
+
+- `git fetch`：`git fetch [remote] [local_branch]`，将仓库里的更新都抓取到本地, 但**不合并**，若不指定远端名和分支名, 则抓取所有分支（的引用）
+  - 使用`git clone`时，自动将其添加为远程仓库并默认名为origin，使本地master分支跟踪远端的master分支
+- `git pull`：
+  - `git pull [remote] [local_branch]`，将远端的修改拉到本地并**自动合并**, 等同于`git fetch + git merge`，但自动merge会污染分支
+  - `git pull --rebase [remote] [local_branch]`，更推荐，本地提交被搁置, 先将远程更新合并到本地, 再提交本地更新, 不会产生合并提交
+    - 配置默认的`git pull`策略为`rebase`：`git config --global pull.rebase true`
+
+## 推送
+
+`git push`：
+
+- `git push <remote> <branch>`，常用`git push origin master`
+- `git push [-f] [--set-upstream] [远端名[本地分支名][:远端分支名]]`
+  - `-f`：强制覆盖
+  - `--set-upstream`或`-u`，推送到远端, 同时建立与远端分支的关联关系, 让本地分支"跟踪"远端分支, 若当前分支已经和远端分支关联, 则可省略, 只有git push即可
+- 打标签推送：`git push --tags`推送所有本地标签，`git push origin <tag_name>`推送单个标签
+- `git push --delete <branch>`：删除远端分支
+
+
+
+---
+
+
+
+# 五、分支
+
+**分支**：本质是一个指向提交对象的可移动指针, 创建一个新分支实际上是在创建新指针, 它指向当前的提交, 在这个分支上进行新的提交, 这个指针会向前移动到最新的提交
+
+![image-20250622221736742](./../assets/image-20250622221736742.png)
+
+**HEAD指针**: `HEAD`指向**当前分支**
+
+- HEAD^n表示当前节点的第n个父节点，只有一个父节点时可省略n
+- HEAD~n表示当前节点的第n代祖先节点
+- `^`和`~`可组合使用，如`HEAD^2~3`
+
+**HEAD分离状态**：HEAD分离状态下，修改提交不会使标签发生变化，新提交不属于任何分支且无法访问（除非通过commit-hash）
+
+## 分支基本操作
+
+- 创：
+  - `git branch <br_name> [base_br]`：基于base分支创建分支，但不会自动切换
+  - `git checkout -b <br_name>`：创建并切换分支
+- 查：
+  - `git branch`或`git branch -a`：查看所有分支，带`*`前缀的为HEAD分支
+  - `git branch -v`：查看每个分支的最后一次提交
+  - `git branch -vv`：显示分支及其与远端的关联
+  - `git branch --merged [<br_name>]`：查看已经合并到指定分支的分支，省略指定分支时默认当前分支
+  - `git branch --no-merged [<br_name>]`：查看所有包含未合并工作的分支，默认指当前分支
+- 切换：分支切换会改变工作目录
+  - `git checkout <br_name>`
+  - `git switch <br_name>`
+- 删：
+  - `git branch -d <br_name>`：删除分支, 删前做各种检查
+  - `git branch -D <br_name>`：强制删除, 不做任何检查
+
+## 合并：`git merge`
+
+`git merge <br_name>`：合并分支, 将分支中所有提交合并**到**当前分支中，自动合并不同行, 若同时修改了同一文件的同一行, 则需要手动解决冲突，然后再commit
+
+- **快进模式**: `Fast Forward`, 一种合并策略, 如果顺着一个分支走下去能够到达另一个分支,那么合并两者的时候只会简单的将指针向前推进 (指针右移)，而不需要创建一个新的合并提交（因为没有需要解决的分歧）
+- 强制创建一个合并提交, 不使用快进模式：`git merge --no-ff feature`，保留了分支的历史结构
+
+合并后建议删除特性分支
+
+`git mergetool`：启动一个合适的可视化合并工具
+
+## 变基：`git rebase`
+
+merge可使合并树变得混乱复杂, 变基使其更清晰
 
 ![3](../assets/3.png)
 
-```bash
-git rebase master 	// 系统首先计算dev和master的差集, 将其应用到dev分支
-git switch master 
-git merge dev		// 切换回master并合并, 得到干净的分支树
-```
+`git rebase <br_name>`：git计算当前分支和指定分支的差集, 将其应用到当前分支，之后当前分支的结点自动被清除
 
-rebase之后, develop的结点自动被清除
+## 分支比较：`git cherry`
 
-## diff
-
-用于显示工作目录和版本库之间、不同分支之间、或不同提交之间的差异
-
-1. 查看工作目录与暂存区的差异:
-
-   ```bash
-   git diff 	// 显示自上次使用git add以来工作目录中未暂存的更改
-   ```
-
-2. 查看暂存区与上次提交之间的差异:
-
-   ```bash
-   git diff --cached 	// 显示已暂存但尚未提交的更改
-   ```
-
-3. 查看工作目录与最后一次提交之间的差异:
-
-   ```bash
-   git diff HEAD // 显示工作目录中所有更改(已暂存和未暂存的)与当前分支最新提交HEAD之间的差异
-   ```
-
-4. 查看两个提交之间的差异:
-
-   ```bash
-   git diff <commit1> <commit2>
-   git diff HEAD~1 HEAD	// 显示上一个提交与当前提交之间的差异
-   ```
-
-5. 查看两个分支之间的差异:
-
-   ```bash
-   git diff <branch1> <branch2>
-   ```
-
-输出:  +: 新增的行 -: 删除的行
-
-## cherry
-
-用于比较两个分支或提交, 找出哪些提交在一个分支中存在但在另一个分支中不存在
-
-重点在于比较提交的存在性, 而不是具体的文件差异(与git diff区别)
+找出哪些提交在一个分支中存在但在另一个分支中不存在，重点在于比较提交的**存在性**, 而不是具体的文件差异(与git diff区别)
 
 ```bash
+# upstream为要比较的基准分支, branch为要检查的分支
 git cherry <upstream> <branch> 		 // 列出在branch中存在, 不在upstream中的提交
 ```
 
-upstream为要比较的基准分支, branch为要检查的分支
+## 提交复制：`git cherry-pick`
 
-### cherry-pick
-
-用途:
-
-- 从一个分支复制特定的改动到另一个分支, 而无需合并整个分支的历史
-- 修复紧急问题, 从另一分支挑出某修复提交, 快速应用到当前分支
-- 从废弃分支拯救有用的提交
+从一个分支**选择性复制**特定的改动到另一个分支, 而无需合并整个分支的历史，可用于修复紧急问题（从另一分支挑出某修复提交快速应用到当前分支）或从废弃分支拯救有用的提交
 
 ```bash
 git cherry-pick <commit-hash> 	// 挑选一个提交
@@ -338,11 +486,7 @@ git cherry-pick --continue
 git cherry-pick --abort
 ```
 
-会创建一个新提交, 为当前分支的最新提交
-
-不会自动去重, 需避免重复挑选
-
-不建议用于大量提交
+会**创建一个新提交**, 为当前分支的最新提交，不会自动去重, 需避免重复挑选，不建议用于大量提交
 
 
 
@@ -350,129 +494,15 @@ git cherry-pick --abort
 
 
 
-# 五、remote
-
-github、gitlab、码云
-
-## 配置SSH公钥
-
-SSH公钥理解为设备识别码，让设备有权限更改remote仓库
-
-```bash
-ssh-keygen -t rsa 		// 使用rsa算法
-```
-
-不断回车即可, 若已存在公钥, 则覆盖
-
-获取公钥:
-
-```bash
-cat ~/.ssh/id_rsa.pub
-```
-
-复制公钥内容到Gitee网站, 添加成功后:
-
-```bash
-ssh -T git@gitee.com
-```
-
-输入yes, 连接成功
-
-## 建立关联
-
-需要现在码云上创建好仓库
-
-```bash
-git remote add origin <仓库路径>(码云上的ssh/http)
-git branch -vv 		// 显示分支, 及其与远端的关联
-```
-
-origin只是为方便操作而起的一个别名, 一般默认origin
- remote add只是建立起本地到远程的关联, 本地就可使用origin操作远程仓库
-
-## 基础操作
-
-```bash
-git remote 		 			// 查看远程仓库
-git remote show 			// 同上
-git remote remove <名称> 	// 删除链接
-git remote rename <旧> <新> 	// 重命名
-```
-
-## push
-
-```bash
-git push [-f] [--set-upstream] [远端名[本地分支名][:远端分支名]]
-
-git push --delete <branch> 		// 删除远端分支
-```
-
-- -f: 强制覆盖
-- --set-upstream: 简写-u,推送到远端, 同时建立与远端分支的关联关系, 让本地分支"跟踪"远端分支, 若当前分支已经和远端分支关联, 则可省略, 只有git push即可
-
-打标签push:
-
-```bash
-git tag v0.1 master
-git push --tags
-```
-
-## clone
-
-```bash
-git clone <仓库路径> [本地目录] 	// 本地目录可省, 自动生成一个新目录
-```
-
-- --depth=1: 克隆深度, 只克隆最新的版本即可
-
-## fetch
-
-```bash
-git fetch [remoteName] [branchName]
-```
-
-将仓库里的更新都抓取到本地, 但不合并
-
-若不指定远端名和分支名, 则抓取所有分支
-
-## pull
-
-```bash
-git pull [remoteName] [branchName]
-```
-
-将远端仓库的修改拉到本地并自动合并, 等同fetch+merge(自动merge会污染分支)以当前分支为基础merge
-
-若不指定远端名和分支名, 则抓取所有并更新当前分支
-
-更推荐使用:
-
-```bash
-git pull --rebase [remote] [bbranch]
-```
-
-本地提交被搁置, 先将远程更新应用到本地, 在提交本地更新, 不会产生合并提交
-
-```bash
-// 配置默认的git pull策略为rebase
-git config --global pull.rebsase true
-```
-
-
-
-------
-
-
-
-# 六、Git标准流程/分支管理策略
+# 六、分支管理策略
 
 ## github-flow/PR流程
 
 1. 克隆代码或者更新代码到本地
-    ​`git clone --depth=1 <路径>​`或者`git pull​`
+   ​`git clone --depth=1 <路径>​`或者`git pull​`
 
 2. 基于master分支创建并切换到自己的分支
-    `​git branch -a​  git branch mybranch master​`
+   `​git branch -a​  git branch mybranch master​`
 
    `git checkout mybranch`或者`git switch mybranch`
 
@@ -544,3 +574,17 @@ git flow hotfix finish VERSION 		// 结束一个hotfix分支, 合并到develop�
 ```
 
 APP推荐: Sourcetree
+
+中文
+
+---
+
+
+
+# 七、GitHub
+
+HTTP格式：`https://github.com/<user>/<project_name>`
+
+SSH格式：`git@github.com:<user>/<project_name>`
+
+“Merge” 按钮会做一个 “non-fast-forward” 合并( 即使可以快进合并)，并产生一个合并提交记录
