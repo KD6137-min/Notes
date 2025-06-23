@@ -376,6 +376,7 @@ ssh -T git@gitee.com
   - `git remote show <别名>`，显示远程仓库的分支和跟踪关系
   - `git remote`：列出远程仓库的简写，origin是远程仓库的默认名称
   - `git remote -v`：列出远程仓库的别名/名称、URL、对应的操作类型（fetch/push）
+  - `git ls-remote <remote>`：显式获得远程引用的完整列表
 
 ## 克隆
 
@@ -387,7 +388,7 @@ ssh -T git@gitee.com
 
 - `git fetch`：`git fetch [remote] [local_branch]`，将仓库里的更新都抓取到本地, 但**不合并**，若不指定远端名和分支名, 则抓取所有分支（的引用）
   - 使用`git clone`时，自动将其添加为远程仓库并默认名为origin，使本地master分支跟踪远端的master分支
-- `git pull`：
+- `git pull`：查找当前分支所跟踪的远端分支，抓取数据后尝试合并
   - `git pull [remote] [local_branch]`，将远端的修改拉到本地并**自动合并**, 等同于`git fetch + git merge`，但自动merge会污染分支
   - `git pull --rebase [remote] [local_branch]`，更推荐，本地提交被搁置, 先将远程更新合并到本地, 再提交本地更新, 不会产生合并提交
     - 配置默认的`git pull`策略为`rebase`：`git config --global pull.rebase true`
@@ -396,10 +397,11 @@ ssh -T git@gitee.com
 
 `git push`：
 
-- `git push <remote> <branch>`，常用`git push origin master`
-- `git push [-f] [--set-upstream] [远端名[本地分支名][:远端分支名]]`
+- `git push <remote> <branch>`，常用`git push origin master`，简写为`git push`
+- `git push [-f] [--set-upstream] [<remote> [<local_br>]:[<remote_br>]]`
   - `-f`：强制覆盖
   - `--set-upstream`或`-u`，推送到远端, 同时建立与远端分支的关联关系, 让本地分支"跟踪"远端分支, 若当前分支已经和远端分支关联, 则可省略, 只有git push即可
+  - 省略remote和local分支名则推送所有分支，只省略local_br则删除remote_br分支，只省略remote_br则在远端新建local_br分支
 - 打标签推送：`git push --tags`推送所有本地标签，`git push origin <tag_name>`推送单个标签
 - `git push --delete <branch>`：删除远端分支
 
@@ -425,13 +427,11 @@ ssh -T git@gitee.com
 
 ## 分支基本操作
 
-- 创：
-  - `git branch <br_name> [base_br]`：基于base分支创建分支，但不会自动切换
-  - `git checkout -b <br_name>`：创建并切换分支
+- 创：`git branch <br_name> [base_br]`：基于base分支创建分支，但不会自动切换
 - 查：
   - `git branch`或`git branch -a`：查看所有分支，带`*`前缀的为HEAD分支
   - `git branch -v`：查看每个分支的最后一次提交
-  - `git branch -vv`：显示分支及其与远端的关联
+  - `git branch -vv`：显示所有分支、跟踪分支及详细信息，ahead指本地提交未推送的数量，behind指远端有多少个提交未合并到本地，注意该命令统计值来自本地缓存的远端数据，未必最新，可在显示前更新数据：`git fetch --all; git branch -vv`
   - `git branch --merged [<br_name>]`：查看已经合并到指定分支的分支，省略指定分支时默认当前分支
   - `git branch --no-merged [<br_name>]`：查看所有包含未合并工作的分支，默认指当前分支
 - 切换：分支切换会改变工作目录
@@ -460,6 +460,22 @@ merge可使合并树变得混乱复杂, 变基使其更清晰
 
 `git rebase <br_name>`：git计算当前分支和指定分支的差集, 将其应用到当前分支，之后当前分支的结点自动被清除
 
+`git rebase <base_br> <topic_br>`：指定变基基准分支和目标分支，省去先检出到目标分支的步骤
+
+`git rebase --onto <新父提交> <旧父提交> [目标分支]`：将变基应用到指定分支
+
+- 新父提交为变基的基准点，可为分支名/提交/标签
+- 旧父提交为变基的起始点，左开区间，不包含该提交本身，若为分支名则找出最新的共同祖先为起点
+- 目标分支指定操作的分支，省略则默认对当前分支操作
+
+变基的本质：丢弃现有提交，新建内容相同但实际上不同的提交（因此有风险）
+
+**遵循准则**：若提交存在于本地仓库之外（即已推送），他人可能基于该提交进行开发，则不要变基
+
+解决方式：不执行合并，而是用变基解决变基（执行`git rebase <remote>/<branch>`或`git pull --rebase`）
+
+
+
 ## 分支比较：`git cherry`
 
 找出哪些提交在一个分支中存在但在另一个分支中不存在，重点在于比较提交的**存在性**, 而不是具体的文件差异(与git diff区别)
@@ -487,7 +503,22 @@ git cherry-pick --abort
 
 会**创建一个新提交**, 为当前分支的最新提交，不会自动去重, 需避免重复挑选，不建议用于大量提交
 
+## 远程分支
 
+远程引用：对远程仓库的引用（指针），包括分支、标签等
+
+远程跟踪分支：远程分支状态的引用，是无法移动的本地引用，可视为书签，标记远程仓库中该分支的位置，命名形式`<remote>/<branch>`
+
+跟踪分支：与远程分支有直接关系的本地分支，git pull时可自动识别去哪个服务器抓取哪个分支
+
+- `git checkout -b <br_name> <remote>/<remote_br>`：创建并切换分支，可同时设置跟踪分支
+- `git checkout --track <remote>/<remote_br>`：更快捷，自动创建远程分支的**同名**本地分支**并切换**
+- `git checkout <remote_br>`：两个条件：尝试检出的分支不存在&&有且只有一个同名远端分支，会创建同名跟踪分支并切换
+- `git branch -u/--set-upstream-to <remote>/<remote_br>`：设置/修改跟踪的上游分支
+
+简写方式引用上游分支：先设置好跟踪分支，用`@{upstream}`或`@{u}`引用，如可用`git merge @{u}`替代`git merge origin/master`
+
+删除远端分支：`git push <remote> --delete <remote_br>`
 
 ------
 
