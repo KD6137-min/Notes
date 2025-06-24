@@ -150,8 +150,6 @@ alias ll='ls -al'
 
 以文件补丁的格式显示**行级**差异，输出:  +: 新增的行 -: 删除的行
 
-`git diff --word-diff`
-
 1. 查看**工作区与暂存区**的差异：`git diff`，默认
 
 2. 查看暂存区与上次提交之间的差异：`git diff --cached/--staged`，staged和cached功能完全相同，但staged可读性好，符合现代习惯
@@ -164,11 +162,13 @@ alias ll='ls -al'
 
 选项`--word-diff`：显示**单词级**差异，新增单词用 `{+ +}` 包裹，删除单词用 `[- -]` 包裹
 
+`git difftool`：启动外部工具展示树的差异
+
 ## 提交文件：`git commit [-m "注释内容"]`
 
 文件从暂存区-->本地仓库
 
-- 跳过使用暂存区：`git commit -a`/--all，自动把所有**已跟踪过的文件**(被git add过)暂存起来一并提交从而跳过`git add`，但不会提交未被git add过的文件
+- 跳过使用暂存区：`git commit -a/--all`，自动把所有**已跟踪过的文件**(被git add过)暂存起来一并提交从而跳过`git add`，但不会提交未被git add过的文件
 - 可使用`git aadd . && git commit`一次性提交所有变更（包括新文件）
 
 原理：提交时git先计算每个子目录的校验和，将其保存为树对象，然后创造一个提交对象，包含指向树对象的指针、指向暂存内容快照的指针、指向父对象的指针、作者姓名邮箱、提交信息
@@ -181,7 +181,9 @@ alias ll='ls -al'
 
 ![image-20250622221439018](./../assets/image-20250622221439018.png)
 
-## 移除文件：`git rm`
+## 移除文件：
+
+### `git rm`
 
 从Git中移除文件必须从已跟踪文件清单中移除，即从暂存区移除，然后**提交**
 
@@ -190,6 +192,14 @@ alias ll='ls -al'
 - `git rm -f <file>`：文件已暂存且被修改时，需加-f强制删除；仅看**工作区与暂存区是否一致**
 - `rm <file>`：系统命令，仅物理删除，需手动`git add/rm`更新 git状态
 - 可使用`glob`模式：`git rm /*~`
+
+### `git clean`
+
+物理删除工作目录中未跟踪文件，默认只删除文件，不删除目录，被删后无法通过git恢复
+
+- `git clean -n`：查看哪些文件会被删除（不会实际删除），建议总是先运行进行预览和`git status`
+- `git clean -f`：强制清理
+- `git clean -d`：删除文件同时删除目录
 
 ## 移动/重命名文件：`git mv`
 
@@ -269,13 +279,17 @@ alias ll='ls -al'
 
 任何未提交的东西丢失后很可能再也找不到了
 
-### 修改提交：`git commit --amend`
+### 修改提交：`git commit --amend/--a`
 
 **将暂存区的文件提交**，覆盖上一次的提交（最终只有一次提交），若两次提交之间无修改则只修改提交信息，本质是用新的提交替换旧的，旧的提交不会出现在仓库历史中
 
 ### `git reset`
 
-移动分支指针并控制暂存区/工作区的状态，会重写本地历史，误用`--hard`后可用`git reflog`找回丢失的提交
+向上移动分支指针并控制暂存区/工作区的状态，会重写本地历史
+
+`git reset HEAD^`向上移动一个提交，新提交就像从没出现过
+
+误用`--hard`后可用`git reflog`找回丢失的提交
 
 若已推送到远程仓库，需强制推送`git push -f`（可能影响团队协作），建议使用`git revert`
 
@@ -288,7 +302,9 @@ alias ll='ls -al'
   - `--hard`：丢弃提交和所有未提交的修改，慎用`git reset --hard <commit-hash>`
 - 版本回退：将分支指针移动到任意历史提交，可选择保留/丢弃更改
 
-### 生成反向提交，不修改历史：`git revert`
+### 逆向提交：`git revert`
+
+`git revert HEAD`撤销当前提交，本质为逆向的`git cherry-pick`，一个新的提交，不影响提交历史
 
 ## 用暂存区恢复工作区：`git restore`
 
@@ -298,24 +314,10 @@ alias ll='ls -al'
 
 - 创：
 
-  - 轻量标签: lightweight，只是对某提交的引用, 无附加信息, 类似书签，本质是只将校验和存储到一个文件中
+  - 轻量标签: lightweight，`git tag <tag_name> [<commit-hash>]`，省略则指向当前提交，只是对某提交的引用, 无附加信息, 类似书签，本质是只将校验和存储到一个文件中
 
-    ```shell
-    git commit -m "add ..."
-    git tag <tag_name> [<commit-hash>] 	// 创建一个轻量标签并指向当前提交
-    # eg.
-    git tag v1.0
-    ```
-
-  - 附注标签: annotated，存储在git数据库中的完整对象，可被校验, 包含标签名、时间、标签者、邮件地址、标签说明，`-m`指定了存储在标签中的信息，必须有
-
-    ```shell
-    git commit -m "add ..."
-    git tag -a <tag_name> [<commit-hash>] -m "Tag message"
-    # eg.
-    git tag -a v1.0 -m "Release version 1.0"
-    ```
-
+  - 附注标签: annotated，`git tag -a <tag_name> [<commit-hash>] -m "Tag message"`，存储在git数据库中的完整对象，可被校验, 包含标签名、时间、标签者、邮件地址、标签说明，`-m`指定了存储在标签中的信息，必须有
+  
 - 查：
 
   - `git tag`：列出所有标签，或`git tag -l/--list`
@@ -386,23 +388,33 @@ ssh -T git@gitee.com
 
 ## 抓取&拉取
 
-- `git fetch`：`git fetch [remote] [local_branch]`，将仓库里的更新都抓取到本地, 但**不合并**，若不指定远端名和分支名, 则抓取所有分支（的引用）
+- `git fetch`：
+  - `git fetch [remote] [local_branch]`，将仓库里的更新都抓取到本地, 但**不合并**，若不指定远端名和分支名, 则抓取所有分支（的引用）
+  - `git fetch <remote> <remote_place>:<local_place>`：place可为分支或单个提交，为提交时抓取找出到指定提交为止的提交（而不是指定的单个提交）
+    - 若local_place不存在或remote_place为空，则会**自动新建分支**
+  
   - 使用`git clone`时，自动将其添加为远程仓库并默认名为origin，使本地master分支跟踪远端的master分支
+  
 - `git pull`：查找当前分支所跟踪的远端分支，抓取数据后尝试合并
-  - `git pull [remote] [local_branch]`，将远端的修改拉到本地并**自动合并**, 等同于`git fetch + git merge`，但自动merge会污染分支
+  - `git pull [remote] [reomote_place]`，将远端的修改拉到本地并**自动与当前分支合并**, 等同于`git fetch + git merge`，但自动merge会污染分支
+  - `git pull <remote> <remote_place>:<local_place>`：若local_place不存在则自动新建分支
+    - remote_place为提交时不更新远端分支
   - `git pull --rebase [remote] [local_branch]`，更推荐，本地提交被搁置, 先将远程更新合并到本地, 再提交本地更新, 不会产生合并提交
+    - 推荐在git push前使用
     - 配置默认的`git pull`策略为`rebase`：`git config --global pull.rebase true`
 
-## 推送
+## 推送：`git push`
 
-`git push`：
+- `git push <remote> <place>`：切换到指定place，找出remote中对应分支没有的提交并推送，不用checkout
+- `git push <remote> <local_place>:<remote_place>`：若本地和远端分支不同名，可指定分支位置
+  - 若remote_place在远端不存在，则会在远端新建分支并推送
+  - 若local_place为空，则**删除远端**的remote_place分支
 
-- `git push <remote> <branch>`，常用`git push origin master`，简写为`git push`
-- `git push [-f] [--set-upstream] [<remote> [<local_br>]:[<remote_br>]]`
-  - `-f`：强制覆盖
-  - `--set-upstream`或`-u`，推送到远端, 同时建立与远端分支的关联关系, 让本地分支"跟踪"远端分支, 若当前分支已经和远端分支关联, 则可省略, 只有git push即可
-  - 省略remote和local分支名则推送所有分支，只省略local_br则删除remote_br分支，只省略remote_br则在远端新建local_br分支
-- 打标签推送：`git push --tags`推送所有本地标签，`git push origin <tag_name>`推送单个标签
+- `git push -f`：强制覆盖
+- `git push -u/--set-upstream <remote> <local_br>:<remote_br>`：推送的同时建立跟踪，若两分支同名，`<local_br>:<remote_br>`可简写为`<branch>`
+  - **首次推送**必须加`-u`或指定远程分支名，会自动建立分支并跟踪
+
+- `git push --tags`：推送所有本地标签，`git push origin <tag_name>`推送单个标签
 - `git push --delete <branch>`：删除远端分支
 
 
@@ -419,11 +431,17 @@ ssh -T git@gitee.com
 
 **HEAD指针**: `HEAD`指向**当前分支**
 
-- HEAD^n表示当前节点的第n个父节点，只有一个父节点时可省略n
-- HEAD~n表示当前节点的第n代祖先节点
-- `^`和`~`可组合使用，如`HEAD^2~3`
+**HEAD分离状态**：HEAD不再指向分支引用，而是直接指向具体提交，HEAD分离状态下修改提交不会使标签发生变化，新提交（匿名提交）不属于任何分支且无法访问（除非通过commit-hash）直接切换分支会使匿名提交丢失，可手动创建分支`git checkout -b`，此时HEAD从分离状态重新关联到新分支，此前的匿名提交自动成为新分支的一部分
 
-**HEAD分离状态**：HEAD分离状态下，修改提交不会使标签发生变化，新提交不属于任何分支且无法访问（除非通过commit-hash）
+**在提交树上移动**：
+
+- 相对引用：不使用提交的哈希值，会进入HEAD分离状态
+  - HEAD^n表示当前节点的第n个父节点，指向第一个父节点时可省略1，这里第一个父节点是自己正上方的节点（而不是从左向右数）
+  - HEAD~n表示当前节点的第n代祖先节点，省略n时即指向父节点
+  - `^`和`~`支持链式操作，如`HEAD~^2~3`
+- `git checkout <br_name>/<commit-hash>`：让HEAD指向另一分支或提交
+
+- `git branch -f <br_name> <commit-hash>`：强制让分支指向另一个提交，常用相对引用
 
 ## 分支基本操作
 
@@ -432,18 +450,19 @@ ssh -T git@gitee.com
   - `git branch`或`git branch -a`：查看所有分支，带`*`前缀的为HEAD分支
   - `git branch -v`：查看每个分支的最后一次提交
   - `git branch -vv`：显示所有分支、跟踪分支及详细信息，ahead指本地提交未推送的数量，behind指远端有多少个提交未合并到本地，注意该命令统计值来自本地缓存的远端数据，未必最新，可在显示前更新数据：`git fetch --all; git branch -vv`
+  - `git branch -r`：查看远程分支列表
   - `git branch --merged [<br_name>]`：查看已经合并到指定分支的分支，省略指定分支时默认当前分支
   - `git branch --no-merged [<br_name>]`：查看所有包含未合并工作的分支，默认指当前分支
 - 切换：分支切换会改变工作目录
   - `git checkout <br_name>`
-  - `git switch <br_name>`
+  - `git switch <br_name>`：更现代、更安全
 - 删：
   - `git branch -d <br_name>`：删除分支, 删前做各种检查
   - `git branch -D <br_name>`：强制删除, 不做任何检查
 
 ## 合并：`git merge`
 
-`git merge <br_name>`：合并分支, 将分支中所有提交合并**到**当前分支中，自动合并不同行, 若同时修改了同一文件的同一行, 则需要手动解决冲突，然后再commit
+`git merge <br_name>`：**单向**合并分支, 将分支中所有提交合并**到**当前分支中，不支持双向合并，自动合并不同行, 若同时修改了同一文件的同一行, 则需要手动解决冲突，然后再commit
 
 - **快进模式**: `Fast Forward`, 一种合并策略, 如果顺着一个分支走下去能够到达另一个分支,那么合并两者的时候只会简单的将指针向前推进 (指针右移)，而不需要创建一个新的合并提交（因为没有需要解决的分歧）
 - 强制创建一个合并提交, 不使用快进模式：`git merge --no-ff feature`，保留了分支的历史结构
@@ -458,6 +477,8 @@ merge可使合并树变得混乱复杂, 变基使其更清晰
 
 ![3](../assets/3.png)
 
+若变基自后代，则变基类似快进合并，只是向前移动指针
+
 `git rebase <br_name>`：git计算当前分支和指定分支的差集, 将其应用到当前分支，之后当前分支的结点自动被清除
 
 `git rebase <base_br> <topic_br>`：指定变基基准分支和目标分支，省去先检出到目标分支的步骤
@@ -465,8 +486,8 @@ merge可使合并树变得混乱复杂, 变基使其更清晰
 `git rebase --onto <新父提交> <旧父提交> [目标分支]`：将变基应用到指定分支
 
 - 新父提交为变基的基准点，可为分支名/提交/标签
-- 旧父提交为变基的起始点，左开区间，不包含该提交本身，若为分支名则找出最新的共同祖先为起点
-- 目标分支指定操作的分支，省略则默认对当前分支操作
+- 旧父提交为被变基提交链的起始点，**左开区间**，不包含该提交本身，若为分支名则找出最新的共同祖先的下一个提交为起点
+- 目标分支指定操作的分支，被变基提交链的结束点，省略则默认对当前分支操作
 
 变基的本质：丢弃现有提交，新建内容相同但实际上不同的提交（因此有风险）
 
@@ -474,7 +495,9 @@ merge可使合并树变得混乱复杂, 变基使其更清晰
 
 解决方式：不执行合并，而是用变基解决变基（执行`git rebase <remote>/<branch>`或`git pull --rebase`）
 
+### 交互式rebase
 
+`git rebase --interactive/-i <base_commit/base_branch>`：可以调整提交的顺序、删除提交、合并提交
 
 ## 分支比较：`git cherry`
 
@@ -487,7 +510,7 @@ git cherry <upstream> <branch> 		 // 列出在branch中存在, 不在upstream中
 
 ## 提交复制：`git cherry-pick`
 
-从一个分支**选择性复制**特定的改动到另一个分支, 而无需合并整个分支的历史，可用于修复紧急问题（从另一分支挑出某修复提交快速应用到当前分支）或从废弃分支拯救有用的提交
+从一个分支**选择性复制**特定的改动到当前分支, 而无需合并整个分支的历史，可用于修复紧急问题（从另一分支挑出某修复提交快速应用到当前分支）或从废弃分支拯救有用的提交
 
 ```bash
 git cherry-pick <commit-hash> 	// 挑选一个提交
@@ -514,7 +537,10 @@ git cherry-pick --abort
 - `git checkout -b <br_name> <remote>/<remote_br>`：创建并切换分支，可同时设置跟踪分支
 - `git checkout --track <remote>/<remote_br>`：更快捷，自动创建远程分支的**同名**本地分支**并切换**
 - `git checkout <remote_br>`：两个条件：尝试检出的分支不存在&&有且只有一个同名远端分支，会创建同名跟踪分支并切换
-- `git branch -u/--set-upstream-to <remote>/<remote_br>`：设置/修改跟踪的上游分支
+- `git branch -u <remote>/<remote_br> [<local_br>]`或`git branch --set-upstream-to=<remote>/<remote_br> [<local_br>]`：设置/修改跟踪的上游分支（分支必须已存在），若为当前分支则可省略local_br
+- `git branch --unset-upstream <local_br>`：取消跟踪
+
+
 
 简写方式引用上游分支：先设置好跟踪分支，用`@{upstream}`或`@{u}`引用，如可用`git merge @{u}`替代`git merge origin/master`
 
