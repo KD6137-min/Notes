@@ -162,6 +162,8 @@ alias ll='ls -al'
 
 选项`--word-diff`：显示**单词级**差异，新增单词用 `{+ +}` 包裹，删除单词用 `[- -]` 包裹
 
+差异范围标记：`@@ -15,7 +15,7 @@`，旧版本从15行开始显示7行，新版本从15行开始显示7行
+
 `git difftool`：启动外部工具展示树的差异
 
 ## 提交文件：`git commit [-m "注释内容"]`
@@ -306,7 +308,33 @@ alias ll='ls -al'
 
 `git revert HEAD`撤销当前提交，本质为逆向的`git cherry-pick`，一个新的提交，不影响提交历史
 
-## 用暂存区恢复工作区：`git restore`
+### `git reflog`
+
+记录本地仓库中 HEAD 指针和所有分支引用的所有移动历史，包括提交、合并、重置、分支切换等操作
+
+与git log不同，reflog仅记录**本地操作**，不同步到远程仓库，且默认保留 **90 天**的记录
+
+主要用途：
+
+- 恢复误操作：如误删分支（git branch -D）、强制重置（git reset --hard）或丢失的提交
+
+- 查看操作历史：追踪本地仓库的变更过程，帮助调试或审计
+- **撤销 Rebase/Merge**：通过找回操作前的提交哈希，恢复到冲突前的状态
+
+使用示例：
+
+```bash
+# 查看完整操作记录
+git reflog
+# 恢复误删的提交（通过哈希值）
+git checkout <commit-hash>
+# 恢复误删的分支
+git branch recovery-branch <commit-hash>
+```
+
+
+
+### 用暂存区恢复工作区：`git restore`
 
 ## 标签
 
@@ -345,35 +373,53 @@ alias ll='ls -al'
 
 # 四、Remote
 
-## 配置SSH公钥
-
-SSH公钥理解为设备识别码，让设备有权限更改remote仓库
-
-```bash
-ssh-keygen -t rsa 		// 使用rsa算法，不断回车即可, 若已存在公钥, 则覆盖
-```
-
-显示公钥:
-
-```bash
-cat ~/.ssh/id_rsa.pub
-```
-
-复制公钥内容到网站, 添加成功后:
-
-```bash
-ssh -T git@gitee.com
-```
-
-输入yes, 连接成功
-
 ## 基础操作
 
 - 增：`git remote add <别名> <URL>`，建立别名和远程的关联，使用别名即可操作远程仓库
+
 - 删：`git remote remove <别名>`或`git remote rm <别名>`
+
 - 改：
   - `git remote set-url <别名> <new_url>`
+  
+    - url两种格式：git支持http和ssh两种协议，优先尝试使用ssh，自动根据url的格式判断使用哪种协议
+  
+      - HTTP格式：`https://github.com/<user>/<project_name>`
+      - SSH格式：`git@github.com:<user>/<project_name>`，更推荐，更稳定且无需重复输入密码
+  
+    - 使用http协议时配置Git代理：
+  
+      ```shell
+      # 代理地址可通过系统设置查看（如 Windows：设置 > 网络和 Internet > 代理）
+      git config --global http.proxy http://127.0.0.1:7890
+      git config --global https.proxy http://127.0.0.1:7890
+      
+      # 取消代理
+      git config --global --unset http.proxy
+      git config --global --unset https.proxy
+      ```
+  
+    - 使用ssh协议：需配置ssh密钥：SSH公钥理解为设备识别码，让设备有权限更改remote仓库
+  
+      ```bash
+      ssh-keygen -t rsa 		// 使用rsa算法，不断回车即可, 若已存在公钥, 则覆盖
+      
+      # 显示公钥:
+      cat ~/.ssh/id_rsa.pub
+      ```
+  
+      复制公钥内容到网站, 添加成功后:
+  
+      ```bash
+      # 验证连接
+      ssh -T git@github.com
+      
+      # 切换仓库远程url为SSH
+      git remote set-url origin git@github.com:... 	# 仓库页面有ssh链接
+      ```
+  
   - `git remote rename <old_name> <new_name>`，重命名
+  
 - 查：
   - `git remote show <别名>`，显示远程仓库的分支和跟踪关系
   - `git remote`：列出远程仓库的简写，origin是远程仓库的默认名称
@@ -385,6 +431,54 @@ ssh -T git@gitee.com
 `git clone <url> [locla_path]`：若本地目录省略则自动生成一个新目录
 
 选项`--depth=1`：克隆深度为1，只克隆最新的版本
+
+**`fork`**：不同于clone
+
+- **在线操作**：仅在 GitHub、GitLab 等代码托管平台的网页端完成，属于“远程仓库级别的复制”
+- **结果**：在用户自己的账户下生成一个独立的远程仓库副本，**与原仓库解耦**
+- **权限**：用户对 fork 后的仓库拥有完全控制权，可自由修改和推送
+
+------
+
+### 2. **协作流程与用途**
+
+| **对比项**     | **`fork`**                           | **`clone`**                            |
+| -------------- | ------------------------------------ | -------------------------------------- |
+| **协作场景**   | 参与开源贡献（需通过 PR 合并代码）   | 本地开发或团队协作（有权限时直接推送） |
+| **典型操作链** | Fork → Clone → 修改 → PR             | Clone → 修改 → Push（需权限）          |
+| **同步机制**   | 需手动配置 `upstream` 同步原仓库更新 | 直接 `git pull` 同步远程分支           |
+
+------
+
+### 3. **关键区别总结**
+
+1. **副本性质**
+   - `fork` 创建的是 **线上独立仓库**，属于“项目级复制”。
+   - `clone` 是 **本地代码下载**，仅建立与远程仓库的同步链接。
+2. **权限与影响**
+   - `fork` 允许用户自由修改自己的副本，不影响原仓库。
+   - `clone` 默认无原仓库写入权限，需通过 fork + PR 或直接授权才能贡献代码。
+3. **工作流差异**
+   - `fork` 是开源协作的起点，适合无权限的贡献者。
+   - `clone` 是本地开发的起点，适合有权限的团队成员或个人学习。
+
+------
+
+### 4. **常见误区澄清**
+
+- **`clone` 也能用于 fork 的仓库**：
+   用户通常先 fork 再 clone 自己的副本，此时 `origin` 指向 fork 仓库，而非原仓库。
+- **`fork` 并非 Git 原生功能**：
+   它是 GitHub/GitLab 等平台提供的协作工具，Git 本身无 `fork` 命令。
+
+------
+
+### 5. **一句话总结**
+
+- **`fork`**：在线上平台复制远程仓库到自己的账户（建立独立副本）。
+- **`clone`**：将远程仓库（包括 fork 的副本）下载到本地，建立本地与远程的同步链接。
+
+两者常结合使用，例如先 fork 再 clone，通过 PR 贡献代码。
 
 ## 抓取&拉取
 
@@ -631,16 +725,11 @@ git flow hotfix finish VERSION 		// 结束一个hotfix分支, 合并到develop�
 
 APP推荐: Sourcetree
 
-中文
+
 
 ---
 
 
 
-# 七、GitHub
 
-HTTP格式：`https://github.com/<user>/<project_name>`
 
-SSH格式：`git@github.com:<user>/<project_name>`
-
-“Merge” 按钮会做一个 “non-fast-forward” 合并( 即使可以快进合并)，并产生一个合并提交记录
