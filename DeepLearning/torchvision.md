@@ -2,7 +2,7 @@
 
 PyTorch的官方扩展库，专为计算机视觉任务设计，提供了预训练模型（如 ResNet、VGG 等）、数据集加载工具（如 ImageNet、CIFAR）和数据增强方法（如 transforms）
 
-# ​`torchvision.datasets`​
+# `torchvision.datasets`​
 
 **包含数据集**：MNIST、COCO、LSUN Classification、ImageFolder、Imagenet-12、CIFAR10 and CIFAR100、STL10，可通过类直接调用：
 
@@ -19,15 +19,15 @@ dataset = datasets.MNIST(
 
 **关键参数**：
 
-- ​`root`​: 数据集存储路径
-- ​`train`​：True为训练集，False为测试集
-- ​`download`​：从网上下载数据，并放在root目录下
-- ​`transform`​: 图像预处理（如 `transforms.Compose([...])`​）
-- ​`target_transform`​: 标签的转换函数
+- `root`: 数据集存储路径
+- `train`​：True为训练集，False为测试集
+- `download`​：从网上下载数据，并放在root目录下
+- `transform`: 图像预处理（如 `transforms.Compose([...])`​）
+- `target_transform`: 标签的转换函数
 
 ## `.ImageFolder()`​
 
-​`.ImageFolder()`​专门用于加载图像分类数据集，自动从文件夹结构中加载图像数据（每个子文件夹代表一个类别）
+`.ImageFolder()`​专门用于加载图像分类数据集，自动从文件夹结构中加载图像数据（每个子文件夹代表一个类别）
 
 - 特点：自动生成标签（基于文件夹名）、内置支持数据预处理（如 `transforms`​）、适用于标准分类数据集（如 ImageNet 结构）
 - **数据组织方式：目录结构**：
@@ -57,7 +57,7 @@ dataset = datasets.MNIST(
 
 ## `.CocoCaptions()`​
 
-​`.CocoCaptions()`​用于加载 **MS COCO Caption 数据集**
+`.CocoCaptions()`​用于加载 **MS COCO Caption 数据集**
 
 - 包含约 33 万张图像，每张图像由人工标注至少 5 句自然语言描述
 - 需指定**图像目录和标注文件路径**加载数据
@@ -101,7 +101,7 @@ densenet = models.densenet_161()
 
   - **底层机制**：`pretrained=True`​ 会触发 `torch.utils.model_zoo`​ 从 PyTorch 官方服务器下载对应的权重文件（如 `resnet18-5c106cde.pth`​），并通过 `load_state_dict`​ 加载到模型中
 
-    - ​`torch.utils.model_zoo`​ ：底层用于下载和管理模型权重的工具，用户通常无需直接调用
+    - `torch.utils.model_zoo`​ ：底层用于下载和管理模型权重的工具，用户通常无需直接调用
 - 新版本：推荐使用`weights`​参数加载，`model = models.resnet18(weights=ResNet18_Weights.IMAGENET1K_V1)`​，支持多版本权重（如 `IMAGENET1K_V1/V2`​），权重来源和版本控制更灵活，且兼容本地缓存和自定义权重路径
 
 |AlexNet|VGG|ResNet|SqueezeNet|DenseNet|
@@ -112,7 +112,7 @@ densenet = models.densenet_161()
 ||​`.vgg19()`​、`.vgg_bn()`​|​`.resnet101()`​||​`.densenet161()`​|
 |||​`.resnet152()`​|||
 
-​`_bn`​表示with batch normalization
+`_bn`​表示with batch normalization
 
 # `torchvision.transforms`​
 
@@ -155,6 +155,8 @@ transforms = v2.Compose([
     v2.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 ```
+
+> 注意ToTensor()默认会对图像类数据进行归一化，其他数据类型不会处理
 
 **v2 API：**
 
@@ -267,7 +269,7 @@ transforms = v2.Compose([
 
 ## `.Normalize()`​
 
-​`.Normalize()`​对图像数据进行标准化处理，核心功能是对输入张量的每个通道执行以下操作：
+`.Normalize()`​对图像数据进行标准化处理，核心功能是对输入张量的每个通道执行以下操作：
 
 $$
 \text{output} = \frac{(\text{input} - \text{mean})}{\text{std}}
@@ -277,13 +279,13 @@ $$
 
 - 参数：
 
-  - ​`mean`​（列表/元组）：各通道的均值
+  - `mean`​（列表/元组）：各通道的均值
 
     - ImageNet 的 RGB 均值通常为 `[0.485, 0.456, 0.406]`​（全局统计量）
-  - ​`std`​（列表/元组）：各通道的标准差
+  - `std`​（列表/元组）：各通道的标准差
 
     - ImageNet 的 RGB 标准差为 `[0.229, 0.224, 0.225]`​（全局统计量）
-  - ​`inplace`​（布尔值，默认为 `False`​）：若为 `True`​，则直接修改输入张量，否则返回新张量
+  - `inplace`​（布尔值，默认为 `False`​）：若为 `True`​，则直接修改输入张量，否则返回新张量
 - 要求：
 
   - **输入要求**：`Normalize`​ 的输入必须是 `torch.Tensor`​，且需在 `ToTensor()`​ 之后调用（因 `ToTensor()`​ 会将像素值缩放到 [0,1]）
@@ -296,20 +298,20 @@ $$
 
 ## `.RandomResizedCrop()`​
 
-​`.RandomResizedCrop()`​用于随机裁剪并调整图像大小
+`.RandomResizedCrop()`​用于随机裁剪并调整图像大小
 
 - 参数：
 
-  - ​`size(int/list/tuple)`​：输出图像的尺寸，若为整数则生成正方形图像 `(size, size)`​，若为元组则按 `(height, width)`​ 输出
-  - ​`scale(tuple, optional)`​：控制裁剪区域占原图的比例范围，默认 `(0.08, 1.0)`​，例如 `(0.2, 0.8)`​ 表示裁剪面积占原图的 20%\~80%。
-  - ​`ratio(tuple, optional)`​：裁剪区域的宽高比范围，默认 `(3./4, 4./3)`​（即 0.75\~1.33），若设为 `(1, 1)`​ 则强制正方形裁剪
-  - ​`interpolation(str/enum)`​：图像缩放的插值方法，常见选项包括：
+  - `size(int/list/tuple)`​：输出图像的尺寸，若为整数则生成正方形图像 `(size, size)`​，若为元组则按 `(height, width)`​ 输出
+  - `scale(tuple, optional)`​：控制裁剪区域占原图的比例范围，默认 `(0.08, 1.0)`​，例如 `(0.2, 0.8)`​ 表示裁剪面积占原图的 20%\~80%。
+  - `ratio(tuple, optional)`​：裁剪区域的宽高比范围，默认 `(3./4, 4./3)`​（即 0.75\~1.33），若设为 `(1, 1)`​ 则强制正方形裁剪
+  - `interpolation(str/enum)`​：图像缩放的插值方法，常见选项包括：
 
-    - ​`"bilinear"`​（双线性插值，默认）
-    - ​`"nearest"`​（最近邻插值）
-    - ​`"bicubic"`​（双三次插值）
+    - `"bilinear"`​（双线性插值，默认）
+    - `"nearest"`​（最近邻插值）
+    - `"bicubic"`​（双三次插值）
 
-  - ​`max_attempts(int, optional)`​：尝试生成有效裁剪区域的最大次数，若失败则回退到中心裁剪
+  - `max_attempts(int, optional)`​：尝试生成有效裁剪区域的最大次数，若失败则回退到中心裁剪
 - **工作原理：**
 
   1. **随机生成裁剪区域**：
@@ -322,7 +324,7 @@ $$
 
   ```python
   from torchvision.transforms import RandomResizedCrop
-
+  
   transform = RandomResizedCrop(
       size=224,
       scale=(0.08, 1.0),
@@ -337,17 +339,17 @@ $$
 
 ## `.ColorJitter()`​
 
-​`.ColorJitter()`​常用图像数据增强方法，用于随机调整图像的亮度、对比度、饱和度和色调
+`.ColorJitter()`​常用图像数据增强方法，用于随机调整图像的亮度、对比度、饱和度和色调
 
 - **参数：**
 
-  - ​`brightness(float/tuple)`​：亮度调整范围，**要求**值必须为非负数
+  - `brightness(float/tuple)`​：亮度调整范围，**要求**值必须为非负数
 
     - 若为浮点数则从 `[max(0, 1 - brightness), 1 + brightness]`​ 随机采样
     - 若为元组（如 `(0.8, 1.2)`​），则直接指定范围 `[min, max]`​
-  - ​`contrast(float/tuple)`​：对比度调整范围，规则同 `brightness`​，范围计算方式相同
-  - ​`saturation(float/tuple)`​：饱和度调整范围，规则同 `brightness`​
-  - ​`hue(float/tuple)`​：色调调整范围
+  - `contrast(float/tuple)`​：对比度调整范围，规则同 `brightness`​，范围计算方式相同
+  - `saturation(float/tuple)`​：饱和度调整范围，规则同 `brightness`​
+  - `hue(float/tuple)`​：色调调整范围
 
     - 若为浮点数则从 `[-hue, hue]`​ 随机采样
     - 若为元组，需满足 `-0.5 ≤ min ≤ max ≤ 0.5`​
@@ -360,7 +362,7 @@ $$
 
   ```python
   from torchvision import transforms
-
+  
   transform = transforms.ColorJitter(
       brightness=(0.8, 1.2),  # 亮度范围 80%~120%
       contrast=0.3,           # 对比度范围 70%~130%
@@ -368,6 +370,24 @@ $$
       hue=0.1                 # 色调范围 -0.1~0.1
   )
   ```
+
+## `torch.compile()`加速转换
+
+可优化计算图和内存布局来提升性能，同时减少内存格式变量的影响
+
+原理：将相邻操作合并为单一内核调用，减少中间内存分配和访存开销，将固定值内联到计算图中避免重复计算等
+
+```python
+# 单独编译Normalize操作
+normalize = transforms.Normalize(mean=[0.5], std=[0.5])
+compiled_normalize = torch.compile(normalize)  # 优化计算和内存访问
+
+# 使用编译后的Normalize
+input_tensor = torch.rand(1, 3, 224, 224)  # 假设输入为NCHW格式
+output = compiled_normalize(input_tensor)   # 自动适配最优内存布局
+```
+
+
 
 # `torchvision.utils`​
 
@@ -379,12 +399,12 @@ $$
 
 参数：
 
-- ​`tensor`​：输入图像张量（形状为 B×C×H×W）
-- ​`nrow=8`​：每行显示的图像数量
-- ​`padding=2`​：图像间的像素间距
-- ​`normalize=False`​：若为True则将图片的像素值归一化处理
-- ​`range=None`​：若为`(min, max)`​则用min和max来规范化image
-- ​`scale_each=False`​：若为True则每个图片独立规范化，而不是根据所有图片的像素最大最小值来规范化
+- `tensor`​：输入图像张量（形状为 B×C×H×W）
+- `nrow=8`​：每行显示的图像数量
+- `padding=2`​：图像间的像素间距
+- `normalize=False`​：若为True则将图片的像素值归一化处理
+- `range=None`​：若为`(min, max)`​则用min和max来规范化image
+- `scale_each=False`​：若为True则每个图片独立规范化，而不是根据所有图片的像素最大最小值来规范化
 
 ```python
 from torchvision.utils import make_grid
@@ -398,9 +418,9 @@ plt.imshow(grid.permute(1, 2, 0))  # 显示网格
 
 **参数**：
 
-- ​`tensor`​：输入张量（单张或批量图像）
-- ​`filename`​：保存路径
-- ​`format`​：文件格式（如 `'png'`​、`'jpeg'`​）
+- `tensor`​：输入张量（单张或批量图像）
+- `filename`​：保存路径
+- `format`​：文件格式（如 `'png'`​、`'jpeg'`​）
 
 ```python
 save_image(images, 'batch_grid.png', nrow=4)
@@ -412,10 +432,10 @@ save_image(images, 'batch_grid.png', nrow=4)
 
 **参数**：
 
-- ​`image`​：输入图像张量（$C \times H \times W$）
-- ​`boxes`​：边界框坐标张量（形状为 $N \times 4$，格式为 `[xmin, ymin, xmax, ymax]`​）
-- ​`labels`​：可选，每个框的标签列表
-- ​`colors`​：框的颜色（支持自定义）
+- `image`​：输入图像张量（$C \times H \times W$）
+- `boxes`​：边界框坐标张量（形状为 $N \times 4$，格式为 `[xmin, ymin, xmax, ymax]`​）
+- `labels`​：可选，每个框的标签列表
+- `colors`​：框的颜色（支持自定义）
 
 ```python
 from torchvision.utils import draw_bounding_boxes
@@ -428,9 +448,9 @@ img_with_boxes = draw_bounding_boxes(image, boxes, labels=['cat', 'dog'], colors
 
 **参数**：
 
-- ​`image`​：输入图像张量
-- ​`masks`​：二值掩码张量（形状为 $N \times H \times W$，$N$ 为类别数）
-- ​`alpha`​：掩码透明度（默认为0.5）
+- `image`​：输入图像张量
+- `masks`​：二值掩码张量（形状为 $N \times H \times W$，$N$ 为类别数）
+- `alpha`​：掩码透明度（默认为0.5）
 
 ```python
 masks = torch.rand(3, 256, 256) > 0.5  # 模拟3类掩码
