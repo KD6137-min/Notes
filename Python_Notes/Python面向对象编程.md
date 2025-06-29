@@ -17,7 +17,7 @@
         ```python
         class MyClass:
             __slots__ = ['name', 'age']
-      
+        
         obj = MyClass()
         obj.y = 42 # 报错
         obj.__dict__['y'] = 42 # 不报错
@@ -103,11 +103,11 @@
     ```python
     MyClass = type('ClassA', (object,) dict(name="type test"))
     a = MyClass()
-  
+    
     # 等同于
     class ClassA:
     	name = "type test"
-  
+    
     a = ClassA()
     ```
 
@@ -475,12 +475,10 @@ print(my_dict)
       hasher2 = StreamHasher('sha1')
       with open('Python-3.7.6.tgz', 'rb') as stream:
           print(hasher2(stream))
-
-
+          
   if __name__ == '__main__':
       main()
-  ```
+
 - 模板方法模式: 定义一个算法框架, 并将一些步骤延迟到子类中实现, 以便在不改变算法结构的情况下, 允许子类重定义算法的某些步骤
 - 访问者模式: 是一种行为型设计模式, 它可以让你在不修改对象结构的前提下, 定义作用于这些对象元素的新操作
 
-‍
