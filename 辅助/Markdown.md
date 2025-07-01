@@ -28,6 +28,20 @@
   - 已选：`- [X] 选项`
 
 - 表情符号：`:<表情符号>:`，一对冒号包含；[表情符号网站](https://www.webfx.com/tools/emoji-cheat-sheet/)
+  -  :bulb:`:bulb:`
+  - :white_check_mark:`:white_check_mark:`
+  - :exclamation:`:exclamation:`
+  - :pushpin:`:pushpin:`
+  - :paperclip:`:paperclip:`
+  - :books:`:books:`
+  - :warning:`:warning:`
+  - :wrench:`wrench:`
+  - :lock:`:lock:`
+  - :rocket:`:rocket:`
+  - :computer:`:computer:`
+  - :triangular_flag_on_post:`:triangular_flag_on_post:`
+  - :star:`:star:`
+
 
 # 表格
 

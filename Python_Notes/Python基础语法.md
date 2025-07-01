@@ -3014,13 +3014,31 @@ print(iter(iterator) == iterator) 		# true
 
       使用方式类似于 `venv`​
 
+4. 使用`conda`:
+
+    - 创建环境：`conda create --name myenv python=3.9 [<Module_names>]`，可创建时附带下载指定的包
+      - `-p /path/to/myenv`指定下载路径
+      - 克隆环境：`conda create --name new_env --clone oldenv`
+      - 从文件创建：`conda env create -f environment.yml`
+    - 激活环境：`conda avtivate <env_name>`
+    - 停用环境：`conda deactivate`
+    - 查看环境：`conda env list`或`conda info --envs`，当前环境有`*`前缀
+    - 删除环境：`conda remove --name myenv --all [-y]`，需要先停用，`-y`强制删除无需确认
+    - 导出环境配置：`conda env export > envirment.yml`
+    - 包管理：
+      - 安装：`conda install [-n <env_name>] <package_name>`，若不指定env则在当前环境安装
+      - 更新：`conda update <package_name>`
+      - 卸载：`conda remove <package_name>`
+    - 镜像加速：`conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/`
+    - 清理缓存：`conda clean --all`
+
 ## **特点**
 
 1. 独立性: 每个虚拟环境之间相互独立, 不会共享库或配置
 2. 轻量级: 虚拟环境仅复制必要的文件, 尽量减少磁盘占用
 3. 多版本支持: 可以同时管理多个 Python 版本或库版本
 
-‍
+
 
 ---
 
