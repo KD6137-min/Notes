@@ -550,6 +550,9 @@ git branch recovery-branch <commit-hash>
 - 切换：分支切换会改变工作目录
   - `git checkout <br_name>`
   - `git switch <br_name>`：更现代、更安全
+- 改：
+  - 重命名：`git branch -m [<old_br_name>] <new_br_name>`，重命名指定分支（无需切换），若省略old则重命名当前分支，若在windows上仅修改大小写（如Feature -> feature）则需强制重命名`git branch -M <new_br_name>`
+
 - 删：
   - `git branch -d <br_name>`：删除分支, 删前做各种检查
   - `git branch -D <br_name>`：强制删除, 不做任何检查

@@ -38,9 +38,39 @@
 
 
 
-## Jupyter内核
+## Jupyter内核管理
 
-独立进程，执行代码的核心引擎，负责与前端（如浏览器中的Notebook界面）通信，并解释运行用户输入的代码，支持多种编程语言
+独立进程，执行代码的核心引擎，负责与前端（如浏览器中的Notebook界面）通信，并解释运行用户输入的代码，支持多种编程语言，每个Kernel对应一个独立的运行时环境，可能关联特定的虚拟环境或解释器
 
-- 每个Kernel对应一个独立的运行时环境，可能关联特定的虚拟环境或解释器
-- 终端中激活的虚拟环境需通过`ipykernel`**显式注册**到Jupyter，才能在Notebook中使用该环境的Python解释器和库：在目标虚拟环境中运行`python -m ipykernel install --user --name 环境名`，将其添加到Jupyter的可选Kernel列表中
+- 查：`jupyter kernelspec list [--json]`，列出所有内核及其配置路径，`--json`查看详细信息
+
+- 创：在目标虚拟环境中运行`python -m ipykernel install --user --name myenv --display-name "My Project Env"`
+
+  - `--name`为内核唯一标识（必填）
+  - `--display-name`Jupyter界面中显示的名称
+  - 终端中激活的虚拟环境需通过`ipykernel`**显式注册**到Jupyter，才能在Notebook中使用该环境的Python解释器和库
+
+- 删：`jupyter kernelspec remove myenv`，需指定内核标识符
+
+  - 或手动删除对应目录
+
+- 改：
+
+  1. 先定位内核配置文件：`cd $(jupyter kernelspec list | grep myenv | awk '{print $2}')`
+
+  2. 编辑kernel.json：重启后生效
+
+     ```json
+     {
+         "display_name": "New Display Name",	// 修改显示名称
+         "argv": [
+             "/path/to/python",	// 确保路径正确
+             "-m",
+             "ipykernel_launcher",
+             "-f",
+             "{connection_file}"
+         ]
+     }
+     ```
+
+     
