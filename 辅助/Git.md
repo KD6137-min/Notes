@@ -726,7 +726,7 @@ git flow hotfix start VERSION [BASENAME] 	// 开启一个hotfix分支
 git flow hotfix finish VERSION 		// 结束一个hotfix分支, 合并到develop、master
 ```
 
-APP推荐: Sourcetree
+APP推荐: Sourcetree、SmartGit
 
 
 
