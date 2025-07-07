@@ -23,20 +23,20 @@
 ## 快捷键
 
 - Tab自动补全: 按两下获取命令清单
-- ctrl+c: 强制终止
-- ctrl+d: 产生输入结束符EOF
-- ctrl+z: 将进程暂停并放到后台
-- ctrl+l: 清屏, 光标移动到第一行
+- ctrl+c: 强制终止,cancel
+- ctrl+d: 产生输入结束符EOF,detach
+- ctrl+z: 将进程暂停并放到后台,suspend
+- ctrl+l: 清屏, 光标移动到第一行,clear
 - ⬆️⬇️: 显示历史命令
 - 删除
 
-  - ctrl+u: 删除光标以前的输入
-  - ctrl+k: 删除光标以后的输入
+  - ctrl+u: 删除光标以前的输入,until
+  - ctrl+k: 删除光标以后的输入,kill
   - ctrl+w: 删除最后一个词, 以空格为分隔符
 - 移动光标
 
-  - ctrl+a: 移动光标到行首
-  - ctrl+e: 移动光标到行末
+  - ctrl+a: 移动光标到行首，ahead
+  - ctrl+e: 移动光标到行末，end
 
 ## 目录结构
 
@@ -96,24 +96,24 @@
 
 ## 符号
 
-- ​`\\`​: 换行符
-- ​`|`​: 管道符, 将前一个命令的输出作为后一个命令的输入
+- `\\`: 换行符
+- `|`: 管道符, 将前一个命令的输出作为后一个命令的输入
 
-  eg: `who | wc -l`​: 返回登录的人数
+  eg: `who | wc -l`: 返回登录的人数
 
-  - ​`｜ xargs`​: 将前一个命令的多项输出作为多参数传递给下一命令, 相当于用空格拼接
+  - `｜ xargs`: 将前一个命令的多项输出作为多参数传递给下一命令, 相当于用空格拼接
 
     eg: `rpm -qa | grep 'mysql' | xargs rpm -e`​
-- ​`&&`​: 将两个命令放在一起, 若前成功则执行后, 前失败则后不执行
+- `&&`: 将两个命令放在一起, 若前成功则执行后, 前失败则后不执行
 
   eg: `make && make install`​
-- ​`||`​: 两个命令放在一起,  若前成功则后不执行 若前失败则后执行
-- ​`;`​: 多个命令用分号隔开,  不管前成功与否都执行后
-- ​`>`​: 输出重定向, 左边数据写入右边, 覆盖写'w'模式
-- ​`>>`​: 追加输出重定向, 'a'模式
-- ​`2>`​: 错误输出重定向, 正常信息和错误信息放在两个文件中
-- ​`<`​: 输入重定向, 从右边读数据
-- ​`$`​: 表示后面为变量
+- `||`: 两个命令放在一起,  若前成功则后不执行 若前失败则后执行
+- `;`: 多个命令用分号隔开,  不管前成功与否都执行后
+- `>`: 输出重定向, 左边数据写入右边, 覆盖写'w'模式
+- `>>`: 追加输出重定向, 'a'模式
+- `2>`: 错误输出重定向, 正常信息和错误信息放在两个文件中
+- `<`: 输入重定向, 从右边读数据
+- `$`: 表示后面为变量
 
 # 三、磁盘管理
 
@@ -128,21 +128,21 @@
 
 # 四、辅助命令
 
-- ​`whatis`​
+- `whatis`​
 
-  - ​`makewhatis`​, 更新whatis数据库
-- ​`man`​命令: 显示完整帮助手册, 按q退出, 回车下一行, 空格下一页, b上一页
-- ​`命令 --help`​
+  - `makewhatis`​, 更新whatis数据库
+- `man`​命令: 显示完整帮助手册, 按q退出, 回车下一行, 空格下一页, b上一页
+- `命令 --help`​
 - info/apropos: 查看帮助文档
 - clear: 清空屏幕
 - whereis/which: 显示程序名所在完整路径
 - history: 显示历史命令, 生成有编号的历史清单
 
-  - ​`!n`​: 重复第n号命令
-  - ​`history -c`​: 清除历史命令, 清除后, `!n`​不再适用
+  - `!n`: 重复第n号命令
+  - `history -c`: 清除历史命令, 清除后, `!n`​不再适用
 - cal: 显示日历, 默认显示当月
 
-  ​`cal [options] [[[day] month] year]`​
+  `cal [options] [[[day] month] year]`​
 
   - options
 
@@ -171,18 +171,18 @@
 
 # 五、系统命令
 
-- ​`logout`​/`exit`​: 退出登录
-- ​`last`​: 查看最近登录的信息
+- `logout`​/`exit`: 退出登录
+- `last`: 查看最近登录的信息
 
-  - ​`lastb`​: 显示尝试登录的信息(攻击者)
+  - `lastb`: 显示尝试登录的信息(攻击者)
 - hostname/uname: 查看系统和主机名
 
   - hostnamectl set-hostname newname: 关闭连接更安全, 需要重启
 - hostnamectl: 查看当前系统信息
 - cat /etc/shells: 查看当前系统下有哪些shell
 - echo $SHELL: 查看当前系统正在使用的shell
-- ​`ps`​: 查看自己使用的shell及进程信息
-- ​`shutdown [options] [time] [wall]`​: 关机
+- `ps`: 查看自己使用的shell及进程信息
+- `shutdown [options] [time] [wall]`: 关机
 
   - options
 
@@ -197,17 +197,17 @@
     - now
     - 12:37 : 指定时间
     - +10 : 十分钟后
-- ​`halt`​: 关闭系统, 等同于shutdown -r now
-- ​`init`​
+- `halt`: 关闭系统, 等同于shutdown -r now
+- `init`​
 
-  - ​`init 0`​: 关机
+  - `init 0`: 关机
   - init 1: 单用户
   - init 2: 单用户
   - init 3: 多用户带网络, 默认
   - init 4: 无操作
   - init 5: 启动图形化系统
   - init 6: 重启
-- ​`reboot`​: 重启
+- `reboot`: 重启
 
 ‍
 
@@ -217,16 +217,16 @@
 
 # 六、文件操作命令
 
-- ​`pwd`​: 当前目录, print working directory
-- ​`cd`​: 切换路径, change directory
+- `pwd`: 当前目录, print working directory
+- `cd`: 切换路径, change directory
 
-  - ​`cd`​ 或 `cd ～`​: home目录
-  - ​`cd /`​: 根目录
-  - ​`cd -`​: 上一次目录
-  - ​`cd ..`​: 切换到上一级目录
-  - ​`cd .`​: 切换到当前目录
-  - ​`cd ../..`​: 切换到上级的上级目录
-- ​`ls [options] [file]`​: 列出文件内容, list directory contents
+  - `cd`​ 或 `cd ～`: home目录
+  - `cd /`: 根目录
+  - `cd -`: 上一次目录
+  - `cd ..`: 切换到上一级目录
+  - `cd .`: 切换到当前目录
+  - `cd ../..`: 切换到上级的上级目录
+- `ls [options] [file]`: 列出文件内容, list directory contents
 
   - 蓝色为文件夹, 浅蓝色为链接, 黑色为文件, 前缀.为隐藏内容, 默认不显示隐藏内容
 
@@ -238,20 +238,20 @@
 
       - 第一位
 
-        - ​`-`​: 文件
-        - ​`d`​: 文件夹
-        - ​`l`​: 链接/快捷方式
+        - `-`: 文件
+        - `d`: 文件夹
+        - `l`: 链接/快捷方式
       - rwx三位一组, 共九位三组, 所有者权限、同组用户权限、其他用户权限
 
-        - ​`r`​: 读权限
-        - ​`w`​: 写权限
-        - ​`x`​: 执行权限
-        - ​`-`​: 无对应位置的权限
+        - `r`: 读权限
+        - `w`: 写权限
+        - `x`: 执行权限
+        - `-`: 无对应位置的权限
     - -R --recursive: 递归查看
     - -S: 排序显示, 根据文件大小, 默认升序
     - -r: 反转显示
   - file: 显示指定文件的内容
-- ​`mkdir [options] directory`​: 创建文件夹
+- `mkdir [options] directory`: 创建文件夹
 
   - options
 
@@ -261,15 +261,15 @@
     - 创建同级的hello和world两个文件夹, 每个文件夹均有1, 2, 3三个文件夹
 
       注意此处不可以有空格
-- ​`touch [options] file`​: 创建空文件
+- `touch [options] file`: 创建空文件
 
   - file
 
-    - ​`touch 1.txt`​: 在当前目录下创建txt
-    - ​`touch /root/1.txt`​: 在指定目录创建txt
-    - ​`touch ./demo/1.txt`​: 在上层目录创建, 注意上层文件必须存在
+    - `touch 1.txt`: 在当前目录下创建txt
+    - `touch /root/1.txt`: 在指定目录创建txt
+    - `touch ./demo/1.txt`: 在上层目录创建, 注意上层文件必须存在
 - rename: 文件重命名
-- ​`rm [options] file`​: 删除文件/文件夹, 默认删除空文件夹, 可以使用通配符\*
+- `rm [options] file`: 删除文件/文件夹, 默认删除空文件夹, 可以使用通配符\*
 
   - options
 
@@ -277,21 +277,21 @@
     - -i: 交互删除, 默认
     - -r: 递归式删除
     - -rf: 强制递归删除
-- ​`rmdir dir`​: 删除空目录
-- ​`cp [options] source destination/newname`​: 拷贝文件到指定位置, 重命名
+- `rmdir dir`: 删除空目录
+- `cp [options] source destination/newname`: 拷贝文件到指定位置, 重命名
 
   - options
 
     - -r: 递归式拷贝, 可以拷贝文件夹
     - -i: 询问是否覆盖已存在文件
     - -v: 显示拷贝后的路径描述
-- ​`mv [options] source directory/newname`​: 移动到指定位置, 重命名
+- `mv [options] source directory/newname`: 移动到指定位置, 重命名
 
   - 操作文件夹不需要-r
   - -v: 显示移动后的路径描述
   - -i: 交互式提示
 - tee: 多重定向, `ls | tee -a ls.txt`​显示ls的结果并追加输出到ls.txt文件中
-- ​`tar [options] [file] [target]`​: 解归档
+- `tar [options] [file] [target]`: 解归档
 
   - 解归档: 将一个归档文件, 如`.tar`​、`.zip`​、`.rar`​中的内容提取出来
 
@@ -319,14 +319,14 @@
     - -xvf
 - 解压缩
 
-  - ​`gzip file`​: 压缩文件
-  - ​`gunzip`​: 解压文件
-  - ​`xz`​: 
+  - `gzip file`: 压缩文件
+  - `gunzip`: 解压文件
+  - `xz`: 
 
     - -z: 压缩
     - -d: 解压
     - -0、-1、……、-9: 压缩级别
-- ​`ln [options] [target] [link name]`​: 创建链接
+- `ln [options] [target] [link name]`: 创建链接
 
   - 最好使用绝对路径创建连接, 否则移动链接后, 路径失效导致链接失效
   - options:
@@ -339,26 +339,26 @@
 
 # 七、文件查看命令
 
-- ​`tree [file]`​: 查看文件树
+- `tree [file]`: 查看文件树
 
   - 可结合more: `tree file | more`​
-- ​`basename`​/`dirname`​: 显示文件或目录
+- `basename`​/`dirname`: 显示文件或目录
 - file: 判断文件类型
-- `cat [options] [file]`​: 拼接文件, 单参数为查看文件全部内容, 适合小文件, 不适合查看二进制内容
+- `cat [options] [file]`: 拼接文件, 单参数为查看文件全部内容, 适合小文件, 不适合查看二进制内容
 
   - -n: 显示行号
 
   - 常用: `cat -n file | more`​
-- ​`tac`​: 倒转行号显示内容, 每行内容不变
-- ​`rev`​: 每一行的内容反转显示, 但是行号不变
-- ​`head`​/`tail`​: 查看文件前部/末尾, 默认显示10行, `-n`​: 查看n行
-- ​`more`​/`less`​: 慢加载文件以方便查看, 无行号
+- `tac`: 倒转行号显示内容, 每行内容不变
+- `rev`: 每一行的内容反转显示, 但是行号不变
+- `head`​/`tail`: 查看文件前部/末尾, 默认显示10行, `-n`: 查看n行
+- `more`​/`less`: 慢加载文件以方便查看, 无行号
 
   - 按回车下翻, 按空格翻页, 按q退出, j下移, k上移, f下一页, b上一页
-- ​`od`​: 用八进制呈现内容, 适用于查看二进制内容
-- ​`wc`​: 返回文件的行数、单词数、字符数, `-l`​: 只返回行数
+- `od`: 用八进制呈现内容, 适用于查看二进制内容
+- `wc`: 返回文件的行数、单词数、字符数, `-l`: 只返回行数
 - iconv: 编码转换
-- ​`find [path] [options] [expression]`​: 搜索文件, 可使用通配符
+- `find [path] [options] [expression]`: 搜索文件, 可使用通配符
 
   - options
 
@@ -371,13 +371,13 @@
     - -delete: 找到之后删除
   - expression
 
-    - ​`+n`​: n以上
-    - ​`-n`​: n以下
+    - `+n`: n以上
+    - `-n`: n以下
   - 通配符
 
-    - ​`*`​: 0个或多个任一字符
-    - ​`?`​: 任一字符
-- ​`grep [options] pattern [file]`​: 搜索, 一般结合管道
+    - `*`: 0个或多个任一字符
+    - `?`: 任一字符
+- `grep [options] pattern [file]`: 搜索, 一般结合管道
 
   - pattern中间有空格时要加引号
 
@@ -389,8 +389,8 @@
     - -n: 显示匹配行号
     - -E: 使用正则表达式匹配
 
-      - ​`^`​: 指定字符开头, `$`​: 指定字符结尾, `.`​: 匹配任一非换行符
-- ​`egrep`​: 正则搜索
+      - `^`: 指定字符开头, `$`: 指定字符结尾, `.`: 匹配任一非换行符
+- `egrep`: 正则搜索
 
 ‍
 
@@ -400,57 +400,57 @@
 
 # 八、文件处理命令
 
-- ​`uniq`​: 去除相邻的重复值, `-c`​: 记数
+- `uniq`: 去除相邻的重复值, `-c`: 记数
 
-  - ​`sort file | uniq`​: 全局去重
-- ​`sort`​: 排序, 默认升序
+  - `sort file | uniq`: 全局去重
+- `sort`: 排序, 默认升序
 
   - -r: 降序
   - -nr: 根据数字排序
-- ​`tr`​: 替换
+- `tr`: 替换
 
-  - ​`tr 'old' 'new' < 1.txt`​
-  - ​`tr '[aeiou]' '*'`​: 可操作字符集
-  - ​`tr '[:lower:]' '[:upper:]' < 1.txt`​: 大小写转换
+  - `tr 'old' 'new' < 1.txt`​
+  - `tr '[aeiou]' '*'`: 可操作字符集
+  - `tr '[:lower:]' '[:upper:]' < 1.txt`: 大小写转换
   - --help: 查看各种写法
   - -s
-- ​`paste`​: 左右拼接, 默认以制表符分隔
+- `paste`: 左右拼接, 默认以制表符分隔
 
-  - ​`-d *`​: 指定分隔符, 不加引号
+  - `-d *`: 指定分隔符, 不加引号
 
     - eg: `-d , > sales.csv`​, 逗号直接拼出csv文件
-- ​`cut`​: 竖直拆分
+- `cut`: 竖直拆分
 
-  - ​`-d *`​: 指定分隔符
-  - ​`-f n`​: 要查看的列编号
+  - `-d *`: 指定分隔符
+  - `-f n`: 要查看的列编号
   - eg: `cut -d , -f 2 filename`​, 用逗号拆分后查看第2列
 - split: 拆分文件
-- ​`sed '操作' filename`​: 字符流编辑器, 不改变原文件, 只是将新内容**输出到终端**
+- `sed '操作' filename`: 字符流编辑器, 不改变原文件, 只是将新内容**输出到终端**
 
   - 操作: 
 
-    - ​`na text`​: 在第n行后插入text
-    - ​`ni text`​: 在第n行前插入text
-    - ​`nd`​: 删除第n行
-    - ​`m,nd`​: 删除从m到n行
-    - ​`s#old#new#g`​: s表替换, old换为new, g为全局替换, 无g则只替换每行第一个
-- ​`awk '{操作}' filename`​: 模式匹配和处理语言
+    - `na text`: 在第n行后插入text
+    - `ni text`: 在第n行前插入text
+    - `nd`: 删除第n行
+    - `m,nd`: 删除从m到n行
+    - `s#old#new#g`: s表替换, old换为new, g为全局替换, 无g则只替换每行第一个
+- `awk '{操作}' filename`: 模式匹配和处理语言
 
   - BEGIN / END {操作}: 操作会在读文件前或读完所有之后执行, 一次性
 
-    ​`awk 'BEGIN{print '名称','数量','价格','时间'}' file`​: 制作表头
+    `awk 'BEGIN{print '名称','数量','价格','时间'}' file`: 制作表头
 
-    ​`awk 'END{print 'Game Over!'}' file`​
+    `awk 'END{print 'Game Over!'}' file`​
   - 操作: 每读一行执行一次
 
-    - ​`-F ,`​: 指定分隔符为逗号
-    - ​`print $1,$2`​: 输出第1、2列, \$指定列编号, \$0为整行, $NF为最后一列
+    - `-F ,`: 指定分隔符为逗号
+    - `print $1,$2`: 输出第1、2列, \$指定列编号, \$0为整行, $NF为最后一列
     - 筛选: `if ($2 >= 200) print $1`​
     - 分组聚合
 
-      - ​`{x[$3] += $2} END{for (i in x) print i,x[i]}`​: 以第3列分组, 累加第2列, 最后输出
-      - ​`{x[$3] += 1} END{for (i in x) print i,x[i]}`​: 以第3列分组, 计数(每个值出现的次数), 最后输出
-    - ​`……｜sort -nr ｜ head -n`​: 取前n名
+      - `{x[$3] += $2} END{for (i in x) print i,x[i]}`: 以第3列分组, 累加第2列, 最后输出
+      - `{x[$3] += 1} END{for (i in x) print i,x[i]}`: 以第3列分组, 计数(每个值出现的次数), 最后输出
+    - `……｜sort -nr ｜ head -n`: 取前n名
 
 ‍
 
@@ -462,71 +462,71 @@
 
 ## 网络管理
 
-- ​`ssh`​: `ssh root@39.106.134.248`​公有, `ssh root@172.22.53.165`​私有, pwd: 大i7
-- `netstat`​: 查看网络端口使用情况
+- `ssh`: `ssh root@39.106.134.248`​公有, `ssh root@172.22.53.165`​私有, pwd: 大i7
+- `netstat`: 查看网络端口使用情况
 
   - -n
   - -t: 查看tcp协议
   - -l: 查看监听状态
   - -p: 查看进程
-- ​`nc`​: Netcat, 网络调试和数据传输的工具
+- `nc`: Netcat, 网络调试和数据传输的工具
 
-  - ​ **​`-n`​**​: 不解析域名(不查询DNS), 直接使用提供的IP地址, 更快
-  - ​ **​`-v`​**​: 启用详细模式(verbose mode), 会输出更多的信息, 例如连接状态或错误消息, `-vv`​提供更加详细的调试信息
+  -  **​`-n`​**: 不解析域名(不查询DNS), 直接使用提供的IP地址, 更快
+  -  **​`-v`​**: 启用详细模式(verbose mode), 会输出更多的信息, 例如连接状态或错误消息, `-vv`​提供更加详细的调试信息
 
   ```bash
   # 测试某个端口是否开放
   nc -nv 192.168.1.1 80  # 测试某个端口是否开放
   # 输出会显示连接是否成功或超时
-
+  
   # 简单的端口扫描, 范围1到1000
   nc -nv 192.168.1.1 1-1000
-
+  
   # 作为服务器监听
   nc -l -p 1234
   # 在本地端口1234上监听, 等待连接
   ```
-- ​`ss`​: 同netstat
-- ​`ifconfig`​: 旧的网络配置工具, 查看内网地址, 可指定查看的内容: `ifconfig eth0/lo`​
-- ​`ip addr`​: 新的网络配置工具, 查看网络IP地址
+- `ss`: 同netstat
+- `ifconfig`: 旧的网络配置工具, 查看内网地址, 可指定查看的内容: `ifconfig eth0/lo`​
+- `ip addr`: 新的网络配置工具, 查看网络IP地址
 
   - 私有ip
 
     - 10.0.0.0～10.255.255.255
     - 172.16.0.0～172.31.255.255
     - 192.168.0.0～192.168.255.255
-- ​`wget url`​: 
+- `wget url`: 
 
   - -O: 指定名称, 下载到指定的目录
   - -b: 后台下载模式
   - -r: 递归下载
-- ​`mail`​: 发送和接受邮件
-- ​`ping url/ip`​: 检测网络可达性, `-c n`​: 检测n次
-- ​`route`​: 显示或管理路由表
-- ​`tcpdump`​: 网络监听抓包
-- ​`nslookup url`​: 解析ip地址
+- `mail`: 发送和接受邮件
+- `ping url/ip`: 检测网络可达性, `-c n`: 检测n次
+- `route`: 显示或管理路由表
+- `tcpdump`: 网络监听抓包
+- `nslookup url`: 解析ip地址
 
 ## 文件管理
 
 - Termius软件操作
-- ​`scp 目标文件 目标地址`​: 远程安全拷贝, 有远程主机时需要用户和ip, 冒号分隔路径
+- `scp 目标文件 目标地址`: 远程安全拷贝, 有远程主机时需要用户和ip, 冒号分隔路径
 
   - -r: 递归拷贝整个目录
   - eg: `scp ./1.txt root@10.11.51.82:/root/`​
-- ​`sftp root@10.11.51.82`​: 安全传输, 默认进去用户主目录, 连接成功后可下步操作
+- `sftp root@10.11.51.82`: 安全传输, 默认进去用户主目录, 连接成功后可下步操作
 
-  - ​`ls`​/`lls`​: 显示远端/本地目录列表
-  - ​`cd`​/`lcd`​: 切换远端/本地路径
-  - ​`mkdir`​/`lmkdir`​: 创建远端/本地目录
-  - ​`pwd`​/`lpwd`​: 显示远端/本地当前工作目录
-  - ​`get filename`​: 下载
-  - ​`put filename`​: 上传
-  - ​`bye`​/`exit`​/`quit`​: 退出sftp
-- ​`rsync`​: 实现文件的自动同步
+  - `ls`​/`lls`: 显示远端/本地目录列表
+  - `cd`​/`lcd`: 切换远端/本地路径
+  - `mkdir`​/`lmkdir`: 创建远端/本地目录
+  - `pwd`​/`lpwd`: 显示远端/本地当前工作目录
+  - `get filename`: 下载
+  - `put filename`: 上传
+  - `bye`​/`exit`​/`quit`: 退出sftp
+- `rsync`: 实现文件的自动同步
 
 ## 进程管理
 
-- ​`ps [options]`​: 显示进程
+- `ps [options]`: 显示进程
 
   - options
 
@@ -541,8 +541,8 @@
     - -x: 显示没有控制终端的进程
     - -sort: 按照列名排序
   - 常用: `ps -ef`​、`ps -aux`​、`ps -ef | grep 'ssh'`​
-- ​`pstree`​: 进程树, `-p`​: 显示进程号
-- ​`kill [options] pid`​: 终止进程, pid为进程id, 可用netstat/ps查询
+- `pstree`: 进程树, `-p`: 显示进程号
+- `kill [options] pid`: 终止进程, pid为进程id, 可用netstat/ps查询
 
   - options
 
@@ -551,11 +551,11 @@
     - -9 / SIGKILL: 强制关闭
     - -15 / SIGTERM: 默认, 发送关闭信号
     - -19 / SIGSTOP: 暂停, 放到后台
-- ​`pkill name`​/`killall`​: 根据进程名关闭进程, `-f`​: 精确匹配, 只有进程名完全匹配才关闭
+- `pkill name`​/`killall`: 根据进程名关闭进程, `-f`: 精确匹配, 只有进程名完全匹配才关闭
 
   - eg: `pkill java`​, 带有java的进程均被关闭
-- ​`pgrep name`​: 根据进程名查询进程id
-- ​`top`​: 任务管理器, 按n显示第n个cpu的进程, 按q退出
+- `pgrep name`: 根据进程名查询进程id
+- `top`: 任务管理器, 按n显示第n个cpu的进程, 按q退出
 
   - -i: 不显示空闲和僵尸进程
   - -u: 指定用户
@@ -563,19 +563,19 @@
   - -p: 显示指定进程的信息
   - -c: 显示进程的整个路径
   - -d: 指定两次刷屏之间的间隔时间, 单位秒
-- ​`htop`​
-- ​`runlevel`​: 查看当前运行级别
-- ​`jobs`​: 查看后台任务
+- `htop`​
+- `runlevel`: 查看当前运行级别
+- `jobs`: 查看后台任务
 
   - -l: 显示进程号
   - -s: 显示暂停的进程
   - -r: 显示运行的进程
-- ​`fg [%编号]`​: 将后台任务放到前台, 无编号则所有, 编号由jobs查看, 百分号在前
-- ​`bg [%编号]`​: 让进程在后台继续运行, 编号由jobs查看, 百分号在前
-- ​`nice`​/`renice`​: 调整程序/进程运行时优先级
-- ​`nohup`​: 用户登出后进程继续运行, 不接受挂起信号运行, `kill -1`​杀不掉
-- ​`命令`​ + `&`​: 将命令放到后台执行
-- ​`strace`​: 跟踪进程系统调用情况
+- `fg [%编号]`: 将后台任务放到前台, 无编号则所有, 编号由jobs查看, 百分号在前
+- `bg [%编号]`: 让进程在后台继续运行, 编号由jobs查看, 百分号在前
+- `nice`​/`renice`: 调整程序/进程运行时优先级
+- `nohup`: 用户登出后进程继续运行, 不接受挂起信号运行, `kill -1`​杀不掉
+- `命令`​ + `&`: 将命令放到后台执行
+- `strace`: 跟踪进程系统调用情况
 
 ## 服务管理
 
@@ -589,21 +589,21 @@
 
 ## 定时任务
 
-- ​`at 23:10+5days`​: 指定时间执行后续代码
+- `at 23:10+5days`: 指定时间执行后续代码
 
   - 回车后出现at\>, 编辑定时任务, ctrl+d结束任务编辑
-- ​`atq`​: 查看定时任务队列
-- ​`atrm 任务编号`​: 从队列删除待执行的任务, 编号用atq查看
-- ​`crontab`​: 周期任务
+- `atq`: 查看定时任务队列
+- `atrm 任务编号`: 从队列删除待执行的任务, 编号用atq查看
+- `crontab`: 周期任务
 
   - -e: 编辑克隆表
   - 克隆表达式
 
     - 分 时 日 月 星期 操作
-    - ​`*`​: 不限制
-    - ​`,`​: 并列
-    - ​`-`​: 范围
-    - ​`m/n`​: 从m开始, 每隔n
+    - `*`: 不限制
+    - `,`: 并列
+    - `-`: 范围
+    - `m/n`: 从m开始, 每隔n
 
 ## 系统诊断
 
@@ -619,55 +619,55 @@
 
 # 十、用户管理命令
 
-- ​`who`​/`w`​: 查看登录信息
+- `who`​/`w`: 查看登录信息
 
   - whoami: 查看自己当前用户
   - who -a: 详细信息
   - who -aH: 详细信息
 
-- ​`useradd username`​: 添加用户
+- `useradd username`: 添加用户
 
   - -d: 可指定用户主目录, 默认在/home/username
   - -g: 指定用户所属的用户组
-- ​`userdel`​: 删除用户
+- `userdel`: 删除用户
 
   - -f: 强制删除, 包括已登录用户也可删除
   - -r: 删除用户目录下的文件
-- ​`groupadd`​: 添加用户组
-- ​`groupdel`​: 删除用户组
-- ​`passwd [username]`​: 更改密码, 不写用户名则更改当前用户密码
+- `groupadd`: 添加用户组
+- `groupdel`: 删除用户组
+- `passwd [username]`: 更改密码, 不写用户名则更改当前用户密码
 
   - -e username: 密码过期, 下次登录需要设置新密码
   - -l username: 锁定用户, 不能登录
   - -u username: 解锁用户
   - -d: 删除密码, 空密码
   - -i: 设置密码过期多少天后禁用该用户
-- ​`su [username]`​: 切换用户, 提示符为#, 普通用户提示符\$, 省略参数默认切到root
-- ​`sudo`​: 以超级管理员身份执行命令, `--list`​显示sudoers清单
-- ​`visudo`​: 编辑sudoer清单
-- ​`id`​: 显示用户相关信息
+- `su [username]`: 切换用户, 提示符为#, 普通用户提示符\$, 省略参数默认切到root
+- `sudo`: 以超级管理员身份执行命令, `--list`​显示sudoers清单
+- `visudo`: 编辑sudoer清单
+- `id`: 显示用户相关信息
 - write/wall [username] [content]: 给其他用户发消息
-- mesg: 查看是否接收其他用户的消息, `-n`​: 设置为不接收, `-y`​: 设置接收
-- ​`chage`​: 查看和修改密码的有效期
+- mesg: 查看是否接收其他用户的消息, `-n`: 设置为不接收, `-y`: 设置接收
+- `chage`: 查看和修改密码的有效期
 
   - -l username: 查看密码有效期
   - -w: 设置n天前发出过期警告
   - -d: 设置密码有效期, 最后一天
   - -M n: 设置有效期天数为n天
-- ​`chmod [u|g|o] [+|-] [r|w|x] filename`​: 使用对应用户的分数, 改变文件的权限
+- `chmod [u|g|o] [+|-] [r|w|x] filename`: 使用对应用户的分数, 改变文件的权限
 
   - u: 所有者 g: 同组用户 o: 其他用户 a: 所有人
-  - 数字法:  `chmod nnn filename`​: n为用户组的权限分值和
+  - 数字法:  `chmod nnn filename`: n为用户组的权限分值和
 
     - 三位n则一一对应改权限, 两位n则改后两组权限, 一位n则改其他用户组
     - r: 4分  w: 2分  x: 1分 -: 0分
     - 7为rwx, 5为r-x, 777为所有用户所有权限
 
   - eg: `chmod u+x,g+x,o+x hello.txt`​、​`chmod +x test.py`​
-- ​`chown username[:groupname] file`​: 改变文件所属者(和用户组), 有用户组时冒号分隔
+- `chown username[:groupname] file`: 改变文件所属者(和用户组), 有用户组时冒号分隔
 
   - -R: 递归式, 文件夹及其中文件均改变
-- ​`chgrp groupname file`​: 改变文件用户组
+- `chgrp groupname file`: 改变文件用户组
 - 查看用户目录: `cd /home`​ + `cd username/`​ + `ls`​
 
 # 十一、vim编辑器操作
@@ -677,20 +677,22 @@
 
   - i: 在当前位置前插入  I: 在行首插入
   - a: 在当前位置后插入  A: 在行尾插入
-  - o: 在下方增加新行并编辑   O: 在上方增加新行并编辑
+  - o: 在下方增加新行并编辑,open below   O: 在上方增加新行并编辑,open above
   - ESC: 回到命令模式
 - 光标移动
 
-  - G: 移动到最后一行, `行号+G`​: 转到指定行
+  - G: 移动到最后一行，go to, `行号+G`: 转到指定行
   - gg: 移动到文件开头
   - 0: 移动到行首
+  - ^:行首非空白符
   - \$: 移动到行尾
-  - h: 光标左移, `n+h`​: 向左移动n格
-  - l: 光标右移, `n+l`​: 向右移动n格
-  - j: 光标下移, `n+j`​: 向上移动n格
-  - k: 光标上移, `n+k`​: 向上移动n格
+  - h: 光标左移, `n+h`: 向左移动n格
+  - l: 光标右移, `n+l`: 向右移动n格
+  - j: 光标下移, `n+j`: 向上移动n格
+  - k: 光标上移, `n+k`: 向上移动n格
   - w: 移动到下一个单词的开头
   - e: 移动到下一个单词的末尾
+  - b:跳至上个单词开头
 - 操作
 
   - 翻页
@@ -701,34 +703,39 @@
     - ctrl+y: 上翻一行
   - 删除
 
-    - dd: 删除当前行,  `ndd`​: 删除n行
+    - dd: 删除当前行,  `ndd`: 删除n行
     - d0 / d\$: 从光标删到行首/行尾
     - dnh / dnj: 从光标向左/下删n个字符
     - dw: 删一个单词
-  - 复制
-
-    - yy / Y: 复制光标所在行, `nyy`​: 复制n行
+    - dnj/k/gg:多行
+  - 复制:yank
+  
+    - yy / Y: 复制光标所在行, `nyy`: 复制n行
     - y0 / y\$: 从光标复制到行首/行尾
-    - yw: 复制一个单词
+    - ynw: 复制n个单词及空格
+    - ynl:复制下n个字母
+    - ynh:复制前n个字母
+    - yne：复制到本单词后n个单词的结尾
+    - ynb：复制到本单词前n个单词开头
   - 粘贴
-
-    - p: 在光标后粘贴, `np`​: 粘贴n次
+  
+    - p: 在光标后粘贴, `np`: 粘贴n次
     - P: 在光标前粘贴
-  - ​`.`​: 再次执行上一次的命令
-  - ​`>>`​: 向右缩进
-  - ​`<<`​: 向左缩进
+  - `.`: 再次执行上一次的命令
+  - `>>`: 向右缩进
+  - `<<`: 向左缩进
   - u: 撤销
   - ctrl+r: 重做上一步撤销的操作
   - v: 选中部分可视
   - ZZ: 保存并退出
-  - ​`%!sort`​: 对内容排序
+  - `%!sort`: 对内容排序
 - 末行模式
 
-  - :w / w!: 保存, `: w + filename`​: 以指定名称保存文件
+  - :w / w!: 保存, `: w + filename`: 以指定名称保存文件
   - :q / q!: 退出/强制退出vim
   - :wq: 强制保存并退出
-  - ​`:x`​: 保存退出
-  - ​`:%d`​: 删除全文
+  - `:x`: 保存退出
+  - `:%d`: 删除全文
   - :set nu / nonu: 显示/隐藏行号
   - :syntax on / off: 开启/关闭语法高亮
   - :set ts\=4: 设置制表键的空格数
@@ -738,24 +745,24 @@
   - :set expandtab / noexpandtab: 是否制表键变空格
   - 使vim设置全局生效: ​`touch .vimrc`​ `vim .vimrc`​
 
-    - ​`set ts=4 `​
-    - ​`set nu `​
-    - ​`set autoindent `​
-    - ​`set ruler `​
-    - ​`set expandtab `​
-    - ​`syntax on`​
-  - ​`/ + 查找文本`​: `/`​也可进入末行模式, 需提供正则表达式
+    - `set ts=4 `​
+    - `set nu `​
+    - `set autoindent `​
+    - `set ruler `​
+    - `set expandtab `​
+    - `syntax on`​
+  - `/ + 查找文本`: `/`​也可进入末行模式, 需提供正则表达式
 
     - n: 向前搜索, 查找下一个匹配项
     - N: 向后搜索, 查找上一个匹配项
-  - ​`? + 查找文本`​: 从下往上查找
+  - `? + 查找文本`: 从下往上查找
 
     - n: 查找上一个匹配项
     - N: 查找下一个匹配项
-  - ​`: %s/old/new/g`​: 替换, 范围+文本+参数, eg: `:2,20s/old/new/c`​
+  - `: %s/old/new/g`: 替换, 范围+文本+参数, eg: `:2,20s/old/new/c`​
 
     - 范围: 2, 20为指定范围, `1,$`​为全文
-    - ​`s/`​为替换命令的开始
+    - `s/`​为替换命令的开始，substitute
     - 文本: s/old/new, s为精确查找
     - 参数
 
@@ -768,14 +775,14 @@
       - : nohls
   - 多文件编辑
 
-    - ​`:ls`​: 返回所有编辑文件清单, 适用于vim了多个文件时
-    - ​`:b n`​: 切到第n个文件
-    - ​`:sp`​: 水平拆分窗口, `ctrl+ww`​: 光标在不同窗口间切换
-    - ​`:vs`​: 垂直拆分窗口
-    - ​`:qa`​: 退出所有
+    - `:ls`: 返回所有编辑文件清单, 适用于vim了多个文件时
+    - `:b n`: 切到第n个文件
+    - `:sp`: 水平拆分窗口, `ctrl+ww`: 光标在不同窗口间切换
+    - `:vs`: 垂直拆分窗口
+    - `:qa`: 退出所有
 - 快捷操作
 
-  - ​`!v`​: 把最近以v开头的文件再执行一遍
+  - `!v`: 把最近以v开头的文件再执行一遍
   - 变python脚本为直接可执行文件: 在开头增加解释器的路径
 
     eg:  `#!/usr/local/python3.11/bin/pyhton3`​
@@ -784,16 +791,16 @@
 - 比较: `vim -d file1 file2`​, 不同的地方会高亮显示
 - 映射快捷键: 
 
-  - ​`:map <F4> gg10000dd`​, 命令模式下输入F4执行从第一行开始删除10000行代码的操作
-  - ​`:inoremap __main if __name__ == '__main__':`​, 编辑模式输入`__main`​直接补全, i表示映射的键在编辑模式使用, nore表示不递归
+  - `:map <F4> gg10000dd`​, 命令模式下输入F4执行从第一行开始删除10000行代码的操作
+  - `:inoremap __main if __name__ == '__main__':`​, 编辑模式输入`__main`​直接补全, i表示映射的键在编辑模式使用, nore表示不递归
 - 录制宏: 命令模式下输入qa开始录制宏, 光标操作、编辑操作均被录制, 按q结束录制
 
-  - ​`n@a`​播放宏n词, n可省略
+  - `n@a`​播放宏n词, n可省略
   - a是寄存器的名字, 可选其他英文字母或0-9的数字
 
 # 十二、包管理工具
 
-- ​`rpm`​: redhat package manager, 适用于`.rpm`​格式的软件包
+- `rpm`: redhat package manager, 适用于`.rpm`​格式的软件包
 
   - -i: install
   - -v: verbose, 可视
@@ -801,7 +808,7 @@
   - -qa: 查询所有
   - -e xxx: 移除
   - 常用: rpm -ivh
-- ​`yum`​: yellowdog updater modified, 适用于`.rpm`​格式的软件包
+- `yum`: yellowdog updater modified, 适用于`.rpm`​格式的软件包
 
   - 搜索: yum search xxx
   - 安装: yum install -y xxx
@@ -816,13 +823,13 @@
     - 停止: systemctl stop xxx
     - 重启: systemctl restart xxx
     - 查看状态: systemctl status xxx
-- ​`apt-get`​: 使用于`.deb`​格式的软件包
+- `apt-get`: 使用于`.deb`​格式的软件包
 
   - 卸载: `sudo apt-get remove 安装包名`​
 - 离线安装: deb文件格式安装, 用dpkg命令: ​`sudo dpkg -i deb安装包`​
 
   - 卸载: `sudo dpkg -r 安装包名`​
-- ​`make && make install`​: 源代码构建安装
+- `make && make install`: 源代码构建安装
 
 # 十三、常用软件
 
@@ -907,8 +914,8 @@ web服务器
     - sudo systemctl restart NetworkManager: 重启网卡
   - 主机自信任
 
-    - ​`ssh-keygen`​: 生成密钥
-    - ​`ssh-copy-id -i .ssh/id_rsa.pub root@10.11.51.82`​: 发送公钥, 信任主机
+    - `ssh-keygen`: 生成密钥
+    - `ssh-copy-id -i .ssh/id_rsa.pub root@10.11.51.82`: 发送公钥, 信任主机
   - 防火墙
 
     - 查看运行状态: sudo firewall-cmd --state
@@ -935,8 +942,8 @@ web服务器
         export CLASSPATH\=.:\${JAVA\_HOME}/lib:\${JRE\_HOME}/lib 
 
         export PATH\=\${JAVA\_HOME}/bin:\$PATH
-      - ​`source /etc/profile`​
-      - ​`java --version`​
+      - `source /etc/profile`​
+      - `java --version`​
 - 下载: https://hadoop.apache.org/releases.html
 - 配置
 
@@ -948,7 +955,7 @@ web服务器
     export HADOOP\_COMMON\_LIB\_NATIVE\_DIR\=\$HADOOP\_HOME/lib/native
     ```
 
-    - ​`source /etc/profile`​
+    - `source /etc/profile`​
   - 修改jvm路径
 
     ```bash
@@ -1039,10 +1046,10 @@ web服务器
   - export HIVE\_HOME\=/usr/local/hive-1.2.2 
 
     export PATH\=\$PATH:\$HIVE\_HOME/bin:\$HIVE\_HOME
-  - ​`source /etc/profile`​
+  - `source /etc/profile`​
 - 关闭报警提示: ​`vim /usr/local/hadoop-2.7.6/etc/hadoop/hadoop-env.sh`​ 
 
-  - ​`export HADOOP_OPTS="-Djava.library.path=${HADOOP_HOME}/lib/native"`​
+  - `export HADOOP_OPTS="-Djava.library.path=${HADOOP_HOME}/lib/native"`​
 
 ## spark
 
@@ -1052,23 +1059,23 @@ web服务器
   - 重命名: mv xxx spark-2.4.7
 - 配置
 
-  - ​`vim /etc/profile`​
+  - `vim /etc/profile`​
 
     ```bash
     export SPARK_HOME=/usr/local/spark-2.4.7 
     export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
     ```
 
-    - ​`source /etc/profile`​
-  - ​`vim /usr/local/spark-2.4.7/conf/spark-env.sh`​
+    - `source /etc/profile`​
+  - `vim /usr/local/spark-2.4.7/conf/spark-env.sh`​
 
     ```bash
     JAVA_HOME=/usr/local/jvm/jdk1.8.0_202 
     SPARK_WORKER_MEMORY=4g  	#spark计算节点的大小 
     SPARK_LOCAL_IP=localhost
     ```
-  - ​`vim /usr/local/spark-2.4.7/conf/log4j.properties`​, 把所有的INFO改为ERROR
-  - ​`vim /usr/local/hive-1.2.2/bin/hive`​, 找到下面代码: 
+  - `vim /usr/local/spark-2.4.7/conf/log4j.properties`​, 把所有的INFO改为ERROR
+  - `vim /usr/local/hive-1.2.2/bin/hive`​, 找到下面代码: 
 
     ```bash
     if [[ -n "\$SPARK\_HOME" ]] 
@@ -1099,7 +1106,7 @@ web服务器
   	fi   
   fi unset __conda_setup
   ```
-  - ​`source /etc/profile`​
+  - `source /etc/profile`​
 - 配置jupyter可远程访问
 
   - 配置密码: 输入`ipython`​
