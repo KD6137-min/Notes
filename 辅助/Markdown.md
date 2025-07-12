@@ -22,15 +22,14 @@
 - 大号字体: `<big>文本</big>`
 - 代码块：````编程语言 + 回车`
   - 纯文本的块用````plaintext/text`
-
 - 选项列表：
   - 空白：`- [ ] 选项`
   - 已选：`- [X] 选项`
-
 - 表情符号：`:<表情符号>:`，一对冒号包含；[表情符号网站](https://www.webfx.com/tools/emoji-cheat-sheet/)
   -  :bulb:`:bulb:`
   - :white_check_mark:`:white_check_mark:`
   - :exclamation:`:exclamation:`
+  - :question:`:question:`
   - :pushpin:`:pushpin:`
   - :paperclip:`:paperclip:`
   - :books:`:books:`
@@ -41,6 +40,9 @@
   - :computer:`:computer:`
   - :triangular_flag_on_post:`:triangular_flag_on_post:`
   - :star:`:star:`
+  - :zap:`:zap:`
+  - :fire:`:fire:`
+  - :sunny:`:sunny:`
 
 
 # 表格
@@ -74,3 +76,4 @@
 
 - 行间:`$公式$`
 - 行内: `$$`回车 / option+command+b
+
