@@ -44,13 +44,14 @@
 - 子图：`plt.subplot()`​或`plt.subplots()`​(更灵活)
 
   - `plt.subplot(nrows, ncols, index)`: 在现有的Figure中创建一个子图并激活，只返回一个Axes对象
-  - `plt.subplots()`​：返回一个元组：
+  - `plt.subplots()`​：返回元组`(fig, axs)`
 
-    - 第一个为Figure对象，代表整个图形窗口
-    - 第二个为包含所有子图轴对象(Axes)的数组(二维)
+    - `fig`：Figure对象，代表整个图形窗口
+    - `axs`：动态类型，包含所有子图轴对象，单子图时为Axes对象(非数组)，单行/单列时返回一维数组`(n，)`，多行多列时返回二维数组`(m, n)`
+        - `.subplots(..., squeeze=False)`：强制返回二维数组，统一维度
   - `axes.flatten()`​：将二维数组axes转换成一维数组，对子图进行相同的操作时，使用flatten可方便地遍历所有子图的轴对象而不再需要分开处理每一行
   - `axes.cla()`: 清除当前轴，保留坐标轴、标签、刻度线
-
+  
     ```python
     fig, axes = plt.subplots(2, 3)
     ```

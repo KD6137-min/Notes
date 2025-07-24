@@ -66,3 +66,8 @@ defaults write com.apple.finder AppleShowAllFiles -boolean false ; killall Finde
 显示隐藏文件
 defaults write com.apple.finder AppleShowAllFiles -boolean true ; killall Finder
 
+# U盘格式
+
+exFAT或FAT32，mac和linux原生读写，推荐exFAT
+
+MS-DOS有局限性，NTFS是windows格式

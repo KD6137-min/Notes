@@ -74,3 +74,16 @@
      ```
 
      
+
+## 交互式环境增强
+
+- `obj?`和`obj??`：
+
+    ```python
+    import numpy as np
+    np.array?    # 显示docstring，同help()
+    np.array??   # 显示源码
+    ```
+
+    
+

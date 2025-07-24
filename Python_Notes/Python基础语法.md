@@ -2161,6 +2161,7 @@ print(heapq.nlargest(2, list2, key=lambda x: x['shares']))
 迭代工具模块
 
 - `islice()`: 窗口迭代器, 返回一个运行在序列的子分组之上的迭代器
+- `batched(iterable, n)`：批次n，返回**生成器**，类型为n元元组，最后一组不足则返回较短的元组
 - `tee()`: 往返式迭代器
 - `groupby()`: uniq迭代器, 只能分组相邻的元素, 使用前需要排序
 - `chain(*iterables)`: 创建在第一个可迭代对象上迭代的迭代器, 然后继续下一个

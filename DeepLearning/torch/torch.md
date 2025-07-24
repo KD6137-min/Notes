@@ -20,6 +20,65 @@ cmp = y_hat.type(y.dtype) == y
 - .numpy()属于PyTorch的`Tensor`​对象方法，共享内存
 - .to\_numpy()属于Pandas的`DataFrame`​或`Series`​对象方法，默认不共享内存，可通过copy参数控制
 
+两个核心类型：PIL图像对象和PyTorch张量
+
+- PyTorch张量：通道优先`[C, H, W]`，数值范围通常为`[0, 1]`或标准化后的浮点数，`matplotlib`的`imshow()`无法直接识别其数据结构，需转为NumPy数组（`[H, W, C]`）并自动映射到`[0, 255]`整数范围
+- PIL图像：通道最后`[H, W, C]`排列像素值（范围`[0, 255]`），与`imshow()`的输入格式完全兼容
+
+```python
+if torch.is_tensor(img):
+    ax.imshow(img.numpy())
+else:
+    ax.imshow(img)
+```
+
+`ndarray`与`Tensor`区别：
+
+- **ndarray**
+
+    - 核心设计：​**​数据存储与解释方式分离​**​，底层分两部分：
+
+        - **数据缓冲区（Data Buffer）**：连续内存块，存储同类型元素（如`int32`、`float64`），确保内存紧凑高效
+
+        - **元数据（Metadata）**：包含`dtype`（数据类型）、`shape`（维度形状）、`strides`（跨步字节数）等，用于解释数据布局
+
+    - **仅限CPU计算**，内存分配由Python内存管理器控制，无法直接访问GPU。数据转换（如`np.array()`）需显式复制内存
+
+    - **无自动微分能力**，仅用于数值计算，无法记录运算历史
+    - **聚焦数值操作**：API设计围绕矩阵运算（如`reshape`、`transpose`），通过`strides`实现视图（view）而非复制数据（如切片返回原数据引用）
+    - 依赖连续内存与矢量化：
+        - 内存连续性（C-order/F-order）影响`np.dot()`等函数的缓存效率
+        - 通过`np.vectorize()`实现无循环批处理，但底层仍依赖CPU指令
+
+- **Tensor**
+
+    - 在`ndarray`基础上扩展，核心结构：
+        - **数据存储（Storage）**：类似`ndarray`的连续内存块，但支持跨设备（CPU/GPU）存储
+        - **梯度计算上下文**：包含`grad_fn`（反向传播函数）、`requires_grad`（梯度标记）等，支持自动微分
+    - 支持异构计算，通过`.cuda()`将数据移至GPU，底层调用CUDA API分配显存，关键特性：
+        - **内存共享**：`torch.from_numpy(np_array)`与原始`ndarray`共享内存，修改任一对象会同步变更（零拷贝）
+        - **设备感知**：`device`属性标识数据位置（CPU/GPU），运算自动选择匹配设备
+    - 深度集成自动微分：
+        - **计算图构建**：每次运算生成`Function`节点，记录输入/输出依赖（如`AddBackward`）
+        - **梯度传播**：调用`.backward()`时，沿`grad_fn`链反向计算梯度，并存储于`.grad`属性中
+    - 深度优化与扩展：
+        - **GPU加速运算**：如`torch.matmul()`调用CuBLAS库实现高效矩阵乘法
+        - **分布式支持**：`DistributedTensor`支持跨设备分片存储（如模型并行）
+        - **操作符重载**：`+`、`*`等运算符重载为`torch.add()`、`torch.mul()`，简化代码
+    - 多层次加速：
+        - **内核融合（Kernel Fusion）**：将多个操作（如`conv2d + relu`）合并为单一GPU内核，减少显存读写
+        - **异步执行**：CUDA流（Stream）并行执行计算与数据迁移，提升吞吐量
+
+|              | **ndarray**                  | **Tensor**                          |
+| ------------ | ---------------------------- | ----------------------------------- |
+| **内存结构** | 数据+元数据分离，连续CPU内存 | 扩展存储结构，支持跨设备+梯度上下文 |
+| **计算设备** | 仅CPU                        | CPU/GPU无缝切换，支持内存共享       |
+| **自动微分** | 不支持                       | 内置计算图与梯度传播机制            |
+| **API设计**  | 数值计算基础操作             | 深度优化运算+分布式扩展             |
+| **性能优化** | 内存布局优化+CPU矢量化       | 内核融合+异步执行+GPU加速           |
+
+
+
 ## 形状与内存布局
 
 **连续张量**：张量在内存中为**连续内存**区域**连续排布**，非连续张量只是索引方式变了
@@ -53,7 +112,7 @@ a = torch.tensor([[1, 2], [3, 4]])
 # a.stride()可能返回 (2, 1)，意思是：行之间隔 2 个元素，列之间隔 1 个元素
 ```
 
-`tensor.reshape(-1)`​：将张量展平成一维向量
+`reshape(-1)`或`reshape(1, -1)`​：将张量展平成一维向量
 
 `torch.reshape(tensor, shape)`​和`tensor.reshape(shape)`​：完全等价
 
@@ -219,6 +278,8 @@ df.where(cond)
 - `.named_parameters()`​：返回模型中**所有可训练参数**的名字和参数本身的迭代器
 - `.named_children()`​：返回模块的**直接**子模块（带名字）
 - `.named_modules()`​：返回模型中**所有**子模块及其名称
+- `.children()`：返回当前模块的第一个子模块
+- `.modules()`：递归地返回所有子模块的**生成器**
 - `.state_dict()`​：获取所有模型的“状态信息”，返回一个 **字典（**​**​`OrderedDict`​**​ **）** ，键是参数或缓存变量的名字，值是张量，包含所有权重和偏置、有些非训练参数（如 BatchNorm 的 running\_mean 和 running\_var），常用于：
 - **保存模型参数：**  `torch.save(model.state_dict(), "model.pth")`​
 - **加载模型参数：**  `model.load_state_dict(torch.load("model.pth"))`​
@@ -238,6 +299,10 @@ df.where(cond)
 获取GPU核心数量：`torch.cuda.device_count()`​
 
 ‍
+
+`nn.Conv2d`有属性`kernel_size`
+
+
 
 ## 损失函数
 
@@ -294,13 +359,9 @@ df.where(cond)
 
 早期用于包装一个张量，以启用自动求导功能，现已和Tensor功能合并
 
-## .backward()
-
-根据某个**标量**输出，自动计算标量对所有涉及的参数的梯度
-
 ## backward()
 
-计算当前张量的 **梯度**，并将梯度传递回模型的每一层，帮助优化参数。通常在损失函数上调用，更新网络的参数
+根据某个**标量**输出，自动计算标量对所有涉及的参数的梯度，并将梯度传递回模型的每一层，帮助优化参数。通常在损失函数上调用，更新网络的参数
 
 ```python
 x = torch.tensor([2.0, 3.0], requires_grad=True)
@@ -310,7 +371,13 @@ loss.backward()
 print(x.grad)
 ```
 
-必须在标量张量上调用
+> 注意：必须在标量张量上调用
+
+两个参数：`y.backward(torch.ones_like(x), retain_graph=True)`
+
+- gradient：指定反向传播的“权重因子”，非标量进行梯度计算时将输出加权为标量
+- retain_graph：保留计算图，允许多次调用`backward()`而不报错，梯度会累加到.grad中
+    - PyTorch默认在单次反向传播后自动释放计算图以节省内存，二次传播会报错
 
 ### **​`net.freeze()`​** ​ **：手动冻结层**
 
@@ -363,6 +430,8 @@ print(x.grad)
 专用于推理场景，提供比no\_grad()更高效的运行时性能，优化了张量的内存管理和计算
 
 Pytorch1.10版本以上优先考虑使用`torch.inference_mode()`​
+
+
 
 # 五. **数据处理 (**​**​`torch.utils.data`​**​ **)与保存**
 

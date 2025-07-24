@@ -1,5 +1,24 @@
 SSH（Secure Shell），加密网络协议，用于在不安全的网络中安全地远程登录和管理服务器，以及进行文件传输等操作
 
+### 安装配置
+
+```bash
+sudo pacman -Syyu
+sudo pacman -S openssh
+
+# 启用
+sudo systemctl start sshd
+sudo systemctl enable sshd		# 设置开机自启
+sudo systemctl status sshd 		# 检查服务状态
+
+# 配置
+vim /etc/ssh/sshd_config
+
+sudo systemctl restart sshd 	# 重启服务使配置生效
+```
+
+
+
 ### **基本连接命令**
 
 - 连接到远程服务器：首次连接时会提示确认主机指纹，输入`yes`后继续
