@@ -164,11 +164,31 @@ sudo pacman -S reflector
 sudo reflector --country China --age 12 --sort rate --save /etc/pacman.d/mirrorlist
 ```
 
-
-
-## 中文输入法
+配置文件
 
 ```bash
+# sudo vim /etc/pacman.conf
+# 增加如下内容
+[archlinuxcn]
+SigLevel = Optional TrustedOnly
+Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
+Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch
+Server = https://mirrors.aliyun.com/archlinuxcn/$arch
+```
+
+下载keyring
+
+```bash
+sudo pacman -Sy archlinuxcn-keyring
+```
+
+
+
+## 中文字体、输入法
+
+```bash
+sudo pacman -S noto-fonts noto-fonts-cjk noto-fonts-extra noto-fonts-emoji ttf-dejavu ttf-liberation
+
 sudo pacman -S kde-l10n-zh_cn fcitx5 fcitx5-chinese-addons fcitx5-qt fcitx5-gtk fcitx5-configtool
 
 vim ~/.pam_environment
