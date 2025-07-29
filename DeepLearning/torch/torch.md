@@ -280,6 +280,8 @@ df.where(cond)
 - `.named_modules()`​：返回模型中**所有**子模块及其名称
 - `.children()`：返回当前模块的第一个子模块
 - `.modules()`：递归地返回所有子模块的**生成器**
+    - `._modules`：内部属性，**有序字典**，用于维护子模块的添加顺序，通常不由用户使用
+    - `add_module(name, module)`：将子模块添加到模型的 `_modules` 字典，无返回值，`name` (str)子模块的名称，将用于在模型的 `__setattr__` 方法中注册子模块，并作为键存储在模型的 `_modules` 字典中；`module` (`nn.Module`)要添加的子模块
 - `.state_dict()`​：获取所有模型的“状态信息”，返回一个 **字典（**​**​`OrderedDict`​**​ **）** ，键是参数或缓存变量的名字，值是张量，包含所有权重和偏置、有些非训练参数（如 BatchNorm 的 running\_mean 和 running\_var），常用于：
 - **保存模型参数：**  `torch.save(model.state_dict(), "model.pth")`​
 - **加载模型参数：**  `model.load_state_dict(torch.load("model.pth"))`​
@@ -292,17 +294,19 @@ df.where(cond)
 |是否包含名字|❌（除非用`named_parameters()`​）|✅（key 就是参数名）|
 |是否包含缓存参数|❌|✅（如`running_mean`​,`running_var`​）|
 
-``$\tilde h_t$当前时间步候选记忆，ℎ𝑡当前时间步最终隐藏状态
-
-获取CPU核心数量：`os.cpu_count()`​
-
-获取GPU核心数量：`torch.cuda.device_count()`​
-
-‍
-
 `nn.Conv2d`有属性`kernel_size`
 
 
+
+初始化
+
+`nn.init.normal_()`
+
+`nn.init.constant_()`
+
+`nn.init.zeros_()`
+
+`nn.init.xavier_uniform_()`
 
 ## 损失函数
 
@@ -542,6 +546,9 @@ train_loader = DataLoader(
 
   - `torch.cuda()`​
   - `torch.cuda.is_available()`​：检测设备
+  - `torch.cuda.get_device_name(0)`：设备名称
+  - `torch.cuda.device_count()`：设备数量
+      - 获取CPU核心数量：`os.cpu_count()`
 - `torch.backends.mps`​
 
   - `torch.backends.mps.is_available()`​：是否启用了Metal Performance Shaders（MPS）
@@ -549,6 +556,12 @@ train_loader = DataLoader(
 
 ## GPU相关
 
-- `!nvdia-smi`​：检查GPU类型
+- `!nvidia-smi`​：检查GPU类型
+
+‍
+
+
+
+
 
 ‍
