@@ -25,12 +25,16 @@
 - 选项列表：
   - 空白：`- [ ] 选项`
   - 已选：`- [X] 选项`
-- 表情符号：`:<表情符号>:`，一对冒号包含；[表情符号网站](https://www.webfx.com/tools/emoji-cheat-sheet/)
+- 表情符号：`:<表情符号>:`，一对冒号包含；[表情符号网站](https://gist.github.com/rxaviers/7360908)
   -  :bulb:`:bulb:`
   - :white_check_mark:`:white_check_mark:`
   - :exclamation:`:exclamation:`
+  - :o:`:o:`
   - :question:`:question:`
+  - :warning:`:warning:`
+  - :red_circle:`:red_circle:`
   - :pushpin:`:pushpin:`
+  - :vs:`:vs:`
   - :paperclip:`:paperclip:`
   - :books:`:books:`
   - :warning:`:warning:`

@@ -516,11 +516,9 @@ train_loader = DataLoader(
 
 ### 注意事项
 
-- **GPU训练**：启用`pin_memory`​可提升性能。
-- **动态数据**：使用`collate_fn`​处理变长数据。
-- **资源平衡**：`num_workers`​过多可能导致竞争，建议根据CPU核心数调整。
-
-更多细节可参考PyTorch官方文档。
+- **GPU训练**：启用`pin_memory`​可提升性能
+- **动态数据**：使用`collate_fn`​处理变长数据
+- **资源平衡**：`num_workers`​过多可能导致竞争，建议根据CPU核心数调整
 
 ## 常用方法：
 
@@ -536,15 +534,17 @@ train_loader = DataLoader(
 
 # 六. 设备管理与**GPU 加速 (**​**​`torch.cuda`​**​ **)**
 
-- `torch.device`​
-
+- `torch.device()`​
   - `device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')`​
-- `torch.to(device)`​：数据迁移
-
-  - `x = x.to('cpu' 或 'mps')`​
+  - 用`torch.device(f'cuda:{i}')`表示第i个GPU(从0开始)，`cuda:0`和`cuda`等价
+  - `x.device`：属性，查看张量所在设备，默认在CPU上啊创建张量
+- 数据迁移，引擎只在同一设备找数据，找不到会失败
+  - `x = x.to(device)`​
+  - `y = x.cuda(n)`：y是x在第n个gpu上的复制品
 - `torch.cuda`​
 
   - `torch.cuda()`​
+  - 
   - `torch.cuda.is_available()`​：检测设备
   - `torch.cuda.get_device_name(0)`：设备名称
   - `torch.cuda.device_count()`：设备数量
@@ -556,7 +556,8 @@ train_loader = DataLoader(
 
 ## GPU相关
 
-- `!nvidia-smi`​：检查GPU类型
+- `!nvidia-smi`​：查看显卡信息
+- 
 
 ‍
 

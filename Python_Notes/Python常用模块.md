@@ -1,0 +1,502 @@
+# 数据序列化
+
+`json`和`pickle`模块，将一数据结构转化为一个字符串或字节流的过程
+
+- 序列化: 
+
+    - `pickle.dumps(obj)`: 将python对象序列化为一个字节串, 并返回该字节串
+
+    - `json.dumps()`: "dump to string", 将python对象编码成`str`类型的JSON字符串
+
+        - 默认编码ascii, 中文使用Unicode, 若要显示中文, 参数`ensure_ascii=False`​
+        - **使用场景**：需要将 JSON 数据存储在变量中、通过网络传输（如 API 响应），或进一步处理时
+
+        ```python
+        import json
+        data = {"name": "Alice", "age": 30}
+        json_string = json.dumps(data)  # 转为字符串
+        print(json_string)  # 输出: '{"name": "Alice", "age": 30}'
+        ```
+
+    - `json.dump()`: “dump to file”，将 **Python 对象直接写入文件**（或类文件对象），返回None，必须指定文件对象`fp`
+
+        - **使用场景**：需要将 JSON 数据持久化保存到文件中时
+
+        ```python
+        import json
+        data = {"name": "Alice", "age": 30}
+        with open("data.json", "w") as f:
+            json.dump(data, f)  # 直接写入文件
+        ```
+
+- 反序列化: 
+
+    - `pickle.loads(data)`: 以pickle格式加载字节串(二进制数据)并将其反序列化为python对象
+    - `json.load()`: 将**文件**中的内容读取并转化为Python对象
+    - `json.loads()`: 将JSON**字符串**转化为Python对象(字典)
+
+- 文本格式转换问题: 
+
+    - \<html\>文本数据: `txt = res.text`​, 获取文本数据
+    - {{{}[]""}}json数据: `js = res.json()`​, 将json转化为程序对象
+    - `用户列表 = js['data']['ranks']`​, 路径
+
+# 时间模块
+
+### 两概念
+
+1. 时间戳: 1970年1月1日0时0分0秒(UNIX纪元)至今的累积时间, 浮点数
+
+2. 结构体时间: struct\_time/时间元组类型, 有9个元素, 被函数当做输入参数, 用于函数间传递时间值, 可与时间戳互相转换, 包括:
+
+    - tm\_year: 年份, 四位数整数
+    - tm\_mon: 月份, 1到12的整数
+    - tm\_mday: 日期, 1到31的整数
+    - tm\_hour: 小时, 0到23的整数
+    - tm\_min: 分钟, 0到59的整数
+    - tm\_sec: 秒数, 0到59的整数
+    - tm\_wday: 星期几, 0到6的整数 0表示星期一, 1表示星期二
+    - tm\_yday: 一年中的第几天, 1到366的整数
+    - tm\_isdst: 是否为夏令时, -1、0或1, 默认为-1 -1表示夏令时信息不可用, 0表示不是夏令时, 1表示是夏令时
+
+### time模块
+
+获取展示时间信息的标准库, 三功能:
+
+- 时间处理
+
+    - `time.time()`: 获取当下时间戳, 默认为秒数
+    - `time.gmtime()`: 返回格林威治时间戳对应的时间元组
+    - `time.ctime()`: 返回系统当前时间戳对应的易读格式字符串时间(周几, 月份, 号数, 时分秒, 年)
+    - `time.localtime()`:返回系统当前时间的时间戳对应本地时间的时间元组
+
+- 时间格式化
+
+    - `time.mktime(t)`: 将时间元组变量t转换成时间戳
+
+    - `time.strftime(format, t)`: 根据format格式显示时间
+
+        format: 由格式控制符组成的格式定义字符串
+
+        t: 代表时间的时间元组变量
+
+        ```python
+        print(time.strftime("%Y-%m-%d %H:%M:%S"))	# 2023-04-29 17:27:51
+        ```
+
+    - `time.strptime(string, format)`: 根据format格式定义解析字符串string, 返回struct\_time类型时间变量, 要求解析格式和时间字符串一致
+
+        string: 时间的字符串
+
+    - `time.asctime([t])`: 接受时间元组并返回形式为`"Tue Dec 11 18:07:14 2008"`​的24个字符的字符串
+
+- 计时
+
+    - `time.sleep(secs)`: 将当前程序挂起secs秒, 即休眠, secs表示时间的数值, 整数或者浮点数
+
+    - `time.perf_counter()`: 返回一个代表时间的精确的浮点数, 相比采用时间戳更为准确, 用于精确计时, 用两次或多次调用的差值来计时, 单次调用返回值没有意义, 系统提供的最精确的计时方法
+
+        ```python
+        t1 = time.perf_counter()
+        time.sleep(5)
+        t2 = time.perf_counter()
+        print(t2 - t1) 			# 5.000081919965048
+        ```
+
+### timeit模块
+
+用于统计小段代码执行时间
+
+`timeit.timeit()`​, 默认执行一百万次
+
+### datetime模块
+
+基于time模块, 更强大, 用于显示和设置日期时间
+
+- datetime类: date类和time类的综合使用
+
+    - `datetime.datetime()`: 创建datetime对象, 第一个datetime为模块名, 第二个为类名
+
+        ```python
+        date1 = datetime.datetime(year=2024, month=5, day=12, hour=12, minute=34, second=23,  microsecond=12,  tzinfo=0)
+        # 年月日不可省略, 其他都可省略, 默认值为0
+        ```
+
+    - `timestamp()`: 时间对象转时间戳
+
+    - `datetime.datetime.now(tz=None)`: 获取指定时区的当前日期和时间, `tz\=None`​等同于today()
+
+        可继续获取年、月、日等, 在后面继续`.year`​/`.month`​/`.weekday`​等
+
+        可继续`.strftime()`​, 时间格式化
+
+    - `datetime.today()`: 返回当前的本地日期和时间
+
+    - `datetime.fromtimestamp(timestamp, tz=None)`: 返回与UNIX时间戳对应的本地日期和时间
+
+    - `datetime.datetime.strptime(date_str, format)`: 时间反格式化
+
+- date类: 主要用于处理年月日
+
+    - `datetime.date(year, month, day)`: 创建date对象, 若指定的day参数超出范围会报错
+    - `date.today()`: 返回当前的本地日期
+    - `date.fromtimestamp(timestamp)`: 返回与UNIX时间戳对应的本地日期
+
+- time类: 主要用于处理时分秒
+
+    `datetime.time(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)`: 创建time对象
+
+- timedelta类: 主要用于计算时间跨度
+
+    - `datetime.timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0)`: 创建对象
+    - microsecond: 微秒, milliseconds: 毫秒
+    - 所有参数可为整形/浮点型/正数/负数
+    - 时间 +/- `datetime.timedelta(days=)`​
+
+- tzinfo类: 时区类
+
+- 与字符串类型互换
+
+    - 日期时间对象转字符串/日期时间格式化: `对象名.strftime(format)`​
+
+    - 字符串转日期时间对象/日期时间解析: `datetime.strptime(date_string, format)`​
+
+    - 格式控制符
+
+        ![截屏2024-12-23 19.02.38](../assets/截屏2024-12-23%2019.02.38-20241223190242-ju94oif.png)![截屏2024-12-23 19.28.26](../assets/截屏2024-12-23%2019.28.26-20241223192829-xwd6p03.png)​
+
+        %j: 一年中的第几天
+
+### calendar模块
+
+- `.calendar(year)`: 获取某年的日历
+
+- `.month(year, month)`: 获取某年某月的日历
+
+- `.isleap()`: 判断是否是闰年, 闰年True
+
+- `.leapdays(year1, year2)`: 返回两指定年份之间闰年的个数, 不包含结束年
+
+- `.weekday(year, month, day)`: 返回指定天的星期, 星期一: 0  星期二: 1 …… 星期日: 6
+
+- `.monthrange(year, month)`: 返回二元元组, 第一个数为该月第一天的星期, 第二个数为该月总天数
+
+    只拿天数`calendar.menthrange( )[-1]`​
+
+# re模块
+
+用于检索、替换符合指定格式的文本, 独立语法, 独立处理引擎, 适用于所有编程语言
+
+1. 构建正则对象: `对象 = re.compile(正则表达式, flag)`​或`对象.方法(字符串)`​, flag为模式修正符, 可选参数
+
+2. `re.方法(正则表达式, 字符串, flag)`​, 字符串一般配合r符不需写转义符
+
+3. 方法:
+
+    - `.match(pattern, string, flags=0)`: 从第一个字符匹配, 用于检查字符串是否以指定字符开头, 返回Match对象
+
+    - `.fullmatch()`: 从头到尾完全匹配, 等价于`match('^ $')`​
+
+    - `.search(pattern, string, flags=0, pos)`: 整个字符串中匹配, 返回Match对象, 只返回第一个满足条件的, 无则返None, pos控制从字符串的哪个索引开始查找
+
+        - `re.Match类`: 包含匹配的详细信息, 例如匹配的位置、内容等
+
+            - `Match.group()`: 返回匹配的具体内容
+            - `Match.start()`: 返回匹配内容的开始索引
+            - `Match.end([group])`: 返回指定组匹配的结束位置的**索引**(以字符串开头为基准, <u>右边界的索引+1</u>, group可省, 默认为整个匹配, 即组号0
+            - `Match.span()`: 返回`(start, end)`​元组
+
+            ```python
+            # 通过search函数指定搜索位置找出所有匹配
+            m = pattern.search(sentence)
+            while m:
+                print(m.group())
+                m = pattern.search(sentence, m.end())
+            ```
+
+    - `.findall()`: 查找所有满足条件的内容, 返回匹配内容**列表**, 无则返回空列表
+
+        - 带捕获组: 使用`()`​可返回`()`​中的内容, 列表形式, 若有n个(), 列表元素为n元元组
+
+            ```python
+            text = "Name: Alice, Age: 25; Name: Bob, Age: 30"
+            pattern = r"Name: (\w+), Age: (\d+)"  # 捕获名字和年龄
+            result = re.findall(pattern, text)
+            print(result)  # 输出: [('Alice', '25'), ('Bob', '30')]
+            
+            text = "2023-01-01, 2024-12-31"
+            pattern = r"(\d{4})-(\d{2})-(\d{2})"  # 捕获年、月、日
+            result = re.findall(pattern, text)
+            print(result)  # 输出: [('2023', '01', '01'), ('2024', '12', '31')]
+            ```
+
+    - `.finditer()`: 同findall, 返回迭代器
+
+    - `.split(pattern, str, maxsplit=0)`: 用指定正则内容分割字符串, 返回**列表**, maxsplit为最大分割次数, 为0表示不限次数, 常搭配+使用
+
+    - `.sub(正则, 新内容, 字符串, count=0)`: 用新内容替换字符串中指定正则内容, 不显示替换次数, count为指定替换次数, 为0表示不限次数
+
+    - `.subn(正则, 新内容, 字符串, count=0)`: 显示替换次数
+
+    - `.compile(pattern, flags=0)`: 编译正则表达式返回正则表达式对象, 可直接调用正则对象的方法, 而不是re的方法传参
+
+        - 若某正则表达式需重复使用, 最好先compile减少解析和编译的次数
+
+    - `.purge()`: 用于清除隐式编译的正则表达式的缓存, 在内存受限条件下使用, 极少使用(`re`​模块会缓存最近使用的正则表达式, 最多缓存512个)
+
+        - 调用re函数时, 会发生以下隐式流程:
+
+            - 正则解析: 将正则表达式字符串转化为内部的正则表达式对象, 即re.Pattern类的一个实例
+            - 正则编译: 正则引擎会将这个解析后的正则表达式转换为字节码, 用于高效匹配
+            - 匹配: 正则引擎会用生成的字节码去匹配目标字符串
+            - 返回结果
+
+## string模块
+
+- `whitespace = ' \t\n\r\v\f'`: 空白符有个空格, 易忘
+- `ascii_lowercase = 'abcdefghijklmnopqrstuvwxyz'`​
+- `ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'`​
+- `ascii_letters = ascii_lowercase + ascii_uppercase`​
+- `digits = '0123456789'`​
+- `hedigits = digits + 'abcdef' + 'ABCDEF'`​
+- `octdigits = '01234567'`​
+- `punctuation = f""!"#$%&'()*+,--/:;<=>?@[\]^_{|}`​
+- `printable = digits + ascii_letters + punctuation + whitespace`​
+
+## copy模块
+
+- `.copy()`: 浅拷贝/浅复制/影子克隆, 创建新对象, 并复制原对象**属性**中**基本数据类型的值**和**引用类型的引用**
+
+    - 不看其本身是基本数据类型/引用类型, 只看元素类型
+    - 与简单赋值区别: =赋值未创建新对象, 浅拷贝创建对象
+- `.deepcopy()`: 深拷贝/深复制/深度克隆, 开辟新栈, 新旧无关, 复制值而不是引用
+
+> 浅拷贝相较简单赋值更进一步, 创建了新对象并复制了基本类型元素的值
+>
+> 深拷贝相较浅拷贝更进一步, 复制了引用类型元素的值
+
+## warnings模块
+
+```python
+warnings.filterwarnings('ignore') 	# 警告过滤器
+```
+
+## random模块
+
+- `.random()`: [0, 1)区间随机小数
+- `.uniform(a, b)`: 指定闭区间随机**实数**
+- `.randint(start, end)`: 指定范围一个随机整数, 包含结束值
+- `.choice()`: 指定范围随机选择一个
+- `.choices(序列, k)`: 指定范围随机选择多个, 有放回式抽样, k为样本数
+- `.sample(序列, k)`: 指定范围随机选择多个, 无放回, 要求序列本身不重复, 样本数k大于序列长度会报错
+- `randrange(start, end, step)`: 指定递增数列中随机选择一个数, 不包含结束值, 可省略step
+- `shuffle()`: 打乱列表, 修改**原列表**
+
+## math模块
+
+提供复杂浮点数学运算的函数, 如幂指对三角、双曲线等
+
+- `.fabs()`: 绝对值, 返回浮点型
+- `.fsum()`: 无精度损失求和, 返回浮点型
+- `.pow(x, y)`: 返回x的y次幂的值, 返回浮点型
+- `.factorial()`: 阶乘
+- `math.ceil()`: 向上取整, 注意负数的问题
+- `math.floor()`: 向下取整
+- `math.sqrt()`: 开平方
+- `math.modf()`: 浮点数分割, 结果为元组
+- `math.log(x, base)`: 返回以base为底的x的对数, 若省略base, 则计算x自然对数
+- `sin()`: 返回弧度x的三角正弦
+- `degrees(x)`: 将弧度x转换为角度
+- `radians(x)`: 将角度x转换为弧度
+- `math.e`​、`math.pi`​、`math.nan`​、`math.inf`​等常量
+
+## os模块
+
+### 文件(夹)操作
+
+- 创
+
+    - `os.mkdir()`: 创建文件夹 存在则报错
+
+        ```python
+        if not os.path.exists('名'):  
+        	os.mkdir('名')
+        ```
+
+    - `os.makedirs()`: 递归式创建文件夹, `/`​隔开各层, 参数exist_ok=True: 文件不存在时则创建
+
+- 查
+
+    - `os.listdir()`: 查看指定目录下所有文件和文件夹, 只能看一层
+
+    - `os.curdir()`: 获取当前目录
+
+    - `os.getcwd()`: 获取当前绝对路径
+
+    - `os.walk()`: 遍历源文件夹下所有子目录和文件
+
+        ```python
+        for root, dirs, files in os.walk(source_dir):
+        	pass
+        ```
+
+    - `os.path.abspath()`: 获取相对路径对应的绝对路径
+
+    - `os.path.basename()`: 获取路径的最后一级路径名
+
+    - `os.path.dirname()`: 获取包含最后一级路径的内容 即除最后一级之外的所有
+
+    - `os.path.splitext()`: 返回二元元组, 文件则返回(文件名, 后缀), 文件夹则返回(目录, '空串')
+
+    - `os.path.getsize()`: 获取文件大小
+
+    - `os.path.exists()`: 判断文件是否存在, 返回布尔值
+
+    - `os.path.isfile()`: 判断是否是文件, 返回布尔值, 文件夹为否
+
+    - `os.path.isdir()`: 判断是否是文件夹, 返回布尔值, 文件为否
+
+    - `os.path.isabs()`: 判断是否是绝对路径
+
+- 改
+
+    - `os.rename('原名', '新名'或'新路径'`: 路径不变名字变: 重命名, 名字不变路径变: 实现剪切
+    - `os.path.join()`: 路径拼接, 拼成一个完整的路径
+    - `os.path.split()`: 路径拆分
+
+- 删
+
+    - `os.rmdir()`: 删除文件夹, 不存在则报错
+
+        ```python
+        if os.path.exists('demo'): os.rmdir('demo')
+        ```
+
+    - `os.removedirs()`: 删除多级文件夹, 需为空文件夹, 不能有文件
+
+    - `os.remove()`: 删除文件, 需为当前文件所在目录下的
+
+### system操作
+
+- `os.system('clear')`: 清屏
+
+## shutil模块
+
+标准库模块, 提供高级的文件操作和文件系统操作功能, 简化文件系统任务
+
+- 复制:
+
+    - `shutil.copy(src, dst)`: 复制文件(包括文件内容和权限)
+    - `shutil.copy2(src, dst)`: 复制文件, 除了文件内容和权限外, 还会复制文件的元数据(例如创建时间和修改时间)
+    - `shutil.copytree(src, dst)`: 递归地复制整个目录树
+
+- 移动: `shutil.move(src, dst)`: 移动文件或目录到目标路径, 若目标路径已经存在, 该路径中的内容会被覆盖
+- 删除:
+
+    - `shutil.rmtree(path)`: 递归删除整个目录树及其内容
+    - `shutil.remove(filename)`: 删除指定的文件
+- 压缩和解压:
+
+    - `shutil.make_archive(base_name, format, root_dir=None, base_dir=None)`: 创建一个压缩文件,
+
+        - `base_name`​ 是压缩文件的路径
+        - `format`​ 压缩格式, `'zip'`​/`'tar'`​
+    - `shutil.unpack_archive(filename, extract_dir=None, format=None)`: 解压缩压缩文件, 可以根据文件扩展名自动检测解压缩格式, 也可以手动指定
+- 磁盘使用情况: `shutil.disk_usage(path)`​, 获取指定路径的磁盘使用情况, 返回一个包含总空间、已用空间和剩余空间的命名元组
+- 修改文件权限: `shutil.chown(path, user=None, group=None)`​, 更改文件的拥有者和/或所属组, 可以分别指定用户和组(或者只修改其中一个)
+- 文件描述符操作: `shutil.get_terminal_size()`​, 获取终端的大小(宽度和高度)
+
+## heapq模块
+
+堆排序
+
+```python
+"""
+从列表中找出最大的或最小的N个元素
+堆结构(大根堆/小根堆)
+"""
+import heapq
+
+list1 = [34, 25, 12, 99, 87, 63, 58, 78, 88, 92]
+list2 = [
+    {'name': 'IBM', 'shares': 100, 'price': 91.1},
+    {'name': 'AAPL', 'shares': 50, 'price': 543.22},
+    {'name': 'FB', 'shares': 200, 'price': 21.09},
+    {'name': 'HPQ', 'shares': 35, 'price': 31.75},
+    {'name': 'YHOO', 'shares': 45, 'price': 16.35},
+    {'name': 'ACME', 'shares': 75, 'price': 115.65}
+]
+print(heapq.nlargest(3, list1))
+print(heapq.nsmallest(3, list1))
+print(heapq.nlargest(2, list2, key=lambda x: x['price']))
+print(heapq.nlargest(2, list2, key=lambda x: x['shares']))
+```
+
+## itertools模块
+
+迭代工具模块
+
+- `islice()`: 窗口迭代器, 返回一个运行在序列的子分组之上的迭代器
+- `batched(iterable, n)`：批次n，返回**生成器**，类型为n元元组，最后一组不足则返回较短的元组
+- `tee()`: 往返式迭代器
+- `groupby()`: uniq迭代器, 只能分组相邻的元素, 使用前需要排序
+- `chain(*iterables)`: 创建在第一个可迭代对象上迭代的迭代器, 然后继续下一个
+- `count([n])`: 返回一个给出连续整数的迭代器
+- `cycle(iterable)`: 在可迭代对象的每个元素上迭代, 然后重新开始, 无限重复
+- `dropwhile(predicate, iterable)`: predicate为真则从可迭代对象中删除元素
+- `ifilter(predicate, iterable)`: 类似filter()
+- `ifilterfalse(predicate, iterable)`: 类似ifilter, 但在predicate为假时迭代
+- `imap(function, *iterables)`: 类似map(), 在多个可迭代对象上工作, 在最短的可迭代对象耗尽时停止
+- `izip(*iterables)`: 类似zip(), 返回一个迭代器
+- `repeat(object[, times])`: 返回一个迭代器, 每次调用迭代器时返回object, 运行times次, 默认无限
+- `starmap(function, iterable)`: 类似imap, 将可迭代元素作为星号参数传递给function
+- `takewhile(predicate, iterable)`: 从可迭代对象返回元素, 当predicate为假时停止
+
+```python
+import itertools
+
+# 产生ABCD的全排列
+itertools.permutations('ABCD')
+
+# 产生ABCDE的五选三组合
+itertools.combinations('ABCDE', 3)
+
+# 产生ABCD和123的笛卡尔积
+itertools.product('ABCD', '123')
+
+# 产生ABC的无限循环序列
+itertools.cycle(('A', 'B', 'C'))
+```
+
+## collections模块
+
+常用的工具类:
+
+- `namedtuple`: 命令元组, 是一个类工厂, 接受类型的名称和属性列表来创建一个类
+- `deque`: 双端队列, 列表的替代实现, Python中的列表底层是基于数组来实现的, 而deque底层是双向链表, 因此当你需要在头尾添加和删除元素时, deque会表现出更好的性能
+- `Counter`: `dict`​的子类, 键是元素, 值是元素的计数, `most_common()`​获取出现频率最高的元素
+- `OrderedDict`: `dict`​的子类, 记录键值对插入的顺序, 看起来既有字典的行为, 也有链表的行为
+- `defaultdict`: 类似于字典类型, 但是可以通过默认的工厂函数来获得键对应的默认值, 相比字典中的`setdefault()`​方法, 这种做法更加高效
+
+```python
+"""
+找出序列中出现次数最多的元素
+"""
+from collections import Counter
+
+words = [
+    'look', 'into', 'my', 'eyes', 'look', 'into', 'my', 'eyes',
+    'the', 'eyes', 'the', 'eyes', 'the', 'eyes', 'not', 'around',
+    'the', 'eyes', "don't", 'look', 'around', 'the', 'eyes',
+    'look', 'into', 'my', 'eyes', "you're", 'under'
+]
+counter = Counter(words)
+print(counter.most_common(3))
+```
+
+## pylint/flake8
+
+提升代码质量
+
+- pylint: 可集成到pycharm中, 插件或外部工具, shell命令: `pylint module.py`​, 会生成分数和评价
+- flake8: 效果同pylint

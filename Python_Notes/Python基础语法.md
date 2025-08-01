@@ -2,30 +2,30 @@
 
 # Python基础语法
 
-# 一、特殊符号
+# 一、Token
 
 ## 注释符
 
-- 单行: #, 后接一个空格
+- 单行: `# `, 后接一个空格，快捷键(注释/取消注释)`command+/`
 
-  - 快捷键(注释/取消注释)command+/
-- 多行: 首尾两行三单引号顶格
+- 多行: 首尾两行三单/双引号顶格
+
+    ```python
+    ‘’‘
+    This function is ...
+    ’‘’
+    ```
 
 ## 标识符
 
-- 定义规则
+- 定义规则：
 
   - 数字、字母、下划线组成, 不能由数字开头(此处的字母包含所有国家的语言)
   - 严格区分大小写
-  - 不能使用python的保留字、关键字(通过keyword模块中的`keyword.kwlist`​查看关键字)
+  - 不能使用python的保留字、关键字(`print(keyword.kwlist)`​查看关键字)
 
-    ```python
-    import keyword
-    print(keyword.kwlist)
-    ```
 - 命名规则
 
-  - 顾名思义命名
   - 下划线命名法, 变量、模块、函数常用
   - 大驼峰命名法, 类名常用
   - 小驼峰命名法
@@ -43,9 +43,9 @@
   ```
 - 缩进符, 包含关系, 推荐使用4个空格而不是制表键, 或设置IDE自动将制表键变为4个空格(不同编辑器和环境对制表键的处理可能不同)
 - 平级关系, 上下对齐
-- 引号: 单引号和双引号用来定义字符串, 功能相同, 引号嵌套时可交替使用避免混乱
+- 引号: 单引号和双引号用来定义字符串, 功能相同, 引号嵌套时可**交替使用避免混乱**
 
-  三重引号: `'''`​、`"""`​, 定义多行字符串
+  三重引号: `'''`​、`"""`​可定义多行字符串
 
   ```python
   text = '''This is a
@@ -54,130 +54,118 @@
 
 ## 运算符
 
-- 算术运算符
+- 算术运算符:
 
   - 不同数据类型不能直接数学运算
-  - 分类
+  - 分类:
 
-    - 一元运算符: 正负号, 正号一般省略, -a就是对a的取反
-    - 二元运算符
+    - 一元运算符: 正负号, 正号省略
+    - 二元运算符:
 
-      +: 加法, 字符串的加法为拼接, 二合一
+      - `+`: 加法, 字符串的加法为拼接, 二合一
 
-      -: 减法  \*: 乘法  /: 除法, 结果为`float`​类型 注意做`类型转换`​
+      - `-`: 减法  
+      - `*`: 乘法  
+      - `/`: 除法, 结果为`float`​类型, 注意做类型转换
 
-      %: 取余  **<u>//: (向下)取整</u>**
-
-      \*\*: 幂, 前底后指, 指数可为正数(结果为int)、 负数、分数(结果为float)
+      - `%`: 取余  
+      - `//`: (向下)取整
+      
+      - `**`: 幂, 前底后指, 指数可为正数(结果为int)、 负数、分数(结果为float)
   - 优先级:  `**`​ \> `正负号`​ \> `*、/、//、%`​ \> `加减`​, 用括号控制先后
+  
 - 赋值运算符: 
 
-  - 简单赋值运算符\=
+  - 简单赋值运算符`=`：前后均有空格，若变量名相同, 后覆盖前
 
-    - 前后均有空格, 不需要类型声明
-    - 若变量名相同, 后覆盖前
-    - 右侧的内存地址传递给左侧
-    - > 推荐不使用临时变量交换: a, b = b, a
-      >
-    - 赋值操作默认是`引用赋值`​, 创建一个新的引用, 即传递原对象内存地址, 实际上未创建新对象
-
-      ```python
-      import copy
-      a = [0, 1, [2, 3]]
-      b = a
-      b[2][0] = 99
-      print(a)	// [0, 1, [99, 3]]
-      print(b)	// [0, 1, [99, 3]] // 简单赋值=传递引用, 指向同一对象
-      ```
+    - 推荐使用临时变量交换: a, b = b, a
+    
     - 可一次性赋值多个变量 (相同或一一对应)
-
+    
       ```python
       x = y = z = 12
-      a = b = c = 87, 43, 29
+    a = b = c = 87, 43, 29
       ```
-  - 复合赋值运算符
-
-    - 复合赋值变量必须提前定义, 有初始值, 先运行\=右边的表达式, 再赋值(赋值的优先级最低)
-    - `+\=`​、`-\=`​、`\*\=`​、`/\=`​、`%\=`​、`**=`​
-  - 赋值表达式: 海象运算符`:=`​, 定义一个变量的同时参与另一变量的定义
-
+    
+  - 复合赋值运算符：`+\=`、`-\=`、`\*\=`、`/\=`、`%\=`、`**=`，变量必须有初始值, 先运行\=右边的表达式, 再赋值(赋值的优先级最低)
+  
+  - 海象运算符`:=`​, 定义一个变量的同时参与另一变量的定义
+  
     ```python
     y = 2 * ( x:= 7) +1
     ```
-- 关系运算符
+
+- 关系运算符：返回布尔值
 
   - 参与比较的数据需要能进行隐式转换 如: 字符串和整形不可比
   - `>`​、`<`​、`>=`​、`<=`​、`==`​、`!=`​(不等于)
 
     - `==`​检查两对象的`值`​是否相等，自动处理类型差异, 如`1==1.0`​返回`True`​
-  - 结果为布尔值 成立返回True 不成立返回False
-  - python支持链式比较, 即 `0 < n < 20`​
+  - 支持链式比较, 即 `0 < n < 20`​
   - 字符串比较: 用ASCII码逐一比较, 第一个比不出来则比较第二个, 直到有结果
-
-    常见ACSII码大小规则: 数字 < 大写字母 < 小写字母
-
-    数字0-9递增, 字母a-z递增, 常见: `A`​为65, `a`​为97, `0`​为48
+  
+  - 常见ACSII码大小规则: 数字 < 大写字母 < 小写字母，数字0-9递增, 字母a-z递增, 常见: `A`​为65, `a`​为97, `0`​为48
   - 列表比较: 逐一比较元素大小, 与字符串方法雷同
-- 逻辑运算符
 
-  - not非: 取反, True返回False, False返回True
-  - and且: 全真返回True, 有一假则返回False
-  - or或: 有一真则返回True, 全假则返回False
+- 逻辑运算符：
+
+  - `not`非: 取反, True返回False, False返回True
+  - `and`且: 全真返回True, 有一假则返回False
+  - `or`或: 有一真则返回True, 全假则返回False
   - 短路原则: 结果可确定则忽略后面, 真或假与, 可替代if嵌套
 
     - `true`​ or `……`​, 直接输出true, 后面短路
     - `false`​ and `……`​, 直接输出 false, 后面短路
     - 短路求值: `a and b or c`​, **a真则返回b，a假则返回c**
   - 优先级: `not`​ > `and`​ > `or`​
-- 成员运算符
+  
+- 成员运算符：`in`、`not in`，用于字符串、元组、列表的判断
 
-  - 用于字符串、元组、列表的判断
   - Num不是容器类型, 不能使用成员运算符
-  - `in`​、`not in`​
+  
+- 位运算符：以二进位为单位进行运算, 操作数和结果均为整型
 
-    > 要善于运用in: if 'L' in name:
-    >
-- 位运算符
-
-  - 以二进位为单位进行运算, 操作数和结果均为整型
-
-    |运算符|名称|例子|
-    | --------| --------| ---------|
-    |～|位反|～x|
-    |&|位与|x&y|
-    |｜|位或|x\|y|
-    |^|位异或|x^y|
-    |>>|右移|x >> a|
-    |<<|左移|x << a|
-  - 取反:  公式: ～a \= -1\*(a+1)
+  |位运算符|名称|例子|
+  | --------| --------| ---------|
+  |`~`|位反|`~x`|
+  |`&`|位与|`x&y`|
+  |`|`|位或|`x|y`|
+  |`^`|位异或|`x^y`|
+  |`>>`|右移|`x >> a`|
+  |`<<`|左移|`x << a`|
+  
+  - 取反:  `~a = -1*(a+1)`
   - 位与: 两位均为1, 结果才为1, 否则为0
   - 位或: 两位中只要有一个1, 结果为1, 否则为0
-  - 位异或: 两位相反结果为1, 否则为0, 对任一数位异或两次, 结果为本身
+  - 位异或: `同1异0`，对任一数位异或两次结果为本身
   - 右移: 高位用符号位补位
   - 左移: 低位用0补位
-- 身份运算符`is`: a is (not) b, 判断两个数据的地址在内存中是否一致
+  
+- `is`身份运算符: `a is/is not b`, 判断两个数据的地址在内存中是否一致
+
 - 三元运算符: `max = a if a > b else b`​
 
   - `max = a > b? a: b`​是C、Java的三元运算符, Python不支持
+  
 - 各运算符优先级: `括号`​>`幂`​>`位反`​>`正负号`​>`乘除余整`​>`加减`​>`位移`​>`位与`​>`位异或`​>`位或`​>`比较`​>`逻辑非`​>`逻辑与`​>`逻辑或`​
 
 ## 功能符
 
-- 转义符: \\
+- 转义符: `\`
 
   - `\`: 可用作简单换行
   - `\u`: unicode码, 把u后面的4个字符解码, 无则报错
-  - `\n`: 换行  `\r`: 回车  `\t`: 水平制表符
-  - `\\`: 一个反斜杠\   `\'`: 一个单引号'  `\"`: 一个双引号"
-- r符: 去除转义功能, 原样输出
-- f符: 配合{}解析格式化输出, 将结果插入字符串中
+  - `\n`: 换行  
+  - `\r`: 回车  
+  - `\t`: 水平制表符
+  - `\\`: 一个反斜杠`\` 
+  - `\'`: 一个单引号,  `\"`: 一个双引号
+  
+- `r`符: 去除转义功能, 原样输出
 
-  ```python
-  name = "小红"
-  age = 18
-  str9 = f'姓名: {name}, 年龄: {age}'
-  ```
-- b符: 字符串前加b, 表示该字符串类型为字节类型
+- `f`符: 配合{}解析格式化输出
+
+- `b`符: 声明字节类型
 
   ```python
   str1 = 'hello'
@@ -185,60 +173,43 @@
   print(type(str1))	# class: str
   print(type(str2)) 	# class: bytes
   ```
-- %占位符
+  
+- `%`占位符：
 
   - `%s`: 任意类型
+  
   - `%d`: 整型
+  
+      - `%0nd`: 对填充的整数指定显式宽度
+  
+          - `n`显示宽度，`0`不足宽度则左侧填充0补齐
+  
+  - `%f`: 数字类型, 保留n位小数 `%.nf`​
+  
+  - 填充值与占位符一一对应, 填充多个值时数据值需要`()`包含
 
-    - `%0nd`: 对填充的整数指定显式宽度
-
-      - n -- 代表显式宽度
-      - 0 -- 不足宽度 左侧填充0 补齐宽度
-      - 如学号2, 显示成000002, 占位符写成%06d
-  - `%f`: 数字类型, 可以设置格式保留n位小数 `%.nf`​
-  - 数值与占位符一一对应, 填充多个值时数据值需要()包含
   - 可以在print函数中一起打印, 也可另起一行赋值
+  
+      ```python
+      info = '%s的工资信息为: 基本工资%s, 绩效%s, 五险一金%s, 扣税%s, 实发工资%s'
+      info = info % (name, bs, perf, issure, tax, ts)
+      print(info)
+      ```
+  
+- `*`星号表达式：
 
-    ```python
-    info = '%s的工资信息为: 基本工资%s, 绩效%s, 五险一金%s, 扣税%s, 实发工资%s'
-    info = info % (name, bs, perf, issure, tax, ts)
-    print(info)
-    ```
+    - 装包：`b = 100, 'John'`
 
-## 变量
+        - 含有`*args`​的情况: 按顺序每个键都要有值,  多余的给*
 
-变量存储的是对象的**引用**(在栈中), 实际是一个字符串符号, 用来关联存储在内存中的对象, 赋值语句就是建立变量与对象的映射关系
+    - 拆包：`a, b = (100, 'John')`
 
-### 动态类型
+        - 拆包可迭代对象, 相当于遍历
+        - 拆包字典用`**`
 
-变量仅为符号(字符串对象), 本身并不存储类型信息, 类型信息存储在对象上, 两操作数执行运算时必须先检查两个操作数的类型
+## 改变作用域
 
-> Python对象机制的核心: 类型信息和引用计数
-
-`type(a)`: 输出a的类型
-
-### 命名空间
-
-一个**容器**, 存储标识符与对应对象之间的映射关系, 解决命名冲突问题
-
-- 由一个`dict`​实现, 维护(name, obj)关联关系, 可以一个套一个地形成一条**命名空间链**, Python执行时大部分时间消耗在从命名空间链中确定符号对应的对象
-- 类、函数、module都对应着一个独立的命名空间
-- 一个独立的命名空间会对应一个`PyCodeObject`​对象
-- import foo时创建一个新变量foo, 绑定一个PyCodeObject对象, 即foo.py的编译结果
-- `dir()`​函数, 查看一个命名空间下的所有名字符号
-
-### 作用域
-
-描述命名空间中标识符的可见性和生命周期, 用于避免作用范围外的代码访问变量
-
-- 分支语句和循环中的变量不存在作用域问题, 外部可直接访问
-- `LEGB`​规则: Python使用LEGB顺序来查找一个符号对应的对象
-
-  - `L`: locals, 当前所在命名空间, 函数的参数也属于命名空间内的变量将变量定义在函数内部,
-
-- 修改作用域:
-
-  - `global`: 于函数内修改函数外变量, 可变类型的修改不可添加global
+- `global`: 于函数内修改函数外变量, 可变类型的修改不可添加global
 
     ```python
     def foo():
@@ -246,359 +217,45 @@
     	a = 12
     	print(a)
     ```
-  - `nonlocal`: 主要用于闭包函数, 于内函数中修改外函数的变量值
+
+- `nonlocal`: 主要用于闭包函数, 于内函数中修改外函数的变量值
 
     ```python
     nonlocal x
     x += 1
     ```
 
-- `LEGB`​规则: 基于作用域的命名空间查找规则, Python使用LEGB顺序查找符号对应的对象, `locals`​->`enclosing function`​->`globals`​->`builtins`​
 
-  - locals: 局部命名空间, 存储函数或方法内部定义的局部变量、函数的参数, 外部不能访问,
 
-    - 函数内外出现同名变量, 函数内使用函数内变量
-    - 若函数中无此变量, 则在全局变量中查找
-    - 函数内定义变量名与函数外变量同名, 不改变函数外变量值
-    - `locals()`: 查看所有函数内部的局部变量
-  - enclosing: 外部嵌套函数的命名空间(闭包中常见), 将变量定义在外函数内, 内函数外
-  - globals: 全局命名空间, 存储模块级的变量、函数、类等, 任意位置访问变量, 限于模块内
-  - builtins: 内置命名空间, Python启动时自动载入, 如dict、list、type、print, 均位于`__builtins__`​模块中
+---
 
-‍
+
 
 # 二、数据类型
 
-Python为动态语言, 变量类型不用声明, 由值决定, 不同类型存储机制不同
+## Num
 
-整型8字节, 字符1字节
-
-序列: 可迭代, 元素有序的容器, 如字节序列bytes、str、list、tuple
-
-引用类型/可变类型: list、dict、set
-
-基本数据类型/不可变类型: int、str、tuple
-
-## 类型操作: 
-
-- type(): 查看类型
-- isinstance(x, A_tuple): 判断类型, 是否是指定类型(单类型或类型元组)
-- 类型转换: 
-
-  - 隐式转换: 布尔 + 整型 = 整型, 布尔/整型 + 浮点 = 浮点
-  - 显式转换: int()、float()、bool()、set()、dict()、str()、list()、tuple()
-
-    - int(x, base = 10), base为进制数, 默认十进制, 浮点数会截断小数部分
-    - float(): 不能转换非数字类型
-    - bool(): `无参数`​、`0`​、`0.0`​、`空字符串`​、`空列表`​、`空元组`​、`空集合`​、`空字典`​、`None`​返回false
-- 数据序列化: 将一数据结构转化为一个字符串或字节流的过程
-
-  - 序列化: 
-
-    - `pickle.dumps(obj)`: 将python对象序列化为一个字节串, 并返回该字节串
-    - `json.dump()`: 将**文件**中的对象转化为json字符串, 并**存储到文件中**
-    - `json.dumps()`: 将python对象编码成JSON字符串, 默认编码ascii, 中文使用Unicode, 若要显示中文, 参数`ensure_ascii=False`​
-  - 反序列化: 
-
-    - `pickle.loads(data)`: 以pickle格式加载字节串(二进制数据)并将其反序列化为python对象
-    - `json.load()`: 将**文件**中的内容读取并转化为Python对象
-    - `json.loads()`: 将JSON**字符串**转化为Python对象(字典)
-  - 文本格式转换问题: 
-
-    - \<html\>文本数据: `txt = res.text`​, 获取文本数据
-    - {{{}[]""}}json数据: `js = res.json()`​, 将json转化为程序对象
-    - `用户列表 = js['data']['ranks']`​, 路径
-
-## 特殊类型: 
-
-- 空值None: 只有一个值None, 类型为Nonetype
-- 可迭代对象: 可逐一返回其成员对象, 可迭代协议`__iter__()`​, 本身不能返回元素, 只是一个容器
-- 迭代器: 只能单向取数, 数据取完即**关闭消失**​, 可迭代协议`__iter__()`​、`__next__()`​
-
-  - 迭代器一定是可迭代对象, 可迭代对象不一定是迭代器, 迭代器包含生成器
-  - `iter(callable, sentinel)`: 返回一个迭代器
-
-    - callable: 一个可调用的对象, 如函数或lambda
-    - sentiel: 停止值, 当callable返回此值时, 迭代结束, 可取代while循环
-
-    ```python
-    def reader(s):
-    	for chunk in iter(lambda: s.recv(CHUNKSIZE), b''):
-    		process_data(data)
-    ```
-  - list、str、tuple、dict、set不是迭代器, 是可迭代对象
-  - 迭代器是惰性对象, 不会一次性加载所有数据, 有自己内部"状态", 会记录当前遍历到的位置, 按需生成下一个元素
-
-  ```python
-  numbers = [1, 2, 3, 4]
-  iterator = iter(numbers)  # 获取迭代器
-  
-  # 使用for循环迭代
-  for i in iterator:   	# for循环在后台自动用next()处理, 直到触发异常为止, 所以for循环不需next()	
-  	print(i)
-  
-  # 使用 next() 显式获取元素
-  print(next(iterator))  # 输出 1
-  print(next(iterator))  # 输出 2
-  print(next(iterator))  # 输出 3
-  print(next(iterator))  # 输出 4
-  # 再调用 next() 会抛出 StopIteration 异常
-  
-  try:
-      print(next(iterator))  # 会抛出 StopIteration
-  except StopIteration:
-      print("Iteration is complete!")
-  ```
-- 生成器: 特殊的迭代器, 懒加载, 按需产生数据, 同一时间内存中只存在一个数据, 节省内存, 惰性求值适合生成无限序列
-
-  - 获取生成器的方式: 
-
-    - 生成器表达式: 列表推导式的[]变成()
-    - 函数+yield(): 暂停函数, 并产生、产出一个数据, 调用不会进入函数, 而是产生一个生成器对象, 当获取生成器中数据时才进入函数, 执行函数中的内容直到yield位置, 暂停函数并把产生的数据返回, 下一次再获取数据, 从上次暂停的位置继续执行到yield位置, 并返回生成的数据
-  - `next(gen)`: 获取下一个值
-
-    - `gen.next()`​方法已废弃
-  - `gen.send()`: 向生成器内部发送一个值(成为yield表达式的结果)并继续执行生成器的代码
-
-    - 易混淆, `a = yield b`​, yield后的表达式非赋值的值, a的值要等待send()
-
-    ```python
-    def calc_avg():
-        """流式计算平均值"""
-        total, counter = 0, 0
-        avg_value = None
-        while True:
-            value = yield avg_value 	# 生成avg_value后暂停, value接受send()
-            total, counter = total + value, counter + 1
-            avg_value = total / counter
-
-
-    gen = calc_avg()
-    next(gen)
-    print(gen.send(10)) 	# 10被赋值给value
-    print(gen.send(20))
-    print(gen.send(30))
-    ```
-  - `gen.throw(exception_type, value=None, traceback=None)`: 向生成器抛出一个异常, 生成器可捕获处理或继续抛出
-  - `gen.close()`: 关闭生成器, 触发`GeneratorExit`​异常, 关闭后无法再通过`next()`​获取值
-  - `yield from`: 简化生成器委托, 把一个生成器的输出直接传递给外部调用者, 减少编写`for`​循环和手动调用yield
-
-    - `yield from iterable`: 迭代`iterable`​中的每个元素, 并将它们逐个'委托'给外部调用者, Python首先通过iter(iterable)获取迭代器, 通过next()获取值, 通过yield将其传递出去
-
-      ```python
-      def generator1():
-          yield 1
-          yield 2
-          yield 3
-      
-      def generator2():
-          yield from generator1()  # 委托给generator1
-          yield 4
-          yield 5
-      
-      # 使用生成器
-      for value in generator2():
-          print(value) 	# 输出1 2 3 4 5
-      
-      # 指定范围的数字生成器
-      def num_generator(m, n):
-      	yield from range(m, n + 1)
-      ```
-    - 可传递子生成器的返回值:
-
-      ```python
-      def generator1():
-          yield 1
-          yield 2
-          return "done"  # 生成器返回值
-      
-      def generator2():
-          result = yield from generator1()
-          print(f"generator1 returned: {result}")
-          yield 3
-      
-      # 使用生成器
-      for value in generator2():
-          print(value)
-      
-      # 输出结果
-      # 1
-      # 2
-      # generator1 returned: done
-      # 3
-      ```
-    - 可将异常传递给委托的生成器:
-
-      ```python
-      def generator1():
-          try:
-              yield 1
-              yield 2
-          except ValueError:
-              print("Handled ValueError in generator1")
-      
-      def generator2():
-          yield from generator1()
-      
-      gen = generator2()
-      next(gen)  # 输出: 1
-      next(gen)  # 输出: 2
-      gen.throw(ValueError)  # 输出: Handled ValueError in generator1
-      ```
-  - 常见应用场景:
-
-    - 处理大型数据集(节省内存):
-
-      ```python
-      # 逐行读取文件
-      def read_large_file(file_path):
-          with open(file_path, 'r') as file:
-              for line in file:
-                  yield line  # 每次返回一行内容
-      
-      # 使用生成器逐行读取文件, 避免一次性将整个文件加载到内存
-      for line in read_large_file('large_file.txt'):
-          process(line)  # 逐行处理文件内容
-      ```
-    - 无限序列生成:
-
-      ```python
-      # 生成无限数字序列
-      def infinite_counter(start=0):
-          count = start
-          while True:
-              yield count  # 每次返回一个新的数字
-              count += 1
-
-      # 生成无限的数字序列
-      counter = infinite_counter()
-      for _ in range(10):
-          print(next(counter))  # 输出 0 1 2 3 4 5 6 7 8 9
-
-      # Fibonacci
-      def fibonacci():
-      	a, b = 0, 1
-      	while True:
-      		yield b
-      		a, b = b, a + b
-
-      fib = fibonacci()
-      ```
-
-    - 生成组合或排列:
-
-      ```python
-      # 生成所有排列
-      import itertools
-      
-      def generate_permutations(iterable):
-          for item in itertools.permutations(iterable):
-              yield item
-      
-      # 生成所有字符的排列
-      for perm in generate_permutations('AB'):
-          print(perm)
-      ```
-    - 管道式数据处理: 在多个处理步骤之间进行数据的传递和处理, 例如, 数据从一个生成器流到下一个生成器, 每个生成器执行某一特定的转换操作
-
-      ```python
-      def read_lines(file_path):
-          with open(file_path) as f:
-              for line in f:
-                  yield line.strip()
-      
-      def filter_lines(lines, keyword):
-          for line in lines:
-              if keyword in line:
-                  yield line
-      
-      def process_lines(lines):
-          for line in lines:
-              yield line.upper()
-      
-      # 使用生成器管道处理文件
-      file_lines = read_lines('data.txt')
-      filtered_lines = filter_lines(file_lines, 'important')
-      processed_lines = process_lines(filtered_lines)
-      
-      for line in processed_lines:
-          print(line)
-      ```
-    - 批处理数据: 数据需要被分成小批次处理(例如机器学习中的数据加载)
-
-      ```python
-      def batch_generator(data, batch_size):
-          for i in range(0, len(data), batch_size):
-              yield data[i:i + batch_size]
-      
-      # 假设我们有一个大数据集
-      data = [i for i in range(100)]
-      
-      # 使用生成器按批次处理数据
-      for batch in batch_generator(data, 10):
-          print(batch)  # 每次输出一个包含 10 个元素的子列表
-      ```
-    - 延迟计算
-
-      ```python
-      def lazy_square(n):
-          for i in range(n):
-              yield i * i  # 每次返回一个平方值
-      
-      # 生成一个懒加载的平方数序列
-      for value in lazy_square(5):
-          print(value)  # 输出 0, 1, 4, 9, 16
-      ```
-    - 流式数据处理: 如处理网络请求、实时数据流, 允许一边接收数据一边处理数据, 避免在内存中存储大量中间数据
-
-      ```python
-      import time
-      
-      def simulate_data_stream():
-          for i in range(10):
-              time.sleep(1)  # 模拟延迟
-              yield i  # 每秒钟生成一个新的数据
-      
-      # 实时处理数据流
-      for data in simulate_data_stream():
-          print(f"Received data: {data}")
-      ```
-
-## Num类型
-
-- 整型int
+- 整型`int`
 
   - 十进制, `int(num, base)`​转换十进制, base参数为原基数(无法转换'80.0' 无法转换'AB' , 可转换int('AB', 16)# 171)
-  - 二进制: 0b为前缀, `bin()`​
-  - 八进制: 0o为前缀, `oct()`​
-  - 十六进制: 0x为前缀, `hex()`​, 不区分大小写, a:10 b:11 c:12 d:13 e:14 f:15
+  - 二进制: `0b`为前缀, `bin()`​
+  - 八进制: `0o`为前缀, `oct()`​
+  - 十六进制: `0x`为前缀, `hex()`​, 不区分大小写, a:10 b:11 c:12 d:13 e:14 f:15
 
-- 布尔类型bool: 只有两个值True和False, T和F**必须大写, ** int子类, 可参与数学运算, 真1假0
+- 布尔类型`bool`: 只有两个值True和False, **必须大写**，int子类, 可参与数学运算, 真1假0
 
-- 浮点型float
+- 浮点型`float`：Python只支持**双精度浮点**类型, 且须与本机相关
 
-  - Python只支持**双精度浮点**类型, 且须与本机相关
   - 运算中有浮点数, 则结果是浮点型
-  - 科学计数法表示: aen: E/e表示底数10, n为指数, 即10的多少次方
-
-- 复数类型complex: 字母j代替数学中虚数单位i
+  - 科学计数法表示: `aen`，E/e表示底数10, n为指数, 即10的多少次方
+  
+- 复数类型`complex`: 字母j代替数学中虚数单位i
 
   ```python
   print(type(1+2j))   # complex
   ```
 
-### 魔法数字
-
-magic number, 在代码中直接使用的、无明确含义的数字/常量, 仿佛凭空出现, 让代码难以理解、维护
-
-```python
-if score >= 60:		# 60即为魔法数字
-    print("Pass")
-else:
-    print("Fail")
-```
-
-解决:
+**魔法数字**：magic number, 在代码中直接使用的、无明确含义的数字/常量, 仿佛凭空出现, 让代码难以理解、维护，eg：`if score >= 60`，60即为魔法数字
 
 - 用有意义的常量/枚举替代魔法数字:
 
@@ -629,138 +286,112 @@ else:
           return "Pending"
   ```
 
-## Str字符串
+## Str
 
 文本序列, 有序不可变, 修改只能重新赋值, 长度为1的称字符, 空格也是字符
 
 - 创: 单引号、双引号、三引号、`str()`​
+
 - 查: 
 
-  - 访问
+  - 切片: `字符串[开始下标: 结束下标: 步长]`​，`str[::]`​原样输出, `str[::-1]`​镜像输出
 
-    - 索引从0开始, 负数表示倒数
-    - `len()`​获取长度
-    - `enumerate()`​列举, 二参为start位置
-
-      ```python
-      for k, v in enumerate(str1):		# k为索引, v为值
-      	print(k, v, end='*')
-      ```
-  - 切片: `字符串[开始下标: 结束下标: 步长]`​
-
-    - 开始下标包含, 默认为0, 结束下标不包含, 默认到最后, 步长默认为1
-    - 步长为正, 起始索引在结束索引左边;  步长为负, 从右向左取值, 起始索引在结束索引右边
-    - `str[::]`​原样输出, `str[::-1]`​镜像输出
-  - 查找
-
-    - `count()`: 统计子串在指定字符串中出现次数, 不重叠, 如在abababab中找abab, 只有两个
-
-      `count("欲统计内容", 开始位置, 结束位置)`​ 开始、结束位置为可选参数
-    - `find()`: 查找指定字符第一次出现位置下标, 无则返回-1
-    - `rfind()`: 查找指定字符追后一次出现位置下标, 无则返回-1
+  - 查找：
+  
+    - `count("欲统计内容", 开始位置, 结束位置)`: 统计子串在指定字符串中出现次数, 不重叠
+    - `find()`: 查找指定字符**第一次**出现位置下标, 无则返回-1
+    - `rfind()`: 查找指定字符**最后一次**出现位置下标, 无则返回-1
     - `index()`: 类似find()函数, 无则报错
-
-      ```python
-      if 'xxx' in word:
-      	word = word[:word.index(' ')]
-      ```
     - `rindex()`: 类似rfind, 无则报错
     - `max()`​、`min()`: 按ASCII码值比较大小, 逐个比较
-  - 判断
+  - 判断：
 
-    - 英语&大小写
-
-      - isupper( ): 检查字母是否全部大写;  其他字符不管, 只检查英语
-      - islower( ): 检查字母是否全部小写;  其他字符不管, 只检查英语
-      - istitle( ): 检查字符串中单词的首字母是否大写, 其他小写
-      - 成员运算符方法 `if i in string.xxx`​
+    - 英语&大小写：
+  
+      - `isupper()`: 检查字母是否全部大写;  其他字符不管, 只检查英语
+      - `islower()`: 检查字母是否全部小写;  其他字符不管, 只检查英语
+      - `istitle()`: 检查字符串中单词的首字母是否大写, 其他小写
+      - 成员运算符方法 `if i in string.xxx`​：
 
         - 大写: `string.ascii_uppercase`​
         - 小写: `string.ascii_lowercase`​
         - 所有英文字母: `string.ascii_letters`​
-    - 首尾
+    - 首尾：
 
       - `startswith(str/元组)`: 是否以指定字符集中任一字符开头
       - `endswith(str/元组)`: 是否以指定字符集中任一字符结尾
-    - `isdigit()`​/`isnumeric()`: 检查是否全部为数字;  
-
-      成员运算符方法: `in string.digits`​
+    - `isdigit()`​/`isnumeric()`: 检查是否全部为数字
+    - 成员运算符方法: `in string.digits`​
     - `isalpha()`: 检查字符串是否全部为字母(各国)
-
+  
       - 汉字: `if '\u4e00' <= a <= '\u9fa5'`​
       - 编码方法: `s.encode().isalpha()`: 纯英文字母
     - `isalnum()`: 是否是数字或字母(各国);  纯数字/纯字母/数字和字母
 
-      编码方法: `s.encode().isalnum()`: 数字或英文字母
+      - 编码方法: `s.encode().isalnum()`: 数字或英文字母
     - `isascii()`: 是否是ascii中的符号
-    - `isspace()`: 判断文本中是否包含空白字符
-
+    - `isspace()`: 是否是空白字符
+  
 - 改: 
 
-  - 大小写转换
+  - 大小写转换：
 
     - 小转大: `upper()`​
     - 大转小: `lower()`​
     - 大小互换: `swapcase()`​
-    - 每个单词首字母大写并且其他小写: `tittle()`​;  用不连续来区分单词
-    - 第一个单词首字母大写并且其它全部小写`.capitalize()`​
-  - 分割
+    - **每个**单词首字母大写并且其他小写: `tittle()`​，用不连续来区分单词
+    - 整个字符串的**第一个**单词首字母大写并且其它全部小写`.capitalize()`​
+  - 分割：
 
-    - `split( sep=None, maxsplit=-1 )`​ 以指定字符sep分割字符串, 默认以空白分割, 返回列表
-
-      - \\t\\n\\r\\v\\f都是空白
+    - `split(sep=None, maxsplit=-1)`​ 以指定字符sep分割字符串, 默认以空白分割, 返回列表
+    - \\t\\n\\r\\v\\f都是空白
       - maxsplit如省略, 则不限制分隔次数
     - `rsplit()`: 从右侧分割
     - `splitlines()`: 按行分割字符串,输出为['xxxxx', 'xxxxx', 'xxxxx']
-  - 拼接
-
-    - `+`: eg: `"12" + "13" = "1213"`​
-    - `join()`: 以指定字符合并字符串, 被拼接的数据只能是字符串类型的
-
-      ```python
+  - 拼接：
+  
+  - `+`: eg: `"12" + "13" = "1213"`​
+    - `.join()`: 以指定字符合并字符串, 被拼接的数据只能是字符串类型的
+  
+    ```python
       list1 = ["1", "2", "3", "4", "5"]
       pf = "-"
       print(pf.join(list1)) 		# 1-2-3-4-5
       print('-'.join(list1))
       ```
-
-      - > 推荐使用序列构建字符串: name = ''.join(char_list)
-        >
-  - 填充
-
+  
+    - 推荐使用序列构建字符串: name = ''.join(char_list)
+  - 填充：
+  
     - `.center(n)`: 将字符串填充到指定长度, 默认空格填充, 原内容居中, 二参str指定填充符
 
       - print(str1.center(50))         # 填充到50个长度
-      - print(str1.center(50,"\*"))     # 用\*填充到50个长度
+    - print(str1.center(50,"\*"))     # 用\*填充到50个长度
     - `.ljust()`: 左对齐, 右侧填充, 默认空格
     - `.rjust()`: 右对齐, 左侧填充, 默认空格
     - `.zjust()`: 零填充, 0在左
   - 替换: `replace('旧', '新', 次数)`​, 无次数则全部替换
-  - 编解码
-
-    - 编码和解码的方式要一致, 否则报错/乱码
-    - ascii
-
+  - 编解码：编码和解码的方式要一致, 否则报错/乱码
+  
+    - ascii：
+  
       - 对ascii中原有符号, 编码前后内容不变;  其他编码, 内容前有`\`​
       - `ord()`: 获取对应十进制数据
-      - `chr()`: 获取对应字符
+    - `chr()`: 获取对应字符
     - utf-8(一个汉字3个字节) gbk(一个汉字两个字节)
-
+    
     - `encode(字符集)`: 以指定字符集编码
     - `decode(字符集)`: 以指定字符集解码
+
 - 删: `strip()`​, 去除字符串两边指定字符, 默认空格
 
   - 不是整个进行检验, 而是一个字符一个字符的判断 遇到不匹配的字符就停止, 左边的从左到右去除, 右边的从右到左移除
   - `lstrip()`: 去除左边指定字符, 默认空格
   - `rstrip()`: 去除右边指定字符, 默认空格
 
-## List列表
+## List
 
-有序可变, 类型可不同, 可嵌套, 可变: 内存地址不变, 数据可变
-
-变量实际为指向堆中元素的指针, 若元素为列表, 则堆中存储的是列表的指针, 故列表类型变量赋值时, 指向堆中同一地址; 浅复制时, 只复制基本类型, 元素为指针的, 实际上仍为同一元素; 深复制时, 复制所有元素拷贝
-
-- 创
+- 创：
 
   - `[]`​包含
   - `list()`: 参数必须为可迭代对象
@@ -770,42 +401,38 @@ else:
 
     - `[目标值 for i in range() if 条件]`​
     - `list(目标值 for i in range() if 条件)`​
-- 查
+- 查：
 
-  - 访问: 下标, 从0开始, -1表示最后一个
-  - 切片: `列表名[开始下标: 结束下标]`​
   - `count()`: 统计次数
   - `index()`: 返回元素的索引
   - 成员`in`​/`not in`​
-  - 迭代用enumerate: 
-
+  - 迭代用`enumerate:` 
+  
     ```python
     fruits = ['orange', 'grape', 'pitaya', 'blueberry']
     for index, fruit in enumerate(fruits):
     	print(index, ':', fruit)
     ```
-- 改
+- 改：
 
   - `reverse()`: 翻转元素顺序, 改变原列表
   - `sort()`: 对元素排序, 默认升序, 改变原列表
-
-    降序: `list1.sort( reverse=True )`​
-
-    - 注意与sorted的区分: sort只是list类型的方法, sorted是高阶函数, 可对任意序列排序 sort改变原数据, sorted生成新数据
-    - 注意有负数的情况, 必要时使用abs()
+- 降序: `.sort(reverse=True)`​
+    - 注意与`sorted`的区分: sort只是list类型的方法, sorted是高阶函数, 可对任意序列排序 sort改变原数据, sorted生成新数据
+- 注意有负数的情况, 必要时使用abs()
   - `insert(下标, 内容)`​ 此时下标不能为负, eg: list1.insert(2, 'a')
   - `append()`: 尾部追加单个元素
-
+  
     - 也可使用运算符+/+\=, 但单个元素必须用[]包含
-    - 若append列表, 则将列表作为一个元素追加
+  - 若append列表, 则将列表作为一个元素追加
   - `extend(序列)`: 添加多个元素, 必须为序列，会直接修改原列表，不生成新列表
   - **+或+\=: 合并**,+会返回一个新对象
   - \*或\*\=: 重复, 右操作数为次数
   - 修改切片
-
+  
     - 切片连续: `list[-3:] = [98, 99, 100]`​ 右侧必须是可迭代数据
-    - 切片不连续: 需要新赋值和获取数量一致
-- 删
+  - 切片不连续: 需要新赋值和获取数量一致
+- 删：
 
   - `pop(下标)`: 删除指定位置的元素, 默认为最后一个元素, 返回原列表
   - `remove(元素)`: 若有重复, 只能删除找到的第一个
@@ -815,97 +442,51 @@ else:
       解决: `for i in list[:]或list.copy()`​ 从镜像中遍历, 从原表中删除
   - `clear()`: 清空列表, 保留空列表
 
-## Tuple元组
+## Tuple
 
 有序不可变, 可嵌套元组, 占内存比列表少
 
-- 创
+- 创：
 
   - `tuple()`​
-  - `()`​包含
-
-    - 只有一个元素时, 必须加一个逗号表示元组, 若不加逗号, 则根据元素的类型决定数据类型
-    - 有时小括号可省略
-  - 星号表达式
-
-    - 装包
-
-      - ```python
-        b = 100, '张三'
-        print(b) 		# (100, '张三')
-        ```
-      - 含有`*args`​的情况: 按顺序每个键都要有值,  多余的给\*
-
-        eg: \*a, b, c, d: bcd分别拿到参数列表中后三个, 其他的打包成列表给\*a, \*b或\*c或\*d原理相同
-    - 拆包
-
-      - ```python
-        a, b = (100, '张三')
-        print(a) 	# 100
-        ```
-      -  拆包可迭代对象, 相当于遍历
-      - 函数要求独立参数, 调用函数时用\*拆包实参列表(拆包字典用**)
-
-        ```python
-        args = [3, 6]
-        list1 = list(range(*args))
-        def func(a, b, *args):	# 省略定义
-        func(*[1, 2, 3, 4])		# 调用时, 用*拆包参数列表
-        ```
-- 查
-
-  - 访问: 下标0为首, -1表最后
-  - 切片: `元组名[开始下标: 结束下标]`​
+  - `()`包含：有时小括号可省略，只有一个元素时, 必须加一个逗号表示元组, 若不加逗号, 则根据元素的类型决定数据类型
+- 查：
   - 判断: `in`​/`not in`​
   - 比较: 相同位置逐个比较
 - 改: 合并: +, 重复: \*
 - 删: del 元组: 删除元组, 释放内存, 再次引用会报错
 
-## Dict字典
+## Dict
 
-底层为高度优化的哈希表结构，有序（官方保持插入顺序），无链表，使用开放寻址（线性探测）
-
-- 内部结构：
-
-  - `ma_keys`​：存储键keys和哈希值
-  - `ma_values`​：存储值values
-  - `entries`​数组：用于查找和维护key的索引信息
-- 核心思想：引入新数据结构`compact dict`​，使用两个数组，一个保存key-hash-value对，一个保存索引顺序（即插入顺序）
-- 相比`OrderedDict`​：dict适合常规使用，性能好，OrderedDict支持更多功能（如移动元素）
-
-‍
-
-- 创
+- 创：
 
   - `{}`​, key和value组成
-
-    - {key1: value1, key2: value2, ……}中间逗号隔开
+    - `{key1: value1, key2: value2, ……}`中间逗号隔开
     - 键不能重复, 重复后覆盖前, 键的数据类型为不可变的类型, 如不能为列表
-  - `dict()`​
-
+  - `dict()`​：
     - `dict(键1:值1, 键2:值2……)`​
     - `dict(变量1=值1,  变量2=值2……)`​,此处变量名不可加引号
-
+    
     - `dict([(键, 值), (键, 值), (键, 值)])`​
     - `dict(zip( [*键], [*值] ))`​, 键值数量不一致时, 以少的为准
   - 字典推导式: 
-
-    - `{ k: v for k, v in 字典.items( ) if 条件 }`​, 此处必须放键值对
-    - `dict((k, v) for k, v in 字典 if 条件 )`​, 此处不能放键值对
+  
+    - `{ k: v for k, v in 字典.items() if 条件 }`​, 此处必须放键值对
+    - `dict((k, v) for k, v in 字典 if 条件)`​, 此处不能放键值对
     - 建议先把键定义出来
   - `dict.fromkeys(序列, 自定义值)`: 根据键快速制作一个字典, 值默认为None, 也可自定义
   - `copy()`: 复制
-- 查
+- 查：
 
   - 访问值: 根据键获取值, 成员运算针对键, 不能用下标/值定位元素
 
     - `字典名[键]`​, 访问不存在的key会报错
-    - `字典.get(键, 不存在时返回值)`​, 不存在时返回值默认为None
+    - `字典.get(键, 不存在时返回值)`​, 不存在时默认返回None
   - `values()`: 获取所有value
   - `keys()`: 获取所有key
   - `items()`: 获取所有键值对
   - `len()`: 获取字典元素的个数
-  - 遍历
+  - 遍历：
 
     - `for i in dict:`​, 获取的仅为键
     - `for v in dict.values( ):`​, 获取的仅为值
@@ -917,57 +498,50 @@ else:
     from collections import Counter
     print (Counter(str1))
     ```
-- 改
+- 改：
 
   - 增: `字典名[键] = 值`​, (原字典中无该键)
   - 改: `字典名[键] = 值`​, (原字典中有该键)
   - 增改: `setdefault(键, 值)`​, 有则不动, 无则增加
   - 合并: `update(序列)`​, 可为字典、键值对、变量\=值、元组/二维数据、zip()
-- 删
+- 删：
 
   - `del 字典[键]`​
   - `pop(键)`​
   - `popitem()`: 默认删除最后一个元素
   - `clear()`: 清空字典, 保留字典结构
 
-## Set集合
+## Set
 
-唯一性, 元素不可重复, set(序列)即可去重
-
-无序性, 无索引, 内部使用哈希表存储元素, 排列顺序与添加顺序无关
-
-可变性, 增减元素, 内存地址不变
-
-- 创
+- 创：
 
   - `set()`​
   - `{}`​包含, 不能构建空集合, 空集合为`set()`​
   - `copy()`: 复制(copy函数可用于列表、字典、集合等可变类型)
   - 集合推导式
-- 查
+- 查：
 
-  - `len()`: 获取集合长度
   - 成员运算: `in`​/`not in`​
   - 比较: 返回布尔值
-
+  
     - 易错: 集合的比较不同于其他类型, **不是逐一比较**
     - \>: 包含, 超集
     - \<: 被包含, 真子集
     - \<\=: 子集, 不一定是真子集
     - \>\=: 包含, 不一定真包含
     - \=\=、!\=
-  - 判断
-
+  - 判断：
+  
     - `isdisjoint()`: 是否无交集, 无交集返回True
     - `s1.issubset(s2)`: s1是否被s2包含, 可以全等
     - `s1.issuperset(s2)`: s1是否包含s2, 可以全等
-- 改
+- 改：
 
-  - 增
+  - 增：
 
     - `add()`: 添加单个元素, 若已存在会报错
     - `update()`: 以列表形式添加多个元素
-  - 算
+  - 算：
 
     - 交集: `a & b`​等同于`a.intersection(b)`​
 
@@ -981,15 +555,231 @@ else:
     - 对称差集: `a ^ b`​等同于`a.symmertric_difference(b)`​, 并集 - 交集
 
       `a ^= b`​等同于`a.symmertric_difference_update(b)`​, 改变原集合, 把对称差集赋值给a
-    - 非: ～
-- 删
+    - 非: `~`
+- 删：
 
   - `pop()`: 随机删除一个元素
   - `remove()`: 删除指定元素,不存在会报错
   - `discard()`: 删除指定元素, 不存在不报错
   - `clear()`: 清空集合, 保留结构
 
-‍
+## 类型转换
+
+- 隐式转换: 布尔 + 整型 = 整型, 布尔/整型 + 浮点 = 浮点
+- 显式转换: `int()`、`float()`、`bool()`、`set()`、`dict()`、`str()`、`list()`、`tuple()`
+
+    - int(x, base = 10), base为进制数, 默认十进制, 浮点数会截断小数部分
+    - float(): 不能转换非数字类型
+    - bool(): `无参数`​、`0`​、`0.0`​、`空字符串`​、`空列表`​、`空元组`​、`空集合`​、`空字典`​、`None`​返回false
+
+## 特殊类型
+
+- 空值None: 只有一个值None, 类型为Nonetype
+
+- 可迭代对象：可逐一返回其成员对象, 可迭代协议`__iter__()`, 本身不能返回元素, 只是一个容器
+
+- 迭代器：
+
+    - `iter(callable, sentinel)`: 返回一个迭代器
+
+        - callable: 一个可调用的对象, 如函数或lambda
+        - sentiel: 停止值, 当callable返回此值时, 迭代结束, 可取代while循环
+
+        ```python
+        def reader(s):
+        	for chunk in iter(lambda: s.recv(CHUNKSIZE), b''):
+        		process_data(data)
+        ```
+
+    - `next()`：显式获取下一元素
+
+    ```python
+    numbers = [1, 2, 3, 4]
+    iterator = iter(numbers)  # 获取迭代器
+    
+    # 使用for循环迭代
+    for i in iterator:   	# for循环在后台自动用next()处理, 直到触发异常为止, 所以for循环不需next()	
+    	print(i)
+    
+    # 使用 next() 显式获取元素
+    print(next(iterator))  # 输出 1
+    print(next(iterator))  # 输出 2
+    print(next(iterator))  # 输出 3
+    print(next(iterator))  # 输出 4
+    # 再调用 next() 会抛出 StopIteration 异常
+    
+    try:
+        print(next(iterator))  # 会抛出 StopIteration
+    except StopIteration:
+        print("Iteration is complete!")
+    ```
+
+- 生成器：推荐多用
+
+    - 创：生成器表达式（列表推导式的`[]`变成`()`）或函数+yield
+
+    - `next(gen)`: 获取下一个值，`gen.next()`​方法已废弃
+
+    - `gen.send()`: 向生成器内部发送一个值**成为yield表达式的结果**，并继续执行生成器的代码
+
+        - :warning:易混淆, `a = yield b`​, 生成b后暂停，a接受`send()`
+
+        ```python
+        def calc_avg():
+            """流式计算平均值"""
+            total, counter = 0, 0
+            avg_value = None
+            while True:
+                value = yield avg_value 	# 生成avg_value后暂停, value接受send()
+                total, counter = total + value, counter + 1
+                avg_value = total / counter
+                
+        gen = calc_avg()
+        next(gen)
+        print(gen.send(10)) 	# 10被赋值给value
+        print(gen.send(20))
+        print(gen.send(30))
+        ```
+
+    - `gen.throw(exception_type, value=None, traceback=None)`: 向生成器抛出一个异常, 生成器可捕获处理或继续抛出
+
+      - `gen.close()`: 关闭生成器, 触发`GeneratorExit`​异常, 关闭后无法再通过`next()`​获取值
+
+      - `yield from <iterable>`: 简化生成器委托, 把一个生成器的输出直接传递给外部调用者, 减少编写`for`循环和手动调用yield
+
+        ```python
+        def num_generator(m, n):
+        	yield from range(m, n + 1)
+        ```
+
+        - 可传递子生成器的返回值和异常
+
+      - 使用场景：
+
+        - 处理大型数据集(节省内存):
+
+            ```python
+            # 逐行读取文件
+            def read_large_file(file_path):
+                with open(file_path, 'r') as file:
+                    for line in file:
+                        yield line  # 每次返回一行内容
+            
+            # 使用生成器逐行读取文件, 避免一次性将整个文件加载到内存
+            for line in read_large_file('large_file.txt'):
+                process(line)  # 逐行处理文件内容
+            ```
+
+        - 无限序列生成:
+
+            ```python
+            # 生成无限数字序列
+            def infinite_counter(start=0):
+                count = start
+                while True:
+                    yield count  # 每次返回一个新的数字
+                    count += 1
+            
+            # 生成无限的数字序列
+            counter = infinite_counter()
+            for _ in range(10):
+                print(next(counter))  # 输出 0 1 2 3 4 5 6 7 8 9
+            
+            # Fibonacci
+            def fibonacci():
+            	a, b = 0, 1
+            	while True:
+            		yield b
+            		a, b = b, a + b
+            
+            fib = fibonacci()
+            ```
+
+        - 生成组合或排列:
+
+            ```python
+            # 生成所有排列
+            import itertools
+            
+            def generate_permutations(iterable):
+                for item in itertools.permutations(iterable):
+                    yield item
+            
+            # 生成所有字符的排列
+            for perm in generate_permutations('AB'):
+                print(perm)
+            ```
+
+        - 管道式数据处理: 在多个处理步骤之间进行数据的传递和处理, 例如, 数据从一个生成器流到下一个生成器, 每个生成器执行某一特定的转换操作
+
+            ```python
+            def read_lines(file_path):
+                with open(file_path) as f:
+                    for line in f:
+                        yield line.strip()
+            
+            def filter_lines(lines, keyword):
+                for line in lines:
+                    if keyword in line:
+                        yield line
+            
+            def process_lines(lines):
+                for line in lines:
+                    yield line.upper()
+            
+            # 使用生成器管道处理文件
+            file_lines = read_lines('data.txt')
+            filtered_lines = filter_lines(file_lines, 'important')
+            processed_lines = process_lines(filtered_lines)
+            
+            for line in processed_lines:
+                print(line)
+            ```
+
+        - 批处理数据: 数据需要被分成小批次处理(例如机器学习中的数据加载)
+
+            ```python
+            def batch_generator(data, batch_size):
+                for i in range(0, len(data), batch_size):
+                    yield data[i:i + batch_size]
+            
+            # 假设我们有一个大数据集
+            data = [i for i in range(100)]
+            
+            # 使用生成器按批次处理数据
+            for batch in batch_generator(data, 10):
+                print(batch)  # 每次输出一个包含 10 个元素的子列表
+            ```
+
+        - 延迟计算：
+
+            ```python
+            def lazy_square(n):
+                for i in range(n):
+                    yield i * i  # 每次返回一个平方值
+            
+            # 生成一个懒加载的平方数序列
+            for value in lazy_square(5):
+                print(value)  # 输出 0, 1, 4, 9, 16
+            ```
+
+          - 流式数据处理: 如处理网络请求、实时数据流, 允许一边接收数据一边处理数据, 避免在内存中存储大量中间数据
+
+            ```python
+            import time
+            
+            def simulate_data_stream():
+                for i in range(10):
+                    time.sleep(1)  # 模拟延迟
+                    yield i  # 每秒钟生成一个新的数据
+            
+            # 实时处理数据流
+            for data in simulate_data_stream():
+                print(f"Received data: {data}")
+            ```
+
+
+
 
 ---
 
@@ -999,8 +789,8 @@ else:
 
 - 顺序结构: 从头到尾, 不重复, 不跳过
 
-  - pass关键字: 无实际意义, 占位, 保证语法完整, 不输出
-- 选择(分支)结构
+  - `pass`关键字: 无实际意义, 占位, 保证语法完整, 不输出
+- 选择(分支)结构：
 
   - 单分支语句: `if`​, 注意if句后的冒号 表达式不成立时, 不执行语句
   - 双分支语句: `if else`​
@@ -1008,7 +798,7 @@ else:
     - 使用三元运算符简化: `max = a if a > b else b`​
   - 多分支语句: `if elif else`​从上往下匹配条件, 否则执行else语句
   - 分支嵌套
-- 循环结构
+- 循环结构：
 
   - while: 初始表达式只执行一次, 条件不满足时, 跳出整个循环
 
@@ -1031,46 +821,8 @@ else:
 
 # 四、函数
 
-一等公民, 封装功能, 按需调用, 可嵌套, 简洁易维护, 属于`function类`​
-
-查看函数源码: comand+点击功能名称
-
-先定义后调用, 否则报错
-
-## 一等公民
-
-指可作为函数参数、函数返回值、赋值给变量、存储在数据结构中、传递和操作的对象, 即可像任何其他类型的数据一样被使用和操作的实体, Python中的'一等公民':
-
-- 函数
-- 类
-
-  ```python
-  class Dog:
-  	pass
-  
-  Animal = Dog
-  dog_instance = Animal("Max")
-  ```
-- 方法
-
-  ```python
-  class Cat:
-      def __init__(self, name):
-          self.name = name
-  
-      def meow(self):
-          return f"{self.name} says meow!"
-  
-  cat = Cat("Whiskers")
-  meow_method = cat.meow  # 获取方法
-  print(meow_method())  # 输出: Whiskers says meow!
-  ```
-- 对象
-
-## 语法
-
 ```python
-def 函数名():
+def 函数名():			# 函数名遵循标识符命名规则, 重名则后覆盖前
 	函数体
 	[return 返回值]
 
@@ -1083,85 +835,59 @@ def 函数名(params: type) -> type: 		# type指明参数类型和返回值类�
 	'''
 	函数体
 	[return 返回值]
-
-# 可像变量一样赋值后调用
-def myprint():
-	pass
-
-t = myprint
-t() 	# 调用t()
-
-# getattr返回md5函数对象, 最后的括号则调用md5()
-self.hasher = getattr(__import__('hashlib'), alg.lower())()
 ```
 
-- 函数名遵循标识符命名规则, 尽量顾名思义, 若重名, 则后覆盖前
-- 参数: `()`​为参数列表, 可为空
+- 可像变量一样赋值后调用：
 
-  - 参数类型
+    ```python
+    def myprint():
+    	pass
+    t = myprint
+    t() 	# 调用t()
+    
+    # getattr返回md5函数对象, 最后的括号则调用md5()
+    self.hasher = getattr(__import__('hashlib'), alg.lower())()
+    ```
 
-    - 必须参数/位置参数: 调用时必须以正确顺序传参, 形实数量一致, 否则报错
-    - 关键字参数: 允许形实乱序, 自动匹配
-    - 默认参数: 定义时给形参的默认值, 无实参则使用默认值, 有实参则覆盖默认值
+- 参数: `()`为参数列表, 可为空，要求独立参数，不独立时需使用*拆包
 
-      - 参数列表中若有默认参数, 应放在最后, 否则报错
-    - 不定长参数(可变参数): 必须放在普通参数之后
-
-      - \*args: 接收多个位置参数, 得到参数为元组
-      - \*\*kwargs: 接收多个关键字参数, 得到参数为字典形式, 传入时使用键值对形式(k \= v)
-    - 命名式关键字参数: 限制只能使用关键字方式传参, 若形参中有\*, <u>*后面的必须用关键字参数传参</u>, 而不能用位置传参, 调用函数时必须明确参数名
-
-      ```python
-      def greet(name, age, *, country='China'):
-      	pass
-      
-      greet('Alice', 30, country='USA') 	# *后的参数必须用关键字传参
-      ```
-  - 拆包实参列表
-
-    - 函数要求独立参数, 参数不独立时, 使用\*操作符把参数从**列表、元组、字典**中拆包
-
-      ```python
-      func(*[1, 2, 3]) 	# 参数在列表中, 用*拆包
-      func(**dict_example)
-      ```
-- 函数体: 要实现的功能
-- 返回值: 
-
-  - return a \=\= b, 返回布尔值, 简单明了
+  - 必须参数/位置参数: 调用时必须以正确顺序传参, 形实数量一致, 否则报错
+  - 关键字参数: 允许形实乱序, 自动匹配
+  - 默认参数: 定义时给形参的默认值, 无实参则使用默认值, 有实参则覆盖默认值
+  
+    - 参数列表中若有默认参数, 应放在最后, 否则报错
+  - 不定长参数(可变参数): 必须放在普通参数之后
+  
+    - \*args: 接收多个位置参数, 得到参数为元组
+    - \*\*kwargs: 接收多个关键字参数, 得到参数为字典形式, 传入时使用键值对形式(k \= v)
+  - 命名式关键字参数: 限制只能使用关键字方式传参, 若形参中有\*, <u>*后面的必须用关键字参数传参</u>, 而不能用位置传参, 调用函数时必须明确参数名
+  
+    ```python
+    def greet(name, age, *, country='China'):
+    	pass
+    
+    greet('Alice', 30, country='USA') 	# *后的参数必须用关键字传参
+    ```
+  
+- 返回值: 默认返回None
 
   - 可一次返回多个数据, 以元组形式保存
-  - 若出现return, return后面的程序(同层级)不会执行
-  - 若return后无任何数据, 默认返回None, 若不写return, 等价于return None
-  - 可用一个变量接受return的数据
-
-## 原理
-
-`def`​实际上是执行一条指令, 用来创建函数, 函数是执行到的时候才创建, 先创建一个**函数对象**, 然后将func这个名称符号绑定到这个函数上
-
-```python
-# def func()的字节码
-30 LOAD_CONST               5 (<code object func at 00D97650, file "demo.py", line 6>)
-33 MAKE_FUNCTION            0
-36 STORE_NAME               2 (func)
-```
-
-Python无法实现C和Java中的重载, 用def语句再次创建一个同名的函数时, 这个变量名就绑定到新的函数对象上
+- 若出现return, return后面的程序(同层级)不会执行
 
 ## 内置函数
 
-内部设置, 直接使用
-
 - `input()`: 接收类型为str, 程序在input函数暂停等待, 输入并回车后继续
+
 - `eval()`: 解析字符串, 转变成数据对应的类型, 如将字符串'10'转变为int类型10
 
-  - 应尽量避免使用，会执行任意传入的字符串作为代码, 且执行效率低于静态代码
+  - 应尽量**避免使用**，会执行任意传入的字符串作为代码, 且执行效率低于静态代码
 
     ```python
     user_input = "__import__('os').system('rm -rf /')"
     eval(user_input)
     ```
   - 替代：`ast.literal_eval()`​，仅支持字面量，如数字、字符串、列表、字典等，不执行代码
+  
 - `print()`: 参数: 
 
   - `self`: 类名, 一般指当前类
@@ -1169,6 +895,7 @@ Python无法实现C和Java中的重载, 用def语句再次创建一个同名的�
   - `sep`: 输出多个数据时数据的间隔, 默认为空格
   - `end`: 输出完毕后的结尾符号, 默认为\\n(技巧: 利用`print()`​换行)
   - `file`: 表示文件名称, 默认为控制台
+  
 - `range([start], end, [step])`​
 
   - `start`: 开始值, 包含, 可选, 默认为0
@@ -1176,6 +903,7 @@ Python无法实现C和Java中的重载, 用def语句再次创建一个同名的�
   - `step`: 步长值, 两值间隔, 默认为1
 
   - 不能直接print, 须借助`list()`​函数 (将其他类型数据转换为列表)
+  
 - `format()`: 格式化函数, `f'{}'`​更简单
 
   - 不设定指定位置, 按照默认位置: 
@@ -1262,23 +990,29 @@ Python无法实现C和Java中的重载, 用def语句再次创建一个同名的�
     ```python
     print ("{} 是 {{银护的台词}}".format("i am Groot")) 	# i am Groot 是 {银护的台词}
     ```
-- `enumerete()`: 枚举函数
+  
+- `enumerete()`: 枚举函数，二参为start位置
+
+    ```python
+    for k, v in enumerate(str1):
+        print(k, v, end='*')
+    ```
+
 - `abs()`: 求绝对值
+
 - `pow(base, exp, mod)`: 求幂
 
 ## 匿名函数
 
-定义时不使用def关键字, 而是用`lambda`​表达式, 调用时一般使用变量接收
+`lambda 参数列表: lambda体`，参数列表不用小括号
 
-简单清晰, 一般只有一行, 不能包含多条语句
+简单清晰, 一般只有一行, 不能包含多条语句，一般使用变量接收
 
 结果返回给`lambda()`​, 不用return
 
 可没有参数, 仅作为函数的'调用器': `lambda: stream.read(self.size)`​
 
 ```python
-lambda 参数列表: lambda体  		# 参数列表不用小括号
-
 test = lambda x, y: x * y 
 print(test(12, 4))
 
@@ -1297,7 +1031,7 @@ for buf in iter(lambda: stream.read(self.size), b''):
 
 ## 回调函数
 
-把函数1作为参数传到函数2中, 函数1即为回调函数, 常用于高阶函数
+把函数1作为参数传到函数2中, 函数1即为回调函数, 常用于高阶函数：
 
 - `map(func, iterable)`: 映射
 
@@ -1324,19 +1058,6 @@ for buf in iter(lambda: stream.read(self.size), b''):
   - `key=排序规则`: 可传递函数, 如`len()`​或者lambda等
 
 ## 闭包closure
-
-指**一个函数**和**其周围的自由变量的引用**组合而成的对象, 可让函数'记住'它定义时的环境, 即使函数被调用时这些环境已离开作用域
-
-### 特点
-
-- 函数嵌套函数
-- 自由变量: 内层函数引用了外层函数中的变量
-- 持久化环境: 即使外层函数执行完毕, 闭包仍然保留对自由变量的访问权
-
-### 结构
-
-- **外层函数**: 提供了定义和变量的作用域
-- **内层函数**: 引用了外层函数中的变量, 并作为返回值存在
 
 ```python
 # 一个简单的闭包
@@ -1373,7 +1094,7 @@ print(counter1())  # 输出 2
 print(counter2())  # 输出 1
 ```
 
-### **应用场景**
+**应用场景：**
 
 1. 数据封装: 使用闭包可以创建私有变量, 只能通过闭包内的函数访问
 
@@ -1395,205 +1116,183 @@ print(counter2())  # 输出 1
 2. 回调函数: 闭包可以用于传递回调函数, 记住上下文环境
 3. 装饰器: 闭包是实现装饰器的基础, 用来为函数动态添加功能
 
-### **闭包和普通函数的区别**
-
-|**普通函数**|**闭包**|
-| ------------------------------| --------------------------------------------------|
-|没有'记住'外部变量的能力|能够记住外部函数的变量, 即使外部函数已经执行完毕|
-|作用域受限于当前的执行环境|闭包保存了自由变量的引用, 可以在不同作用域中使用|
-|变量的生命周期受限于函数调用|变量的生命周期可以延长, 直到闭包不再被引用|
-
-### **注意**
-
-- `nonlocal`​关键字: 如果需要在闭包中修改外层函数的变量, 必须使用`nonlocal`​声明
-- 可能导致内存泄漏: 如果闭包持有过多不必要的引用, 可能会导致内存无法释放
-- 避免过度依赖闭包: 虽然闭包非常强大, 但在某些场景下可能会导致代码可读性下降
-
 ## 装饰器
 
-Python中一种高级函数, 用于在不改变原函数代码的情况下, 动态地为函数或方法添加功能(可复用, 可多个修饰一个函数)
+**结构:**
 
-- 原则: 封闭开放, 定义好的功能不再修改, 增加额外的功能
-- 本质: 是一个函数, 它接受另一个函数作为参数, 对其进行扩展或修改后返回一个新的函数
-- 优点:
+```python
+def decorator(func): 	# func即被装饰的函数
+    def wrapper(*args, **kwargs):	# 包装函数, 在此添加额外功能
+        # 在调用原函数之前可以执行一些操作
+        do Something
+        # 调用原函数
+        result = func(*args, **kwargs)
+        # 在调用原函数之后可以执行一些操作
+        do Something
+        return result
+    return wrapper
+```
 
-  - 代码复用: 通过装饰器, 可以为多个函数动态添加相同的功能
-  - 分离逻辑: 把通用功能(如日志、权限验证)与业务逻辑分离
-  - 简洁优雅: 避免重复代码, 提高代码可读性
-- 若有多个装饰器, 从上到下执行, 原函数只调用一次
-- 结构:
+**使用:** `@decorator_name`​置于函数定义上一行
+
+**带参数的装饰器**(装饰器本身有参数):
+
+```python
+# 接受一个times参数, 返回一个装饰器
+def repeat(times):		# 装饰器工厂, 用来生成装饰器
+	# 接受一个func参数, 返回一个包装函数
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            for _ in range(times):
+                func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+@repeat(times=3)
+def greet():		# 实际上被替换为wrapper函数
+    print("Hello!")
+
+greet()
+```
+
+**应用场景:**
+
+- 日志记录:
 
   ```python
-  def decorator(func): 	# func即被装饰的函数
-      def wrapper(*args, **kwargs):	# 包装函数, 在此添加额外功能
-          # 在调用原函数之前可以执行一些操作
-          do Something
-          # 调用原函数
-          result = func(*args, **kwargs)
-          # 在调用原函数之后可以执行一些操作
-          do Something
+  def log(func):
+      def wrapper(*args, **kwargs):
+          print(f"Function {func.__name__} is called with {args}, {kwargs}")
+          return func(*args, **kwargs)
+      return wrapper
+  
+  @log
+  def multiply(a, b):
+      return a * b
+  
+  print(multiply(2, 5))
+  ```
+- 权限验证:
+
+  ```python
+  def require_auth(func):
+      def wrapper(user, *args, **kwargs):
+          if not user.get("is_admin"):
+              print("Access denied.")
+              return None
+          return func(user, *args, **kwargs)
+      return wrapper
+  
+  @require_auth
+  def delete_user(user, user_id):
+      print(f"User {user_id} has been deleted.")
+  
+  # 示例
+  admin = {"username": "admin", "is_admin": True}
+  guest = {"username": "guest", "is_admin": False}
+  
+  delete_user(admin, 123)  # 有权限
+  delete_user(guest, 456)  # 无权限
+  
+  # ------------------------------ # 
+  # 输出
+  User 123 has been deleted.
+  Access denied.
+  ```
+- 缓存结果: 将最近调用的输入参数及结果缓存, 极大的提高效率, 若有新的调用, 先检查缓存, 维护一个固定大小的有序字典, 存储参数和对应的返回值
+
+  ```python
+  def cache(func):
+      cached_results = {}
+  
+      def wrapper(*args):
+          if args in cached_results:
+              print("Fetching from cache...")
+              return cached_results[args]
+          result = func(*args)
+          cached_results[args] = result
           return result
       return wrapper
+  
+  @cache
+  def fibonacci(n):
+      if n <= 1:
+          return n
+      return fibonacci(n - 1) + fibonacci(n - 2)
+  
+  print(fibonacci(10))  # 计算并缓存结果
+  print(fibonacci(10))  # 从缓存中获取
   ```
-- 使用: `@decorator_name`​置于函数定义上一行
-- 带参数的装饰器(装饰器本身有参数):
+
+  - `@lru_cache`: Least Recently Used cache缓存装饰器, maxsize指定缓存的最大条目数
+
+    ```python
+    from functiontools import lru_cache
+    
+    @lru_cache(maxsize=256)  
+    def fib(n): 
+    	if n in (1, 2): 
+    		return 1 
+    	return fib(n - 1) + fib(n - 2)
+    ```
+- 确保枚举唯一: `@unique`​, 修饰枚举类, 若枚举类中有重复值, 会抛出ValueError异常, 枚举成员之间**只能用is比较**, 不能用==
 
   ```python
-  # 接受一个times参数, 返回一个装饰器
-  def repeat(times):		# 装饰器工厂, 用来生成装饰器
-  	# 接受一个func参数, 返回一个包装函数
-      def decorator(func):
-          def wrapper(*args, **kwargs):
-              for _ in range(times):
-                  func(*args, **kwargs)
-          return wrapper
-      return decorator
+  from enum import Enum, unique
   
-  @repeat(times=3)
-  def greet():		# 实际上被替换为wrapper函数
-      print("Hello!")
-  
-  greet()
+  @unique
+  class Color(Enum):	# 继承Enum表示定义的是一个枚举类, 包含一组有意义的常量集合, 但不保证唯一性
+  	RED = 1			# Enum允许多个枚举成员有相同值
+  	GREEN = 2
+  	BLUE = 3
   ```
-- 应用场景:
+- 加速计算：`@jit`​，即时编译，将数值函数编译成接近机器语言的高效代码
 
-  - 日志记录:
+  函数必须是数值密集型、循环密集型才有效果，不支持所有Python特性（复杂类，字符串操作等），第一次运行慢（编译），推荐`nopython=True`​，否则会自动fallback到Python模式，提升不大
 
-    ```python
-    def log(func):
-        def wrapper(*args, **kwargs):
-            print(f"Function {func.__name__} is called with {args}, {kwargs}")
-            return func(*args, **kwargs)
-        return wrapper
-    
-    @log
-    def multiply(a, b):
-        return a * b
-    
-    print(multiply(2, 5))
-    ```
-  - 权限验证:
+  ```python
+  @jit(nopython=True)
+  def foo(x):
+  	pass
+  ```
+- 实现单例模式:
 
-    ```python
-    def require_auth(func):
-        def wrapper(user, *args, **kwargs):
-            if not user.get("is_admin"):
-                print("Access denied.")
-                return None
-            return func(user, *args, **kwargs)
-        return wrapper
-    
-    @require_auth
-    def delete_user(user, user_id):
-        print(f"User {user_id} has been deleted.")
-    
-    # 示例
-    admin = {"username": "admin", "is_admin": True}
-    guest = {"username": "guest", "is_admin": False}
-    
-    delete_user(admin, 123)  # 有权限
-    delete_user(guest, 456)  # 无权限
-    
-    # ------------------------------ # 
-    # 输出
-    User 123 has been deleted.
-    Access denied.
-    ```
-  - 缓存结果: 将最近调用的输入参数及结果缓存, 极大的提高效率, 若有新的调用, 先检查缓存, 维护一个固定大小的有序字典, 存储参数和对应的返回值
+  ```python
+  def singleton(cls):
+      """装饰类的装饰器"""
+      instances = {}
+  
+      @wraps(cls)
+      def wrapper(*args, **kwargs):
+          if cls not in instances:
+              instances[cls] = cls(*args, **kwargs)
+          return instances[cls]
+  
+      return wrapper
+  
+  @singleton
+  class President:
+      """总统(单例类)"""
+      pass
+  
+  # 线程安全的单例装饰器
+  from functools import wraps
+  form threading import RLock
+  def singleton(cls):
+      """线程安全的单例装饰器"""
+      instances = {}
+      locker = RLock()
+  
+      @wraps(cls)
+      def wrapper(*args, **kwargs):
+          if cls not in instances: 	# 检查两次比先锁后查性能更好
+              with locker:		# 锁对象本就是上下文管理器对象
+                  if cls not in instances: 
+                      instances[cls] = cls(*args, **kwargs)
+          return instances[cls]
+  
+      return wrapper
 
-    ```python
-    def cache(func):
-        cached_results = {}
-    
-        def wrapper(*args):
-            if args in cached_results:
-                print("Fetching from cache...")
-                return cached_results[args]
-            result = func(*args)
-            cached_results[args] = result
-            return result
-        return wrapper
-    
-    @cache
-    def fibonacci(n):
-        if n <= 1:
-            return n
-        return fibonacci(n - 1) + fibonacci(n - 2)
-    
-    print(fibonacci(10))  # 计算并缓存结果
-    print(fibonacci(10))  # 从缓存中获取
-    ```
-
-    - `@lru_cache`: Least Recently Used cache缓存装饰器, maxsize指定缓存的最大条目数
-
-      ```python
-      from functiontools import lru_cache
-      
-      @lru_cache(maxsize=256)  
-      def fib(n): 
-      	if n in (1, 2): 
-      		return 1 
-      	return fib(n - 1) + fib(n - 2)
-      ```
-  - 确保枚举唯一: `@unique`​, 修饰枚举类, 若枚举类中有重复值, 会抛出ValueError异常, 枚举成员之间只能用is比较, 不能用==
-
-    ```python
-    from enum import Enum, unique
-    
-    @unique
-    class Color(Enum):	# 继承Enum表示定义的是一个枚举类, 包含一组有意义的常量集合, 但不保证唯一性
-    	RED = 1			# Enum允许多个枚举成员有相同值
-    	GREEN = 2
-    	BLUE = 3
-    ```
-  - 加速计算：`@jit`​，即时编译，将数值函数编译成接近机器语言的高效代码
-
-    函数必须是数值密集型、循环密集型才有效果，不支持所有Python特性（复杂类，字符串操作等），第一次运行慢（编译），推荐`nopython=True`​，否则会自动fallback到Python模式，提升不大
-
-    ```python
-    @jit(nopython=True)
-    def foo(x):
-    	pass
-    ```
-  - 实现单例模式:
-
-    ```python
-    def singleton(cls):
-        """装饰类的装饰器"""
-        instances = {}
-    
-        @wraps(cls)
-        def wrapper(*args, **kwargs):
-            if cls not in instances:
-                instances[cls] = cls(*args, **kwargs)
-            return instances[cls]
-    
-        return wrapper
-
-
-    @singleton
-    class President:
-        """总统(单例类)"""
-        pass
-    
-    # 线程安全的单例装饰器
-    from functools import wraps
-    form threading import RLock
-    def singleton(cls):
-        """线程安全的单例装饰器"""
-        instances = {}
-        locker = RLock()
-    
-        @wraps(cls)
-        def wrapper(*args, **kwargs):
-            if cls not in instances: 	# 检查两次比先锁后查性能更好
-                with locker:		# 锁对象本就是上下文管理器对象
-                    if cls not in instances: 
-                        instances[cls] = cls(*args, **kwargs)
-            return instances[cls]
-    
-        return wrapper
-    ```
 - `@wraps(func)`: 装饰器会覆盖原函数的元信息(函数名`__name__`​、函数文档字符串`__doc__`​、函数注解`__annotations`​), `functools.wraps`​可将原函数的元信息保留在包装函数中
 
   ```python
@@ -1633,13 +1332,13 @@ Python中一种高级函数, 用于在不改变原函数代码的情况下, 动�
 
 函数调用自身
 
-实现递归的思路: 
+**实现递归的思路:** 
 
 - 找到临界值(临界条件), 如0, 1
 - 找到两个循环间的关系
 - 总结规律
 
-注意: 
+**注意:** 
 
 - 一定要有基例(出口, 已知项)
 - 嵌套的层次不可太深(占用内存)
@@ -1816,415 +1515,6 @@ Python中第三方库的分发和安装通常有两种格式:
 - 数分三剑客: Numpy、Pandas、Matplotlib
 - glob: 大批量文件处理
 
-## 时间模块
-
-### 两概念
-
-1. 时间戳: 1970年1月1日0时0分0秒(UNIX纪元)至今的累积时间, 浮点数
-
-2. 结构体时间: struct\_time/时间元组类型, 有9个元素, 被函数当做输入参数, 用于函数间传递时间值, 可与时间戳互相转换, 包括:
-
-    - tm\_year: 年份, 四位数整数
-    - tm\_mon: 月份, 1到12的整数
-    - tm\_mday: 日期, 1到31的整数
-    - tm\_hour: 小时, 0到23的整数
-    - tm\_min: 分钟, 0到59的整数
-    - tm\_sec: 秒数, 0到59的整数
-    - tm\_wday: 星期几, 0到6的整数 0表示星期一, 1表示星期二
-    - tm\_yday: 一年中的第几天, 1到366的整数
-    - tm\_isdst: 是否为夏令时, -1、0或1, 默认为-1 -1表示夏令时信息不可用, 0表示不是夏令时, 1表示是夏令时
-
-### time模块
-
-获取展示时间信息的标准库, 三功能:
-
-- 时间处理
-
-  - `time.time()`: 获取当下时间戳, 默认为秒数
-  - `time.gmtime()`: 返回格林威治时间戳对应的时间元组
-  - `time.ctime()`: 返回系统当前时间戳对应的易读格式字符串时间(周几, 月份, 号数, 时分秒, 年)
-  - `time.localtime()`:返回系统当前时间的时间戳对应本地时间的时间元组
-- 时间格式化
-
-  - `time.mktime(t)`: 将时间元组变量t转换成时间戳
-  - `time.strftime(format, t)`: 根据format格式显示时间
-
-    format: 由格式控制符组成的格式定义字符串
-
-    t: 代表时间的时间元组变量
-
-    ```python
-    print(time.strftime("%Y-%m-%d %H:%M:%S"))	# 2023-04-29 17:27:51
-    ```
-
-  - `time.strptime(string, format)`: 根据format格式定义解析字符串string, 返回struct\_time类型时间变量, 要求解析格式和时间字符串一致
-
-    string: 时间的字符串
-  - `time.asctime([t])`: 接受时间元组并返回形式为`"Tue Dec 11 18:07:14 2008"`​的24个字符的字符串
-- 计时
-
-  - `time.sleep(secs)`: 将当前程序挂起secs秒, 即休眠, secs表示时间的数值, 整数或者浮点数
-  - `time.perf_counter()`: 返回一个代表时间的精确的浮点数, 相比采用时间戳更为准确, 用于精确计时, 用两次或多次调用的差值来计时, 单次调用返回值没有意义, 系统提供的最精确的计时方法
-
-    ```python
-    t1 = time.perf_counter()
-    time.sleep(5)
-    t2 = time.perf_counter()
-    print(t2 - t1) 			# 5.000081919965048
-    ```
-
-### timeit模块
-
-用于统计小段代码执行时间
-
-`timeit.timeit()`​, 默认执行一百万次
-
-### datetime模块
-
-基于time模块, 更强大, 用于显示和设置日期时间
-
-- datetime类: date类和time类的综合使用
-
-  - `datetime.datetime()`: 创建datetime对象, 第一个datetime为模块名, 第二个为类名
-
-    ```python
-    date1 = datetime.datetime(year=2024, month=5, day=12, hour=12, minute=34, second=23,  microsecond=12,  tzinfo=0)
-    # 年月日不可省略, 其他都可省略, 默认值为0
-    ```
-  - `timestamp()`: 时间对象转时间戳
-  - `datetime.datetime.now(tz=None)`: 获取指定时区的当前日期和时间, `tz\=None`​等同于today()
-
-    可继续获取年、月、日等, 在后面继续`.year`​/`.month`​/`.weekday`​等
-
-    可继续`.strftime()`​, 时间格式化
-  - `datetime.today()`: 返回当前的本地日期和时间
-  - `datetime.fromtimestamp(timestamp, tz=None)`: 返回与UNIX时间戳对应的本地日期和时间
-  - `datetime.datetime.strptime(date_str, format)`: 时间反格式化
-- date类: 主要用于处理年月日
-
-  - `datetime.date(year, month, day)`: 创建date对象, 若指定的day参数超出范围会报错
-  - `date.today()`: 返回当前的本地日期
-  - `date.fromtimestamp(timestamp)`: 返回与UNIX时间戳对应的本地日期
-- time类: 主要用于处理时分秒
-
-  `datetime.time(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)`: 创建time对象
-- timedelta类: 主要用于计算时间跨度
-
-  - `datetime.timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0)`: 创建对象
-  - microsecond: 微秒, milliseconds: 毫秒
-  - 所有参数可为整形/浮点型/正数/负数
-  - 时间 +/- `datetime.timedelta(days=)`​
-- tzinfo类: 时区类
-- 与字符串类型互换
-
-  - 日期时间对象转字符串/日期时间格式化: `对象名.strftime(format)`​
-  - 字符串转日期时间对象/日期时间解析: `datetime.strptime(date_string, format)`​
-  - 格式控制符
-
-    ![截屏2024-12-23 19.02.38](../assets/截屏2024-12-23%2019.02.38-20241223190242-ju94oif.png)![截屏2024-12-23 19.28.26](../assets/截屏2024-12-23%2019.28.26-20241223192829-xwd6p03.png)​
-
-    %j: 一年中的第几天
-
-### calendar模块
-
-- `.calendar(year)`: 获取某年的日历
-- `.month(year, month)`: 获取某年某月的日历
-- `.isleap()`: 判断是否是闰年, 闰年True
-- `.leapdays(year1, year2)`: 返回两指定年份之间闰年的个数, 不包含结束年
-- `.weekday(year, month, day)`: 返回指定天的星期, 星期一: 0  星期二: 1 …… 星期日: 6
-- `.monthrange(year, month)`: 返回二元元组, 第一个数为该月第一天的星期, 第二个数为该月总天数
-
-  只拿天数`calendar.menthrange( )[-1]`​
-
-## re模块
-
-用于检索、替换符合指定格式的文本, 独立语法, 独立处理引擎, 适用于所有编程语言
-
-1. 构建正则对象: `对象 = re.compile(正则表达式, flag)`​或`对象.方法(字符串)`​, flag为模式修正符, 可选参数
-2. `re.方法(正则表达式, 字符串, flag)`​, 字符串一般配合r符不需写转义符
-3. 方法:
-
-    - `.match(pattern, string, flags=0)`: 从第一个字符匹配, 用于检查字符串是否以指定字符开头, 返回Match对象
-    - `.fullmatch()`: 从头到尾完全匹配, 等价于`match('^ $')`​
-    - `.search(pattern, string, flags=0, pos)`: 整个字符串中匹配, 返回Match对象, 只返回第一个满足条件的, 无则返None, pos控制从字符串的哪个索引开始查找
-
-      - `re.Match类`: 包含匹配的详细信息, 例如匹配的位置、内容等
-
-        - `Match.group()`: 返回匹配的具体内容
-        - `Match.start()`: 返回匹配内容的开始索引
-        - `Match.end([group])`: 返回指定组匹配的结束位置的**索引**(以字符串开头为基准, <u>右边界的索引+1</u>, group可省, 默认为整个匹配, 即组号0
-        - `Match.span()`: 返回`(start, end)`​元组
-
-        ```python
-        # 通过search函数指定搜索位置找出所有匹配
-        m = pattern.search(sentence)
-        while m:
-            print(m.group())
-            m = pattern.search(sentence, m.end())
-        ```
-    - `.findall()`: 查找所有满足条件的内容, 返回匹配内容**列表**, 无则返回空列表
-
-      - 带捕获组: 使用`()`​可返回`()`​中的内容, 列表形式, 若有n个(), 列表元素为n元元组
-
-        ```python
-        text = "Name: Alice, Age: 25; Name: Bob, Age: 30"
-        pattern = r"Name: (\w+), Age: (\d+)"  # 捕获名字和年龄
-        result = re.findall(pattern, text)
-        print(result)  # 输出: [('Alice', '25'), ('Bob', '30')]
-        
-        text = "2023-01-01, 2024-12-31"
-        pattern = r"(\d{4})-(\d{2})-(\d{2})"  # 捕获年、月、日
-        result = re.findall(pattern, text)
-        print(result)  # 输出: [('2023', '01', '01'), ('2024', '12', '31')]
-        ```
-    - `.finditer()`: 同findall, 返回迭代器
-    - `.split(pattern, str, maxsplit=0)`: 用指定正则内容分割字符串, 返回**列表**, maxsplit为最大分割次数, 为0表示不限次数, 常搭配+使用
-    - `.sub(正则, 新内容, 字符串, count=0)`: 用新内容替换字符串中指定正则内容, 不显示替换次数, count为指定替换次数, 为0表示不限次数
-    - `.subn(正则, 新内容, 字符串, count=0)`: 显示替换次数
-    - `.compile(pattern, flags=0)`: 编译正则表达式返回正则表达式对象, 可直接调用正则对象的方法, 而不是re的方法传参
-
-      - 若某正则表达式需重复使用, 最好先compile减少解析和编译的次数
-    - `.purge()`: 用于清除隐式编译的正则表达式的缓存, 在内存受限条件下使用, 极少使用(`re`​模块会缓存最近使用的正则表达式, 最多缓存512个)
-
-      - 调用re函数时, 会发生以下隐式流程:
-
-        - 正则解析: 将正则表达式字符串转化为内部的正则表达式对象, 即re.Pattern类的一个实例
-        - 正则编译: 正则引擎会将这个解析后的正则表达式转换为字节码, 用于高效匹配
-        - 匹配: 正则引擎会用生成的字节码去匹配目标字符串
-        - 返回结果
-
-## string模块
-
-- `whitespace = ' \t\n\r\v\f'`: 空白符有个空格, 易忘
-- `ascii_lowercase = 'abcdefghijklmnopqrstuvwxyz'`​
-- `ascii_uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'`​
-- `ascii_letters = ascii_lowercase + ascii_uppercase`​
-- `digits = '0123456789'`​
-- `hedigits = digits + 'abcdef' + 'ABCDEF'`​
-- `octdigits = '01234567'`​
-- `punctuation = f""!"#$%&'()*+,--/:;<=>?@[\]^_{|}`​
-- `printable = digits + ascii_letters + punctuation + whitespace`​
-
-## copy模块
-
-- `.copy()`: 浅拷贝/浅复制/影子克隆, 创建新对象, 并复制原对象**属性**中**基本数据类型的值**和**引用类型的引用**
-
-  - 不看其本身是基本数据类型/引用类型, 只看元素类型
-  - 与简单赋值区别: =赋值未创建新对象, 浅拷贝创建对象
-- `.deepcopy()`: 深拷贝/深复制/深度克隆, 开辟新栈, 新旧无关, 复制值而不是引用
-
-> 浅拷贝相较简单赋值更进一步, 创建了新对象并复制了基本类型元素的值
->
-> 深拷贝相较浅拷贝更进一步, 复制了引用类型元素的值
-
-## warnings模块
-
-```python
-warnings.filterwarnings('ignore') 	# 警告过滤器
-```
-
-## random模块
-
-- `.random()`: [0, 1)区间随机小数
-- `.uniform(a, b)`: 指定闭区间随机**实数**
-- `.randint(start, end)`: 指定范围一个随机整数, 包含结束值
-- `.choice()`: 指定范围随机选择一个
-- `.choices(序列, k)`: 指定范围随机选择多个, 有放回式抽样, k为样本数
-- `.sample(序列, k)`: 指定范围随机选择多个, 无放回, 要求序列本身不重复, 样本数k大于序列长度会报错
-- `randrange(start, end, step)`: 指定递增数列中随机选择一个数, 不包含结束值, 可省略step
-- `shuffle()`: 打乱列表, 修改**原列表**
-
-## math模块
-
-提供复杂浮点数学运算的函数, 如幂指对三角、双曲线等
-
-- `.fabs()`: 绝对值, 返回浮点型
-- `.fsum()`: 无精度损失求和, 返回浮点型
-- `.pow(x, y)`: 返回x的y次幂的值, 返回浮点型
-- `.factorial()`: 阶乘
-- `math.ceil()`: 向上取整, 注意负数的问题
-- `math.floor()`: 向下取整
-- `math.sqrt()`: 开平方
-- `math.modf()`: 浮点数分割, 结果为元组
-- `math.log(x, base)`: 返回以base为底的x的对数, 若省略base, 则计算x自然对数
-- `sin()`: 返回弧度x的三角正弦
-- `degrees(x)`: 将弧度x转换为角度
-- `radians(x)`: 将角度x转换为弧度
-- `math.e`​、`math.pi`​、`math.nan`​、`math.inf`​等常量
-
-## os模块
-
-### 文件(夹)操作
-
-- 创
-
-  - `os.mkdir()`: 创建文件夹 存在则报错
-
-    ```python
-    if not os.path.exists('名'):  
-    	os.mkdir('名')
-    ```
-  - `os.makedirs()`: 递归式创建文件夹, `/`​隔开各层, 参数exist_ok=True: 文件不存在时则创建
-- 查
-
-  - `os.listdir()`: 查看指定目录下所有文件和文件夹, 只能看一层
-  - `os.curdir()`: 获取当前目录
-  - `os.getcwd()`: 获取当前绝对路径
-  - `os.walk()`: 遍历源文件夹下所有子目录和文件
-
-    ```python
-    for root, dirs, files in os.walk(source_dir):
-    	pass
-    ```
-  - `os.path.abspath()`: 获取相对路径对应的绝对路径
-  - `os.path.basename()`: 获取路径的最后一级路径名
-  - `os.path.dirname()`: 获取包含最后一级路径的内容 即除最后一级之外的所有
-  - `os.path.splitext()`: 返回二元元组, 文件则返回(文件名, 后缀), 文件夹则返回(目录, '空串')
-  - `os.path.getsize()`: 获取文件大小
-  - `os.path.exists()`: 判断文件是否存在, 返回布尔值
-  - `os.path.isfile()`: 判断是否是文件, 返回布尔值, 文件夹为否
-  - `os.path.isdir()`: 判断是否是文件夹, 返回布尔值, 文件为否
-  - `os.path.isabs()`: 判断是否是绝对路径
-- 改
-
-  - `os.rename('原名', '新名'或'新路径'`: 路径不变名字变: 重命名, 名字不变路径变: 实现剪切
-  - `os.path.join()`: 路径拼接, 拼成一个完整的路径
-  - `os.path.split()`: 路径拆分
-- 删
-
-  - `os.rmdir()`: 删除文件夹, 不存在则报错
-
-    ```python
-    if os.path.exists('demo'): os.rmdir('demo')
-    ```
-  - `os.removedirs()`: 删除多级文件夹, 需为空文件夹, 不能有文件
-  - `os.remove()`: 删除文件, 需为当前文件所在目录下的
-
-### system操作
-
-- `os.system('clear')`: 清屏
-
-## shutil模块
-
-标准库模块, 提供高级的文件操作和文件系统操作功能, 简化文件系统任务
-
-- 复制:
-
-  - `shutil.copy(src, dst)`: 复制文件(包括文件内容和权限)
-  - `shutil.copy2(src, dst)`: 复制文件, 除了文件内容和权限外, 还会复制文件的元数据(例如创建时间和修改时间)
-  - `shutil.copytree(src, dst)`: 递归地复制整个目录树
-
-- 移动: `shutil.move(src, dst)`: 移动文件或目录到目标路径, 若目标路径已经存在, 该路径中的内容会被覆盖
-- 删除:
-
-  - `shutil.rmtree(path)`: 递归删除整个目录树及其内容
-  - `shutil.remove(filename)`: 删除指定的文件
-- 压缩和解压:
-
-  - `shutil.make_archive(base_name, format, root_dir=None, base_dir=None)`: 创建一个压缩文件,
-
-    - `base_name`​ 是压缩文件的路径
-    - `format`​ 压缩格式, `'zip'`​/`'tar'`​
-  - `shutil.unpack_archive(filename, extract_dir=None, format=None)`: 解压缩压缩文件, 可以根据文件扩展名自动检测解压缩格式, 也可以手动指定
-- 磁盘使用情况: `shutil.disk_usage(path)`​, 获取指定路径的磁盘使用情况, 返回一个包含总空间、已用空间和剩余空间的命名元组
-- 修改文件权限: `shutil.chown(path, user=None, group=None)`​, 更改文件的拥有者和/或所属组, 可以分别指定用户和组(或者只修改其中一个)
-- 文件描述符操作: `shutil.get_terminal_size()`​, 获取终端的大小(宽度和高度)
-
-## heapq模块
-
-堆排序
-
-```python
-"""
-从列表中找出最大的或最小的N个元素
-堆结构(大根堆/小根堆)
-"""
-import heapq
-
-list1 = [34, 25, 12, 99, 87, 63, 58, 78, 88, 92]
-list2 = [
-    {'name': 'IBM', 'shares': 100, 'price': 91.1},
-    {'name': 'AAPL', 'shares': 50, 'price': 543.22},
-    {'name': 'FB', 'shares': 200, 'price': 21.09},
-    {'name': 'HPQ', 'shares': 35, 'price': 31.75},
-    {'name': 'YHOO', 'shares': 45, 'price': 16.35},
-    {'name': 'ACME', 'shares': 75, 'price': 115.65}
-]
-print(heapq.nlargest(3, list1))
-print(heapq.nsmallest(3, list1))
-print(heapq.nlargest(2, list2, key=lambda x: x['price']))
-print(heapq.nlargest(2, list2, key=lambda x: x['shares']))
-```
-
-## itertools模块
-
-迭代工具模块
-
-- `islice()`: 窗口迭代器, 返回一个运行在序列的子分组之上的迭代器
-- `batched(iterable, n)`：批次n，返回**生成器**，类型为n元元组，最后一组不足则返回较短的元组
-- `tee()`: 往返式迭代器
-- `groupby()`: uniq迭代器, 只能分组相邻的元素, 使用前需要排序
-- `chain(*iterables)`: 创建在第一个可迭代对象上迭代的迭代器, 然后继续下一个
-- `count([n])`: 返回一个给出连续整数的迭代器
-- `cycle(iterable)`: 在可迭代对象的每个元素上迭代, 然后重新开始, 无限重复
-- `dropwhile(predicate, iterable)`: predicate为真则从可迭代对象中删除元素
-- `ifilter(predicate, iterable)`: 类似filter()
-- `ifilterfalse(predicate, iterable)`: 类似ifilter, 但在predicate为假时迭代
-- `imap(function, *iterables)`: 类似map(), 在多个可迭代对象上工作, 在最短的可迭代对象耗尽时停止
-- `izip(*iterables)`: 类似zip(), 返回一个迭代器
-- `repeat(object[, times])`: 返回一个迭代器, 每次调用迭代器时返回object, 运行times次, 默认无限
-- `starmap(function, iterable)`: 类似imap, 将可迭代元素作为星号参数传递给function
-- `takewhile(predicate, iterable)`: 从可迭代对象返回元素, 当predicate为假时停止
-
-```python
-import itertools
-
-# 产生ABCD的全排列
-itertools.permutations('ABCD')
-
-# 产生ABCDE的五选三组合
-itertools.combinations('ABCDE', 3)
-
-# 产生ABCD和123的笛卡尔积
-itertools.product('ABCD', '123')
-
-# 产生ABC的无限循环序列
-itertools.cycle(('A', 'B', 'C'))
-```
-
-## collections模块
-
-常用的工具类:
-
-- `namedtuple`: 命令元组, 是一个类工厂, 接受类型的名称和属性列表来创建一个类
-- `deque`: 双端队列, 列表的替代实现, Python中的列表底层是基于数组来实现的, 而deque底层是双向链表, 因此当你需要在头尾添加和删除元素时, deque会表现出更好的性能
-- `Counter`: `dict`​的子类, 键是元素, 值是元素的计数, `most_common()`​获取出现频率最高的元素
-- `OrderedDict`: `dict`​的子类, 记录键值对插入的顺序, 看起来既有字典的行为, 也有链表的行为
-- `defaultdict`: 类似于字典类型, 但是可以通过默认的工厂函数来获得键对应的默认值, 相比字典中的`setdefault()`​方法, 这种做法更加高效
-
-```python
-"""
-找出序列中出现次数最多的元素
-"""
-from collections import Counter
-
-words = [
-    'look', 'into', 'my', 'eyes', 'look', 'into', 'my', 'eyes',
-    'the', 'eyes', 'the', 'eyes', 'the', 'eyes', 'not', 'around',
-    'the', 'eyes', "don't", 'look', 'around', 'the', 'eyes',
-    'look', 'into', 'my', 'eyes', "you're", 'under'
-]
-counter = Counter(words)
-print(counter.most_common(3))
-```
-
-## pylint/flake8
-
-提升代码质量
-
-- pylint: 可集成到pycharm中, 插件或外部工具, shell命令: `pylint module.py`​, 会生成分数和评价
-- flake8: 效果同pylint
-
 # 六、文件操作
 
 - 文件类型
@@ -2277,24 +1567,23 @@ print(counter.most_common(3))
     - `t`: 以文本文件模式打开文件, 默认
     - `b`: 以二进制文件模式打开文件
     - `w`: 以只写模式打开文件, 不能读内容
-
-      - 若文件不存在, 则创建文件, 仅限于最后一级不存在
-
-      - 若文件存在, 则**覆盖**文件内容
+  - 若文件不存在, 则创建文件, 仅限于最后一级不存在
+      
+  - 若文件存在, 则**覆盖**文件内容
     - `a`: 以追加模式打开文件, 不能读内容
-
-      - 若文件不存在, 则创建文件, 仅限于最后一级不存在
+    
+    - 若文件不存在, 则创建文件, 仅限于最后一级不存在
       - 若文件存在, 则在文件末尾追加
     - `x`: 以独占创建模式打开文件
-
-      - 若文件不存在, 则创建并以写入模式打开
+    
+    - 若文件不存在, 则创建并以写入模式打开
       - 若文件存在, 则引发FileExistsError异常
     - `+`: 以更新(读写)模式打开文件, 可读可写, 必须与r/w/a组合使用才能设置文件为读写模式
-
-    ![截屏2024-12-23 23.51.32](../assets/截屏2024-12-23%2023.51.32-20241223235135-na04eg3.png)​
+    
+  ![截屏2024-12-23 23.51.32](../assets/截屏2024-12-23%2023.51.32-20241223235135-na04eg3.png)​
   - `encoding`​参数: 用来指定打开文件时的编码, 默认None, 用操作系统默认的编码, 主要用于打开文本文件
   - `errors`​参数: 指定在发生错误时如何处理, 推荐取值为'ignore', 表示忽略该错误, 程序继续执行
-
+  
 - `close()`: 关闭文件
 
   - 推荐close放在finally代码块中, 保证对文件的操作无论正常结束与否都能关闭文件
