@@ -421,7 +421,344 @@ typedef struct _object {
 
 # 模块管理
 
+## 程序编译
 
+- 代码开始执行后, 启动Python解释器, 将`.py`文件编译为**字节码对象`PyCodeObject`**(包含源代码中的字符串、常量值、字节码指令及字节码指令和源代码行号的对应关系)
+
+    - `dis.dis.()`: 接收一个code对象, 输出code对象中字节码指令信息
+
+        ```python
+        import dis
+        
+        s = open('demo.py').read()
+        co = compile(s, 'demo.py', 'exec')
+        dis.dis(co)
+        ```
+
+- Python虚拟机从`PyCodeObject`对象中依次读入每一条字节码指令, 并在当前的`上下文环境`​中执行这条字节码指令
+
+- 执行完后, 编译结果保存为.pyc文件, 下次不用再编译, 直接加载到内存
+
+    - .pyc文件: 字节码对象在硬盘上的表现形式, 包含三部分信息:
+
+        - Python的**magic number**: Python定义的一个用来保证Python兼容性的整数值, 不同版本的Python实现都会定义不同的magic number, 检查magic number即可限制低版本编译的pyc文件不能让高版本的Python程序来执行
+        - .pyc文件创建的时间信息
+        - PyCodeObject对象
+    - 创建.pyc文件: `python generate_pyc.py module_name`​
+    - Python只会对那些以后可能继续被使用和载入的模块才会生成pyc文件, 即被import的模块有pyc文件, 而**<u>主模块不生成pyc文件</u>**
+
+## import
+
+引入，将模块、函数、类或变量加载到当前的命名空间
+
+### 过程
+
+- 确保最新: import时检查.pyc文件中的创建时间信息
+
+    - 若存在pyc文件, Python检查创建时间是否晚于代码文件的修改时间, 否则直接载入而省去编译过程
+    - 若不存在pyc文件, 先将.py文件编译生成.pyc文件, 即import指令执行后就生成pyc文件
+- <u>**将module的代码执行一遍**</u>: 创建函数(否则无法调用), 并在该module的命名空间中, 创建模块内定义的函数和各种对象的符号名称(也就是变量名), 并将其绑定到对象上, 使其他module能通过变量名来引用这些对象
+- 缓存: 缓存已被import的module到一个全局modules集合`sys.modules`​(dict类型), 再次被import时从缓存中返回
+
+### 引入方式
+
+- 动态引入: 程序运行时根据需要加载模块, 灵活, 节省初始加载时间, 通过importlib模块或`__import__`​实现
+
+    ```python
+    # importlib模块
+    import importlib
+    module_name = "math"
+    math_module = importlib.import_module(module_name)
+    print(math_module.sqrt(16))  # 输出 4.0
+    
+    # __import__方法
+    math_module = __import__('math')
+    print(math_module.sqrt(16))  # 输出: 4.0
+    ```
+
+- 静态引入: 最常见, 在代码编写阶段就明确加载某个模块, 可能加载不必要的部分, 影响效率
+
+    - `import module`: 导入模块中所有的代码元素, 访问变量时需要在变量前加`模块名.`​, 加`.`​的方式只能用于全部导入
+    - `from module import class, func`: 导入模块中的类、函数等, 多个中间用逗号隔开, 不用在变量前加`模块名.`​
+    - `from module import *`: 只能导入模块中`__all__`​规定的对外公开的内容, 指定导入则无此限制
+    - 使用from导入相同功能名时, 调用的是最后定义或导入的功能
+    - `import module as 别名`​, 解决重名或过长问题
+
+- 绝对引入: 从项目的根目录开始定位模块路径, 推荐, 便于维护
+
+- 相对引入: 基于当前模块的位置进行模块加载, 使用点号表示层级
+
+    - 适用于模块间内部依赖
+    - `.`​当前目录、`..`​上一级目录、`...`​上上级目录, 以此类推
+
+    ```python
+    project/
+        ├── main.py
+        ├── utils/
+        │   ├── helper.py
+        │   └── data.py
+    
+    # 当前在utils/helper.py中:
+    # 从当前目录引入 data.py
+    from . import data
+    # 从上一级目录引入 main.py
+    from .. import main
+    ```
+
+### 定位顺序
+
+Python解释器对模块位置的搜索顺序:
+
+1. 当前目录
+2. 若无, 则搜索shell变量`PYTHONPATH`下的每个目录
+3. 若无, 则查看默认路径, UNIX下默认路径一般为`/usr/local/lib/python`                                         
+
+## 程序结构
+
+### 模块
+
+Module, 一个.py文件, modules中有一个主module作为程序入口
+
+`__name__`: 模块的内置属性, 定义当前类/模块/脚本的名称, Python程序启动后, 自动为每个模块设置`__name__`​, 一般用文件名, 主模块例外, 被设置为`'__main__'`​
+
+建议每个.py文件都使用`if __name__ == '__main__':`​
+
+- if之前的代码**无条件执行**, 无论是作为主模块还是被导入
+- if之后的代码只有脚本作为主模块运行时执行
+
+### 包
+
+Package, 有联系的模块的**集合**, 与同路径下`__init__.py`​文件共同组成包
+
+`__init__.py`**: 包中的特殊文件, 导入包时解释器**自动执行**包中`__init__.py`​文件
+
+作用:
+
+- 初始化包: 导包自动执行, 需执行一些初始化操作
+
+- 标识包: 告诉解释器此文件夹为包, 而不是普通文件夹
+
+- 控制包的导入行为:
+
+    - 在`__init__.py`​中定义`__all__`​变量, 控制包的公共接口，若无`__all__`​变量, `from module import *`​会导入所有不以下划线开头的名称
+
+- 提供包级别的功能: 包被导入时, 导入者可直接访问该包`__init__.py`​中定义的函数和类等, 而无需再显式导入该包中具体模块
+
+- 自动导入模块: 在`__init__.py`​中将包内部模块导入, 用户只需导入包即可
+
+    ```python
+    # my_package/__init__.py
+    from .module1 import func_from_module1
+    from .module2 import func_from_module2
+    __all__ = ['func_from_module1', 'func_from_module2']
+    ```
+
+### 库
+
+Python中没有library概念, 库即可以为一个模块, 也可以是一个包
+
+### Wheel
+
+Python的一种打包格式, 让库的分发和安装变得更快、更简单
+
+Python中第三方库的分发和安装通常有两种格式:
+
+1. Source Distribution (sdist): 含源代码包, 需要在用户机器上编译, 安装时可能需要依赖编译工具链, 如 `gcc`​、`make`​
+2. Wheel (Binary Distribution): <u>二进制格式</u>, 预先编译好了, 不需要用户在本地编译, 文件扩展名是 `.whl`​, 安装更快, 因为跳过了编译步骤, 可以针对不同的平台和Python版本打包, 减少兼容性问题, 可自动解决依赖问题
+
+`build wheel`: 把源代码打包成.whl文件的过程
+
+
+
+---
+
+
+
+# 虚拟环境
+
+一个隔离的Python运行环境, 允许在不影响全局Python安装的情况下, 为不同的项目创建独立的环境, 每个虚拟环境都可以有自己独立的 Python 解释器和依赖库集合
+
+## 目的
+
+1. 隔离项目依赖: 确保一个项目的依赖不会影响其他项目
+2. 避免污染全局环境: 在系统的全局 Python 环境中安装库, 会影响所有项目, 使用虚拟环境可以将项目的依赖限定在项目目录中, 避免全局污染
+3. 便于迁移和部署: 虚拟环境可以轻松生成项目的依赖清单(`requirements.txt`​), 使得在其他设备上复现项目环境变得简单
+4. 测试不同版本的库: 通过虚拟环境, 可以轻松测试项目在不同版本的库或 Python 解释器下的运行情况
+
+## **工作原理**
+
+1. 独立的 Python 解释器: 为项目创建独立Python解释器, 避免与系统全局Python冲突
+2. 独立的库目录: 虚拟环境有一独立`site-packages`​目录, 用于存放当前环境的依赖包
+3. 环境激活和管理: 激活虚拟环境后, 所有的Python操作(如安装依赖)都仅限于该环境
+
+## **特点**
+
+1. 独立性: 每个虚拟环境之间相互独立, 不会共享库或配置
+2. 轻量级: 虚拟环境仅复制必要的文件, 尽量减少磁盘占用
+3. 多版本支持: 可以同时管理多个 Python 版本或库版本
+
+
+
+---
+
+
+
+# 魔术方法
+
+又称dunder方法, 是对象行为的一种**约定(非强制)** , 允许对象表现地像内置类型, 且可自定义行为, 而不需要继承特定类或接口
+
+本质是一种行为规范, 通过约定, 确保对象在特定操作下表现出一致的行为
+
+## 上下文管理协议
+
+允许开发者自定义资源管理行为, 可自动化资源管理及异常处理
+
+上下文管理器: 一个实现了上下文管理协议的对象, 告诉python在进入with时做什么, 退出时做什么, 本质是**资源管理器**
+
+核心方法: `__enter__()`​和`__exit__()`​, 配合with语句
+
+- `__enter__()`: 进入with语句时调用, 进行上下文管理器的初始化工作
+
+    - 通常是资源的获取, 如打开文件、连接数据库、分配内存等,
+    - 返回值: 可返回任何对象, 通常是资源本身(如文件句柄), 也可返回任何对象供as语句使用
+
+- `__exit__()`: 退出with语句时调用, **无论代码块正常结束还是异常退出**
+
+    - 通常用于清理, 如释放资源、关闭文件、断开数据路连接等
+    - 返回值: 返回True时, 异常被抑制不会传播, 返回False或None则异常被重新抛出
+    - 参数: ​
+
+        - `exc_type`: 异常类型, 如果没有异常则为 `None`​​
+        - `exc_value`: 异常实例, 如果没有异常则为 `None`​​
+        - `traceback`: 异常的回溯对象, 如果没有异常则为 `None`​
+
+- `with……as`: 避免手动管理, 文件在操作完成后自动关闭
+
+    ```python
+    with open('file.txt', 'w') as f: 	# open()返回一个文件对象, 即一个上下文管理器
+    	f.write('Hello World!')			# as将返回的对象赋值给f
+    ```
+
+## **可迭代协议**
+
+使对象可在for循环中被迭代
+
+- `__iter__()`: 返回一个迭代器对象
+
+## 迭代器协议
+
+一种设计模式, 允许对象提供一种**统一**的方式来遍历其元素, 定义了如何创建和使用迭代器, 在不暴露底层数据结构的情况下, 依次访问集合中的元素
+
+核心方法: 
+
+- `__iter__()`: 返回一个迭代器对象, 该对象具有`__next__()`​方法
+- `__next__()`: 逐个返回元素, 并记录当前位置, 若无后续元素, 抛StopIteration异常
+
+> 可把`__iter__()`​协议理解为生成`__next__()`​协议的一个桥梁, next才是前移取数的完成者
+
+为了统一接口, 迭代器本身也需`__iter__()`​协议, 返回自身, 即return self
+
+iter()函数本质是对一个对象调用__iter__()方法
+
+```python
+print(iter(iterator) == iterator) 		# true
+```
+
+## 序列协议
+
+使对象可像列表、元组、字符串等序列类型一样, 支持下标索引和 `len()`​ 函数
+
+- `__getitem__(index)`: 返回给定索引的元素
+- `__len__()`: 返回序列的长度
+
+## **映射协议**
+
+使得对象能够表现得像字典一样
+
+- `__getitem__(key)`: 返回给定键的值
+- `__setitem__(key, value)`: 设置给定键的值
+- `__delitem__(key)`: 删除给定键
+- `__contains__(key)`: 检查给定键是否存在于映射中
+
+## **可调用对象协议**
+
+使对象能够表现得像函数一样被调用
+
+- `__call__(self, *args, **kwargs)`: 允许对象像函数一样被调用
+
+    ```python
+    class MyCallable:
+        def __call__(self, x, y):
+            return x + y
+    
+    c = MyCallable()
+    print(c(3, 4))  # 输出 7
+    ```
+
+## **比较协议**
+
+使对象可在比较操作中使用, 如`==`​、`!=`​、`<`​、`>`​ 等
+
+- `__eq__(self, other)`: 判断 `self`​ 是否等于 `other`​
+- `__ne__(self, other)`: 判断 `self`​ 是否不等于 `other`​
+- `__lt__(self, other)`: 判断 `self`​ 是否小于 `other`​
+- `__le__(self, other)`: 判断 `self`​ 是否小于或等于 `other`​
+- `__gt__(self, other)`: 判断 `self`​ 是否大于 `other`​
+- `__ge__(self, other)`: 判断 `self`​ 是否大于或等于 `other`​
+
+## **容器协议**
+
+通常用于实现`in`​操作
+
+- `__contains__(self, item)`: 检查容器是否包含某个元素
+
+## **自省协议**
+
+使对象可控制它们如何转换为字符串, 常用于打印和调试
+
+- `__str__()`: 返回对象的字符串表示
+- `__repr__()`: 返回对象的官方字符串表示
+
+## 描述符协议
+
+描述符: 本质为实现了描述符协议的类, 可控制其他对象属性的访问
+
+- 两种类型: 
+
+    1. 数据描述符: 通常用来完全控制属性的访问, 同时实现了 `__get__`​ 和 `__set__`​ 方法
+    2. 非数据描述符: 通常用来提供方法或计算的值, 不直接存储数据, 仅实现`__get__`​ 方法
+
+- 优先级:
+
+    - 数据描述符优先于实例属性
+    - 非数据描述符的优先级低于实例属性
+
+- 与`property`​关系: property只是描述符的简单封装, 适用于轻量级场景, 描述符用于复杂、可复用行为
+
+- 描述符协议: 
+
+    - `__get__(self, instance, owner)`: 定义属性被获取时的行为
+
+        - self: 描述符对象本身
+        - instance: 访问属性的实例对象
+        - owner/klass: 实例所属的类
+
+        ```python
+        class Descriptor:
+            def __get__(self, instance, klass):
+                print(f"Accessing via {klass.__name__}.{instance.__class__.__name__}")
+                return "Descriptor value"
+        
+        class MyClass:
+            attr = Descriptor()
+        
+        obj = MyClass()
+        print(obj.attr)  # 输出: Accessing via MyClass.MyClass
+        ```
+
+    - `__set__(self, instance, value)`: 定义属性被设置时的行为
+
+    - `__delete__(self, instance)`: 定义属性被删除时的行为
 
 
 
@@ -464,7 +801,7 @@ Introspection, Python对象能在运行时动态获取有关自身的信息, 如
 
 ## `__all__`
 
-模块级别的特殊变量，**用于声明模块的公开接口**，当使用 `from module import *` 时，只有 `__all__` 列表中指定的对象会被导入
+包含**字符串**的列表, 模块级别的特殊变量，**用于声明模块的公开接口**，当使用 `from module import *` 时，只有 `__all__` 列表中指定的对象会被导入
 
 ```python
 # my_module.py
