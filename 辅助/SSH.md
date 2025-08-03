@@ -39,10 +39,7 @@ sudo systemctl restart sshd 	# 重启服务使配置生效
 
   - 生成密钥对：`ssh-keygen -t rsa -b 4096`
   - 将公钥复制到远程服务器：`ssh-copy-id user@192.168.1.100`，或手动将公钥内容添加到远程服务器的`~/.ssh/authorized_keys`文件中
-  
 - 使用指定私钥连接：`ssh -i ~/.ssh/id_rsa_private user@192.168.1.100`
-
-- 
 
 ### **执行远程命令**
 
