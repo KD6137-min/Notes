@@ -1156,6 +1156,33 @@
 
 # EDA库
 
+Exploratory Data Analysis，探索性数据分析，指通过统计方法和可视化技术对数据集进行初步分析，以理解数据分布、识别异常值、发现潜在模式或相关性，从而指导后续的模型设计和训练
+
+核心目标：
+
+- **数据理解**：分析特征分布（如均值、方差、偏度）、缺失值比例、类别平衡性等
+- **异常检测**：通过箱线图、Z-score等方法识别离群值
+- **特征关系**：利用热力图、散点图等分析特征间的相关性
+- **数据质量**：检查重复数据、噪声或不一致性，为预处理（如归一化、填充缺失值）提供依据
+
+在深度学习中的特殊作用：
+
+- **数据预处理指导**：EDA可揭示是否需要标准化（如CNN对输入尺度敏感）或处理类别不平衡（如分类任务）
+- **模型设计依据**：例如，发现数据存在长尾分布时，可能需采用加权损失函数或过采样技术
+- **性能优化**：通过分析特征重要性，减少冗余特征以降低计算成本
+
+典型方法：
+
+- **统计摘要**：`df.describe()`​ 计算数值特征的基本统计量
+- 可视化工具：
+
+    - **直方图/密度图**：查看数据分布
+    - **散点图/热力图**：分析特征间关系
+    - **PCA/t-SNE**：降维后观察聚类现象
+- **自动化工具**：如 `ydata-profiling`​ 可一键生成完整分析报告
+
+EDA库：
+
 - pandas\_profiling
 
   - import pandas\_profiling pandas\_profiling.ProfileReport( )
@@ -1169,3 +1196,280 @@
 - from pivottablejs import pivot\_ui pivot\_ui(data)
 - import pygwalker as pyw walker \= pyw.walk(data)
 - from itables import init\_notebook\_mode, show init\_notebook\_mode(all\_interactive\=True) show(data)
+
+
+
+# pandas和python的重要区别: 
+
+在 Pandas 中使用 `apply()`​ 和直接在 DataFrame/Series 上进行逻辑操作时, 出现了 `and`​/`or`​ 与 `&`​/`|`​ 不同的原因, 主要与 **Python 的布尔运算** 和 **Pandas 的矢量化操作** 的设计模式有关。
+
+### 1. Python 中的 `and`​/`or`​ 与 Pandas 中的 `&`​/`|`​ 的区别
+
+- **​`and`​**​ **和** **​`or`​**​ 是 **Python 语言的关键字**, 用于对 **单个布尔值**(`True`​ 或 `False`​)进行运算。它们要求操作数是单个布尔值, 而不能是数组、Series 或 DataFrame。
+- **​`&`​** ​ **和**  **​`|`​** ​ 是 **按位运算符**, 它们在 Pandas 中被 **重载**, 使其可以对 **Series 或 DataFrame** 进行按元素的逻辑运算(逐元素运算)。这种按元素的逻辑操作是 Pandas 中矢量化操作的一部分, 可以处理每个元素独立的布尔逻辑运算。
+
+### 2. 在 `apply()`​ 中使用 `lambda`​ 和直接在 Pandas 中的差异
+
+- **​`apply()`​** ​ **中的** **​`lambda`​**:
+    在 `apply()`​ 中, `lambda`​ 通常处理的是单个元素(或者在 `axis=1`​ 时是每一行的数据)。由于 `lambda`​ 处理的是一个个元素(例如, 单个数值或一个布尔值), 因此可以直接使用 Python 中的 `and`​ 和 `or`​, 因为它们是为单个布尔值设计的。
+
+    ```python
+    df = pd.DataFrame({'a': [True, False, True]})
+    df['b'] = df['a'].apply(lambda x: x and True)  # 使用 and
+    ```
+
+- **直接在 Pandas 中的操作**: 
+    在 Pandas 中, 当你直接对 Series 或 DataFrame 进行操作时, 通常是在进行 **矢量化运算**, 也就是针对整个数组(Series 或 DataFrame)进行的逐元素操作。这时, `and`​ 和 `or`​ 就无法使用, 因为它们只能作用于 **单一的布尔值**, 而不是数组。所以在 Pandas 中, 必须使用 **按位运算符** `&`​ 和 `|`​ 来处理元素级的逻辑运算。
+
+    ```python
+    df = pd.DataFrame({'a': [True, False, True]})
+    df['b'] = df['a'] & True  # 使用 & 来处理每个元素
+    ```
+
+### 3. 为什么会有这个差异？
+
+- **​`and`​**​ **/**​**​`or`​**​ **的局限性**:
+    ​`and`​ 和 `or`​ 是设计用来操作 **单个布尔值** 的, 在 Python 中, 它们不会逐元素地操作一个列表、Series 或 DataFrame。因此, Pandas 不允许在矢量化的 Series 或 DataFrame 上使用它们。
+- **​`&`​** ​ **/**​ **​`|`​** ​ **的设计理念**:
+    ​`&`​ 和 `|`​ 被设计为 **按位运算符**, 可以对多个布尔值进行逐元素运算。这符合 Pandas 在处理数据时的矢量化设计思想, 即通过并行处理每个元素来提高效率。
+
+### 4. 在 Pandas 中正确使用 `&`​ 和 `|`​
+
+当你在 Pandas 中进行布尔逻辑运算时, 必须使用  **​`&`​** ​(与)和  **​`|`​** ​(或)来进行逐元素的布尔运算。并且需要用括号将每个布尔条件括起来, 以确保运算顺序正确。
+
+例如: 
+
+```python
+df = pd.DataFrame({'a': [True, False, True], 'b': [False, True, True]})
+
+# 使用按位运算符进行逐元素布尔逻辑运算
+df['c'] = (df['a'] & df['b'])  # & 用于按位与
+df['d'] = (df['a'] | df['b'])  # | 用于按位或
+
+print(df)
+```
+
+输出: 
+
+```
+       a      b      c      d
+0   True  False  False   True
+1  False   True  False   True
+2   True   True   True   True
+```
+
+### 总结: 
+
+- 在 **​`apply()`​** ​ 中使用 `lambda`​ 时, `and`​ 和 `or`​ 可以直接使用, 因为它们操作的是单个布尔值。
+- 在 **Pandas** 中直接对 Series 或 DataFrame 进行逻辑运算时, 必须使用 **按位运算符** `&`​ 和 `|`​, 这是因为 Pandas 要对每个元素进行逐个计算, 而 `and`​ 和 `or`​ 只能操作单个布尔值。
+- 记得在使用 `&`​ 和 `|`​ 时, 为了确保优先级正确, 需要使用圆括号将每个条件括起来。
+
+希望这解释清楚了为什么在 `apply()`​ 中可以使用 `and`​ 和 `or`​, 而在 Pandas 中需要使用 `&`​ 和 `|`​！
+
+‍
+
+---
+
+‍
+
+# df.where()和series.where()
+
+`where()`​ 是 Pandas 中的一个非常有用的函数, 通常用于条件筛选。它的作用是根据给定的条件来替换 DataFrame 或 Series 中的元素, 或者标记满足条件的元素。
+
+### `DataFrame.where()`​ 和 `Series.where()`​ 的基本用法
+
+#### 语法: 
+
+```python
+DataFrame.where(cond, other=nan, axis=None, inplace=False, level=None, regex=False, method=None)
+```
+
+- **​`cond`​**: 条件表达式, 布尔值(`True`​ 或 `False`​)或者布尔数组。
+- **​`other`​**: 如果 `cond`​ 为 `False`​ 的元素, 替换成 `other`​。默认是 `NaN`​。
+- **​`axis`​**: 如果条件是按列(`axis=0`​)还是按行(`axis=1`​)进行应用。默认是 `None`​, 即不影响。
+- **​`inplace`​**: 是否直接在原 DataFrame 或 Series 上进行操作, 默认是 `False`​, 即返回一个新的对象。
+- **​`level`​**: 如果是多层索引, 可以指定在哪个级别应用条件。
+- **​`regex`​**: 如果为 `True`​, 则 `cond`​ 会被当作正则表达式来匹配。
+- **​`method`​**: 可以指定填充的方式(通常与 `pad`​ 和 `bfill`​ 配合使用), 不过在普通条件替换中不常用。
+
+#### 返回值: 
+
+- 如果条件满足, 则保留原值；否则, 将原值替换为 `other`​(默认是 `NaN`​)。
+
+### 使用 `where()`​ 进行条件筛选
+
+#### 1. 条件筛选并替换元素
+
+```python
+import pandas as pd
+
+# 创建一个 DataFrame
+df = pd.DataFrame({
+    'A': [1, 2, 3, 4, 5],
+    'B': [10, 20, 30, 40, 50]
+})
+
+# 使用 where 替换不符合条件的值
+result = df.where(df > 2, other=0)  # 如果大于 2, 保留原值, 否则替换为 0
+print(result)
+```
+
+输出: 
+
+```
+   A   B
+0  0  0
+1  0  0
+2  3  30
+3  4  40
+4  5  50
+```
+
+在上面的代码中, `df.where(df > 2, other=0)`​ 表示, 如果某个元素大于 2, 则保留该值, 否则将其替换为 0。
+
+#### 2. 条件筛选并替换某一列的值
+
+```python
+# 假设我们想替换列 'A' 中小于 3 的值
+df['A'] = df['A'].where(df['A'] >= 3, 0)
+print(df)
+```
+
+输出: 
+
+```
+   A   B
+0  0  10
+1  0  20
+2  3  30
+3  4  40
+4  5  50
+```
+
+#### 3. 条件筛选并保留原值(不替换)
+
+```python
+# 保留符合条件的原值, 替换不符合条件的元素为 NaN
+result = df.where(df > 2)
+print(result)
+```
+
+输出: 
+
+```
+     A     B
+0  NaN   NaN
+1  NaN   NaN
+2  3.0  30.0
+3  4.0  40.0
+4  5.0  50.0
+```
+
+这里, 只有 `df > 2`​ 的位置上的元素被保留, 其余被替换为 `NaN`​。
+
+### 4. `where()`​ 结合 `inplace=True`​
+
+如果想在原 DataFrame 上进行操作, 可以使用 `inplace=True`​。
+
+```python
+df.where(df > 2, other=0, inplace=True)
+print(df)
+```
+
+输出: 
+
+```
+   A   B
+0  0  0
+1  0  0
+2  3  30
+3  4  40
+4  5  50
+```
+
+这会直接修改原始 `df`​
+
+‍
+
+---
+
+# loc和链式索引
+
+链式索引可能会有SettingWithCopyWarning的问题, 但这里只是读取数据, 可能不会有警告
+
+效率方面，.loc是直接访问, 而链式索引会生成中间DataFrame, 可能更慢一些
+
+语法上, .loc的写法更明确, 行和列同时指定, 而链式的是先筛选行, 再选列
+
+代码可读性, .loc可能更好, 尤其是对于有经验的Pandas用户来说, 更推荐这种方式
+
+### **1.**  **​`students.loc[students['student_id'] == 101, ['name', 'age']]`​** ​
+
+- **原理**:使用 `.loc`​ 一次性完成「布尔索引 + 列选择」, 是 Pandas 推荐的优化方式
+- **特点**: 
+
+    - ✅ **单步操作**: 直接通过标签索引定位数据, 无中间临时 DataFrame 生成
+    - ✅ **高效**: 对大型数据集更高效
+    - ✅ **语法明确**: 行列条件在同一 `[]`​ 中指定, 格式为 `[行条件, 列条件]`​
+
+---
+
+### **2.**  **​`students[students['student_id'] == 101][['name', 'age']]`​** ​
+
+- **原理**: 
+    通过「链式索引」分两步完成: 
+
+    1. 先筛选行: `students[students['student_id'] == 101]`​
+    2. 再选择列: `[['name', 'age']]`​
+- **特点**: 
+
+    - ⚠️ **链式操作**: 生成中间临时 DataFrame(第一步的结果)
+    - ⚠️ **潜在性能问题**: 对大型数据集可能更慢
+    - ⚠️ **可能触发警告**: 若尝试修改数据, 会触发 `SettingWithCopyWarning`​
+
+---
+
+### **关键区别总结**
+
+| 特性               | `.loc`​ 方式              | 链式索引方式                     |
+| ------------------ | ------------------------ | -------------------------------- |
+| **执行步骤**       | 单步操作                 | 两步操作(生成中间临时 DataFrame) |
+| **性能**           | 更高效(适合大数据量)     | 较低效(中间数据占用内存)         |
+| **代码可读性**     | 更清晰(行列条件集中)     | 较分散                           |
+| **修改数据安全性** | 安全(直接操作原数据视图) | 可能不安全(中间数据可能是副本)   |
+
+---
+
+### **示例对比**
+
+#### 数据准备: 
+
+```python
+import pandas as pd
+
+students = pd.DataFrame({
+    'student_id': [101, 102, 103],
+    'name': ['Alice', 'Bob', 'Charlie'],
+    'age': [20, 21, 19]
+})
+```
+
+#### 输出结果(两种方式相同): 
+
+```python
+# 输出: 
+   name  age
+0  Alice   20
+```
+
+### **扩展: **​ **​`.loc`​**​ **的其他优势**
+
+```python
+# 支持更复杂的条件(例如多列筛选)
+students.loc[
+    (students['age'] > 19) & (students['student_id'] != 102), 
+    ['name', 'age']
+]
+```
+
+# 

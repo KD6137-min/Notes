@@ -1,5 +1,3 @@
-# Shell
-
 ```bash
 # 查看系统内的shells
 cat /etc/shells
@@ -163,4 +161,64 @@ condition可为`[]`、`[[]]`、`(())`：
 - `(())`：数学表达式，支持常见的四则运算
 
 > if语法严格，括号两头必须有空格
+
+
+
+# Python命令
+
+```shell
+python my_module.py [arg1 arg2...] 	# 传递参数
+```
+
+通过命令行直接运行模块，而不必进入模块后执行
+
+**常用参数：**
+
+- **`-m <module_name>`**：module，激活了包管理机制，将后续参数作为模块来运行，优先在 `sys.path`（系统路径列表）中查找，并将其作为顶层脚本执行，而非普通路径脚本文件
+
+    - 执行测试：Python自带`unittest`​测试框架
+
+        ```shell
+        python -m unittest test_module.py
+        ```
+
+    - 执行库、整个包或工具: 
+
+        ```shell
+        python -m pip install package_name
+        ```
+
+    - 运行内置模块: 无需路径
+
+        ```shell
+        python -m timeit  # 使用 timeit 测试代码执行时间
+        ```
+
+- **`-c <command>`**：直接执行字符串形式的 Python 代码
+
+    ```shell
+    python -c "print('Hello, World!')"
+    ```
+
+- **`-i`**：执行脚本后进入交互模式（常用于调试）
+
+    ```shell
+    python -i script.py  # 运行后保留变量环境
+    ```
+
+- **`-q`**：静默模式（隐藏交互式提示的版权信息）
+
+- **`-V` 或 `--version`**：显示 Python 版本信息
+
+- **`--help`**：显示所有命令行选项的说明
+
+- **`-O`**：启用基础优化（移除 `assert` 语句和 `__debug__` 代码块）
+
+- **`-OO`**：在 `-O` 基础上进一步移除文档字符串（`docstrings`）
+
+- **`-W <warning-control>`**：控制警告行为（`ignore`, `error`, `default` 等）
+
+
+
+
 

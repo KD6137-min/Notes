@@ -73,7 +73,7 @@ request.GET.get('id')和request.GET['id']区别:
 
 urls.py需导入views
 
-​`path('book', views.book_detail_query_string)`​: 不加括号, 回调函数
+`path('book', views.book_detail_query_string)`: 不加括号, 回调函数
 
 url两种传参方式:
 
@@ -81,5 +81,101 @@ url两种传参方式:
 2. path/<int: book_id>: 指定int类型, 若输入非整型, 则404, 否则, 默认是str类型
 
     ‍
+
+‍CBV和FBV
+
+**CBV(Class-Based Views)**  和 **FBV(Function-Based Views)**  是 Django 中两种不同的视图处理方式, 它们可以**同时存在**于同一个项目中, 甚至在同一个应用中同时使用。
+
+### 1. **CBV(Class-Based Views)**
+
+CBV 是 Django 引入的面向对象的视图方式, 允许你通过定义类来处理 HTTP 请求。CBV 更加灵活, 适合处理复杂的视图逻辑, 且可以通过继承和混入(Mixin)等技术重用代码。
+
+例如: 
+
+```python
+from django.http import HttpResponse
+from django.views import View
+
+class HelloWorldView(View):
+    def get(self, request):
+        return HttpResponse("Hello, World!")
+```
+
+### 2. **FBV(Function-Based Views)**
+
+FBV 是传统的视图方式, 使用普通的 Python 函数来处理 HTTP 请求。FBV 更加简单直观, 适合处理简单的视图逻辑。
+
+例如: 
+
+```python
+from django.http import HttpResponse
+
+def hello_world(request):
+    return HttpResponse("Hello, World!")
+```
+
+### 3. **CBV 和 FBV 可以同时存在吗？**
+
+- **是的, 它们可以同时存在**。你可以根据需求选择适合的视图方式, FBV 和 CBV 可以在同一个 Django 应用中共存, 不会产生冲突。
+- 你可以为某些视图使用 CBV, 而对于其他简单的视图使用 FBV。这取决于视图的复杂性和你的设计需求。
+
+### 4. **混合使用的示例**
+
+假设你有一个应用, 既使用了 FBV 处理简单的请求, 又使用 CBV 处理更复杂的请求。
+
+#### 示例 1: 使用 FBV 和 CBV 处理不同的 URL 路由
+
+```python
+# urls.py
+
+from django.urls import path
+from .views import hello_world, HelloWorldView
+
+urlpatterns = [
+    path('fbv/', hello_world),  # 使用 FBV
+    path('cbv/', HelloWorldView.as_view()),  # 使用 CBV
+]
+```
+
+#### 示例 2: 简单的 FBV
+
+```python
+# views.py
+
+from django.http import HttpResponse
+
+def hello_world(request):
+    return HttpResponse("Hello, World!")
+```
+
+#### 示例 3: 更复杂的 CBV
+
+```python
+# views.py
+
+from django.views import View
+from django.http import HttpResponse
+
+class HelloWorldView(View):
+    def get(self, request):
+        return HttpResponse("Hello, World! from CBV!")
+```
+
+### 5. **选择 FBV 还是 CBV？**
+
+- **FBV 的优点**: 
+
+    - 简单直接, 适用于简单的请求处理。
+    - 易于理解和使用, 尤其是对于新手来说。
+- **CBV 的优点**: 
+
+    - 适用于较复杂的视图逻辑, 能够重用代码。
+    - 提供了内置的通用视图(例如 `ListView`​, `DetailView`​, `CreateView`​ 等), 使得常见操作(如显示列表、显示单个对象、表单处理等)变得更加方便。
+    - 可以通过继承和混入类(Mixin)来扩展和复用功能。
+
+### 总结: 
+
+- **CBV** 和 **FBV** 在同一个 Django 项目中是可以共存的。你可以根据不同的需求选择使用 FBV 还是 CBV, 甚至在同一个应用中同时使用它们。
+- 对于简单的视图, 使用 **FBV** 更加方便；对于复杂的视图, 尤其是需要代码复用和更高灵活性的情况, 使用 **CBV** 更加合适。
 
 ‍

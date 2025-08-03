@@ -11,6 +11,8 @@ import seaborn as sns
 
 **核心模块：**pyplot模块
 
+**两种接口：**MATLAB风格（pyplot模块）、面向对象风格（显示创建Figure和Axes对象）
+
 **基本步骤：**
 
 ```python
@@ -623,7 +625,7 @@ plt.hist(data_c, bins=40, alpha=0.7, color='green', label='Set C')
 
 # Seaborn
 
-基于matplotlib的高级同级可视化
+基于matplotlib的高级封装，与Pandas集成好，样式美观
 
 - 配置项: 
 
