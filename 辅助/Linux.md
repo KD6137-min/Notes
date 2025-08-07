@@ -434,25 +434,96 @@
     - `nd`: 删除第n行
     - `m,nd`: 删除从m到n行
     - `s#old#new#g`: s表替换, old换为new, g为全局替换, 无g则只替换每行第一个
-- `awk '{操作}' filename`: 模式匹配和处理语言
 
-  - BEGIN / END {操作}: 操作会在读文件前或读完所有之后执行, 一次性
+##  `awk`
 
-    `awk 'BEGIN{print '名称','数量','价格','时间'}' file`: 制作表头
+强大的文本处理和数据提取语言，擅长对结构化文本进行逐行扫描、模式匹配和操作
 
-    `awk 'END{print 'Game Over!'}' file`​
-  - 操作: 每读一行执行一次
+```shell
+awk '模式 {动作}' filename	# 省略模式则处理所有行，省略动作则默认打印整行
+# 或
+awk -f 脚本文件 filename
+```
 
-    - `-F ,`: 指定分隔符为逗号
-    - `print $1,$2`: 输出第1、2列, \$指定列编号, \$0为整行, $NF为最后一列
-    - 筛选: `if ($2 >= 200) print $1`​
-    - 分组聚合
+分割符：按行读取输入（文件或管道输入），将每行分割成字段，默认以空格/制表符分割，可用`-F`参数指定分隔符
 
-      - `{x[$3] += $2} END{for (i in x) print i,x[i]}`: 以第3列分组, 累加第2列, 最后输出
-      - `{x[$3] += 1} END{for (i in x) print i,x[i]}`: 以第3列分组, 计数(每个值出现的次数), 最后输出
-    - `……｜sort -nr ｜ head -n`: 取前n名
+```shell
+awk -F',' '{print $2, $5}' data.csv		# F后无空格
+```
 
-‍
+模式匹配：支持正则表达式或条件判断，仅处理匹配的行
+
+```shell
+awk '/error/ {print}' data.txt	# 输出包含error的行
+```
+
+常用内置变量：
+
+| 变量       | 说明                         |
+| ---------- | ---------------------------- |
+| `$0`       | 当前行的全部内容             |
+| `$1`, `$2` | 第1、第2个字段（列）         |
+| `NF`       | 当前行的字段总数（列数）     |
+| `NR`       | 当前处理的行号（从1开始）    |
+| `FS`       | 输入字段分隔符（默认为空格） |
+| `OFS`      | 输出字段分隔符（默认为空格） |
+| `FILENAME` | 当前输入文件名               |
+
+操作: 每读一行执行一次
+
+- `'{print}'`、`'{print $1,$2}'`：打印整行或指定字段
+
+- 条件过滤：`awk '$3 > 10 {print $0}' data.txt`
+
+- 分组聚合：
+
+  ```shell
+  awk '{x[$3] += $2} END {for (i in x) print i, x[i]}'	file	# 以第3列分组, 累加第2列, 最后输出
+  awk '{x[$3] += 1} END {for (i in x) print i, x[i]}' file		# 以第3列分组, 计数(每个值出现的次数), 最后输出
+  ```
+
+- 流程控制：if、for、while
+
+    ```shell
+    awk '{if ($3 > 100) print "High: ", $1; else print "Normal: ", $1}' file
+    ```
+
+- `……｜sort -nr ｜ head -n`: 取前n名
+
+`BEGIN` 和 `END` 块：一次性
+
+- `BEGIN`：处理前执行（常用于初始化变量）
+- `END`：处理后执行（常用于输出统计结果）
+
+```shell
+# 计算总和
+awk 'BEGIN {sum=0} {sum+=$3} END {print "总和:", sum}' data.txt
+# 求某列平均值
+awk 'BEGIN {sum=0; lines=0} {sum+=$2; lines++} END {print "平均值: ", sum/lines}' file
+# 制作表头
+awk 'BEGIN {print '名称','数量','价格','时间'}' file
+# 后处理
+awk 'END {print 'Game Over!'}' file
+# 自定义变量
+awk '{count++} END {print "总行数: ", count}' file.txt
+```
+
+常用内置函数：`sqrt()`、`rand()`、`int()`、`length()`、`substr()`、`tolower()`、`toupper()`、`gsub()`
+
+重定向输出：
+
+```
+awk '{if ($2 == "error") print > "errors.txt"; else print > "others.txt"}' log.txt
+```
+
+与管道组合使用：
+
+```shell
+# 分析访问日志：统计IP访问量 Top 5
+cat access.log | awk '{print $1}' | sort | uniq -c | sort -nr | head -5
+```
+
+
 
 ---
 

@@ -6,19 +6,19 @@ torch库专注于基础张量操作和自动微分机制
 
 ## 创造与转换
 
-类型转换：`tensor.type(dtype)`​方法，不是`type()`​内置函数
+类型转换：`tensor.type(dtype)`​方法（不是`type()`​内置函数）
 
-比较技巧
+比较技巧：
 
 ```python
 # 将y_hat转为和y同类型后比较，否则数据相同类型不同仍为False
 cmp = y_hat.type(y.dtype) == y
 ```
 
-.numpy()和.to\_numpy()区别：
+`.numpy()`和`.to_numpy()`区别：
 
 - .numpy()属于PyTorch的`Tensor`​对象方法，共享内存
-- .to\_numpy()属于Pandas的`DataFrame`​或`Series`​对象方法，默认不共享内存，可通过copy参数控制
+- .to\_numpy()属于Pandas的`DataFrame`​或`Series`​对象方法，默认不共享内存，可通过copy参数控制，且可避免object类型，推荐（替换`.values()`）
 
 两个核心类型：PIL图像对象和PyTorch张量
 
@@ -76,6 +76,39 @@ else:
 | **自动微分** | 不支持                       | 内置计算图与梯度传播机制            |
 | **API设计**  | 数值计算基础操作             | 深度优化运算+分布式扩展             |
 | **性能优化** | 内存布局优化+CPU矢量化       | 内核融合+异步执行+GPU加速           |
+
+:warning:  numpy数组中的`bool`列会被推断为`object`而无法转换为tensor类型，需将其转换为`float32`或`int64`
+
+pandas的`.values()`可能返回object数组，优先用`.to_numpy(dtype=...)`
+
+```python
+array = all_features.to_numpy(dtype=np.float32)
+```
+
+典型步骤：
+
+```python
+# 假设 all_features 是包含混合类型的 DataFrame
+# 1. 转换非数值列
+object_cols = all_features.select_dtypes(include=['object']).columns
+for col in object_cols:
+    all_features[col] = pd.to_numeric(all_features[col], errors='coerce')
+
+# 2. 填充缺失值
+all_features.fillna(0, inplace=True)
+
+# 3. 确保全为 float32
+all_features = all_features.astype(np.float32)
+
+# 4. 转换为张量
+n_train = train_data.shape[0]
+train_features = torch.tensor(
+    all_features[:n_train].to_numpy(), 
+    dtype=torch.float32
+)
+```
+
+
 
 
 
