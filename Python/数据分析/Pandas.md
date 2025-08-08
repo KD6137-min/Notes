@@ -1472,4 +1472,24 @@ students.loc[
 ]
 ```
 
-# 
+# apply()
+
+默认针对第一个维度，df默认针对列（若axis=1则针对行），series天然针对元素
+
+`applymap()`：针对整个表
+
+- **避免滥用 `apply()`**：优先使用 Pandas 内置的**向量化操作**（如 `df.sum()`、`df['A'] + df['B']`），效率远高于逐行/逐列的 `apply()`
+- **元素级操作替代方案**：简单运算用向量化（如 `df * 2`），复杂逻辑可结合 `np.vectorize`或 `df.transform()`
+
+
+
+```python
+# 最小-最大归一化
+df_normalized = (df - df.min()) / (df.max() - df.min())
+
+# Z-score标准化
+df_standardized = (df - df.mean()) / df.std()
+```
+
+
+

@@ -36,16 +36,13 @@ ax.grid(True, linestyle='--', alpha=0.7)
 plt.savefig('trainint_plot.png', dpi=300, bbox_inches='tight')
 ```
 
-
-
 ## 核心容器操作
 
 Matplotlib 采用分层对象模型：
 
 ```mermaid
 graph TD
-    Figure[Figure 画布] --> Canvas[Canvas 渲染层]
-    Figure --> Axes1[Axes 坐标系1]
+    Figure[Figure 画布] --> Axes1[Axes 坐标系1]
     Figure --> Axes2[Axes 坐标系2]
     Axes1 --> AxisX[XAxis 横轴]
     Axes1 --> AxisY[YAxis 纵轴]
@@ -64,7 +61,7 @@ graph TD
 
     ```python
     # 创建空画布
-    fig = plt.figure()
+    fig = plt.figure(figsize=())	# 指定尺寸
     # 添加子图坐标系
     ax1 = fig.add_subplot(2, 2, 1)  # 指定2行2列的第1个位置
     ax2 = fig.add_axes()             # 自由定位坐标系
@@ -95,54 +92,69 @@ graph TD
     plt.scatter(a, b)
     ```
 
+- 删除子图：`fig.delaxes(ax[0])`删除指定子图
+
 ### 容器导航
 
-- 获取当前活动对象：
+- 获取容器：
 
     ```python
+    # 当前对象
     current_fig = plt.gcf()  # 获取当前Figure
     current_ax = plt.gca()   # 获取当前Axes
-    ```
-
-- 遍历所有容器：
-
-    ```python
+    
+    # 所有对象
     all_figures = plt.get_fignums()     # 所有图形窗口ID
     fig_obj = plt.figure(1)             # 通过ID获取Figure
-    all_axes = fig_obj.get_axes()       # 画布中所有Axes
+    all_axes = fig_obj.axes()       # 画布中所有Axes
     ```
 
-- 访问组件：
+- 遍历容器：
+
+    ```python
+    # 遍历子图
+    fig, axs = plt.subplots(2, 2)
+    for ax in axs.flat:
+        操作...
+        
+    # fig的属性
+    axs = fig.axes
+    ```
+
+    - `ax.flat`：推荐，返回一个迭代器，可按行优先顺序**惰性**遍历所有元素，不会创建新数组，只提供遍历接口
+
+    - `ax.flatten()`：返回一个按行优先展开的一维数组（副本）
+
+- 访问容器：
 
     ```python
     # Axes内部组件
     x_axis = ax.xaxis        # XAxis对象
     y_axis = ax.yaxis        # YAxis对象
     title_obj = ax.title     # 标题文本对象
+    fig = ax.figure		# axes所属画布
     
-    # 坐标轴控制
     spines = ax.spines  # 边界线字典 {'top','bottom','left','right'}
     spines['top'].set_visible(False)  # 隐藏顶部边界
-    ```
-
-- 容器信息查询：
-
-    ```python
-    print(f"Axes所属画布: {ax.figure}")
-    print(f"画布包含坐标系数: {len(fig.axes)}")
-    print(f"坐标系位置: {ax.get_position()}")  # 返回Bbox对象
     
-    # 坐标系实际尺寸（英寸）
-    print(f"宽度: {ax.bbox.width:.2f}英寸, 高度: {ax.bbox.height:.2f}英寸")
+    # 其他信息
+    print(f"坐标系位置:  {ax.get_position()}")  # 返回Bbox对象
+    print(f"坐标系宽度: 	{ax.bbox.width:.2f}英寸, "
+          f"坐标系高度: 	{ax.bbox.height:.2f}英寸")
+    print(ax.bbox_inches)	# 坐标系实际尺寸
     ```
 
 ### 容器生命周期
 
-- 容器复用：
+- 删除/清空容器：
 
     ```python
     ax.clear()  # 清空坐标系内容（保留框架）
+    axes.cla() 	# 清除当前轴，保留坐标轴、标签、刻度线
     fig.clf()   # 清除画布所有内容（重置为空白画布）
+    
+    fig.delaxes(ax2)	# 删除指定坐标系
+    plt.delaxes()	# 删除当前坐标系
     ```
 
 - 内存管理：
@@ -152,11 +164,8 @@ graph TD
     plt.close(fig)  # 关闭图形窗口
     del fig        # 删除对象引用
     
-    # 批量处理避免内存泄漏
-    for i in range(10):
-        fig = create_plot(i)
-        fig.savefig(f'output_{i}.png')
-        plt.close(fig)  # 关键：关闭并释放内存
+    # 图像保存，支持png、svg、pdf
+    fig.savefig('plot.png', dpi=300, bbox_inches='tight')
     ```
 
 - 关系变更：
@@ -174,15 +183,18 @@ graph TD
 
 ## 绘图函数
 
+### 基础图表
+
 - 折线图：
 
     ```python
     ax.plot(x, y, 
-            linestyle='--',   # 线型 ('-', '--', '-.', ':')
-            marker='o',       # 数据点标记
-            linewidth=2, 
-            color='blue', 
-            label='Trend')
+            linestyle='--', # 线型 ('-'实线, '--'虚线, '-.', ':')
+            linewidth=2, 	# 线宽
+            marker='o',     # 数据点标记，''无，'o'圆形，'s'方形，'^'三角
+    		markersize=8	# 标记大小
+            color='blue', 	
+            label='Trend')	# 图例标签
     ```
 
 - 阶梯图：离散数据
@@ -198,29 +210,33 @@ graph TD
     ```python
     # 基本散点图
     ax.scatter(x, y, 
-               s=50,          # 点大小（标量或数组）
-               c=values,      # 点颜色（标量或数组）
-               cmap='viridis', # 颜色映射
-               alpha=0.8,     # 透明度
+               s=50,          	# 点大小（标量或数组）
+               c=values,      	# 点颜色（标量或数组）
+               cmap='viridis', 	# 颜色映射
+               alpha=0.8,     	# 透明度
                edgecolors='black')  # 边界颜色
     
     # 气泡图（尺寸映射）
-    ax.scatter(x, y, s=sizes, c=z, cmap='coolwarm')
+    ax.scatter(x, y, 
+               s=sizes, 
+               c=z, 
+               cmap='coolwarm')
     ```
 
 - 柱状图：
 
     ```python
     # 垂直柱状图
-    ax.bar(categories, values, 
+    ax.bar(categories, values, # 类别和柱高度
            width=0.8,        # 柱宽
            color='skyblue', 
            edgecolor='black',
-           label='Revenue')
+           label='Revenue',
+           align='center')	# 对齐方式
     
     # 水平柱状图
     ax.barh(categories, values, 
-            height=0.6, 
+            height=0.6, 	# 柱宽
             color='salmon')
     
     # 分组柱状图
@@ -230,146 +246,268 @@ graph TD
     ax.bar(x + width/2, values2, width, label='Group 2')
     ```
 
-- 统计分布图：
+- 饼图：
 
     ```python
-    # 直方图
+    ax.pie(sizes, 
+           labels=['A', 'B', 'C'], 
+           autopct='%1.1f%%', 	# 百分比格式
+           startangle=90,		# 起始角度
+           explode=(0, 0.1, 0), # 突出某部分
+           shadow=True)			# 阴影效果
+    ```
+
+### 统计分布图表
+
+- 直方图：
+
+    ```python
     ax.hist(data, 
             bins=30,          # 箱数
-            density=True,     # 显示密度
+            density=True,     # 是否归一化
             color='steelblue',
+            edgecolor='steelblue',
             alpha=0.7,
             histtype='stepfilled')  # 'bar', 'step', 'stepfilled'
-    
-    # 箱线图
+    ```
+
+- 箱线图：
+
+    ```python
     ax.boxplot([data1, data2], 
-               positions=[1, 2], 
-               widths=0.6,
-               notch=True,        # 显示置信区间
-               patch_artist=True) # 填充颜色
-    
-    # 小提琴图（分布密度）
+               positions=[1, 2], 	# x位置
+               widths=0.6,			# 箱体宽度
+               showmeans=True,		# 显示均值
+               notch=True,        	# 显示置信区间
+               patch_artist=True) 	# 填充颜色
+    ```
+
+- 小提琴图（分布密度）：
+
+    ```python
     ax.violinplot([data1, data2],
                   positions=[0, 1],
                   showmeans=True)  # 显示均值
     ```
 
+- 误差图：
+
+    ```python
+    ax.errorbar(
+        x, y, yerr=error,	# Y误差值
+        fmt='o',			# 点标记格式
+        capsize=5			# 误差条末端线长度
+    )
+    ```
+
+### 高级图
+
+- 热力图：
+
+    ```python
+    # 推荐用.imshow()方法实现
+    im = ax.imshow(data, 
+                   cmap='RdYlGn', 
+                   aspect='auto',  # 自动宽高比
+                   interpolation='bilinear')  # 插值方法
+    fig.colorbar(im, ax=ax)  # 添加颜色条
+    ```
+
+    :warning: 注意：热力图处理二维数据，常规图标处理一维/离散数据，`.imshow()`是专为二维数据设计的图像渲染器，可高效处理矩阵结构
+
+- 矢量场图/箭头图：
+
+    ```python
+    ax.quiver(x, y, u, v,  	# 位置(x,y)和方向(u,v)
+              scale=50,     # 箭头缩放
+              width=0.005,	# 箭杆宽度
+              color='red')
+    ```
+
+- 面积图：
+
+    ```python
+    ax.fill_between(x, y1, y2=y2,		# X轴和两条曲线 
+                    color='skyblue', 	
+                    alpha=0.4, 		
+                    where=(y1>y2))		# 填充条件
+    ```
+
+- 六边形箱图：
+
+    ```python
+    ax.hexbin(x, y, 
+              gridsize=30, 	# 网格密度
+              cmap='inferno')
+    ```
+
+### 绘图技巧
+
+- 双Y轴：
+
+    ```python
+    ax1 = fig.add_subplot(111)
+    ax2 = ax1.twinx()  # 共享X轴
     
+    ax1.plot(x, y1, 'r-', label='Temp') 
+    ax2.plot(x, y2, 'b--', label='Humidity') 
+    
+    # 合并图例
+    lines1, labels1 = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax1.legend(lines1 + lines2, labels1 + labels2)
+    ```
 
-- 特殊图表
+- 嵌套图表：
 
+    ```python
+    # 主图
+    ax_main = fig.add_axes([0.1, 0.1, 0.6, 0.8])
+    ax_main.plot(x, y)
+    
+    # 右上角小图
+    ax_inset = fig.add_axes([0.7, 0.7, 0.25, 0.25])
+    ax_inset.plot(x_detail, y_detail, color='firebrick')
+    ```
 
+- 多数据层叠加：
 
-### 4. 统计分布图
+    ```python
+    ax.scatter(x1, y1, color='blue')
+    ax.plot(x2, y2, color='red', linewidth=2)
+    ax.bar(x3, height=y3, color='green', alpha=0.5)
+    ```
 
-```
+- 多子图：
 
-```
-
-### 5. 特殊图表
-
-```
-# 饼图
-ax.pie(sizes, 
-       labels=labels, 
-       autopct='%1.1f%%', 
-       startangle=90,
-       explode=(0, 0.1, 0),  # 突出某部分
-       shadow=True)
-
-# 热力图
-im = ax.imshow(data, 
-               cmap='RdYlGn', 
-               aspect='auto',  # 自动宽高比
-               interpolation='bilinear')  # 插值方法
-fig.colorbar(im)  # 添加颜色条
-
-# 等高线图
-contour = ax.contour(X, Y, Z, 
-                     levels=20,     # 等高线数量
-                     cmap='viridis')
-ax.clabel(contour, fmt='%1.1f')    # 添加高度标签
-
-# 矢量场图（箭头图）
-ax.quiver(x, y, u, v,  # 位置(x,y)和方向(u,v)
-          scale=50,     # 箭头缩放
-          width=0.005,
-          color='red')
-```
-
-高级绘图技巧
-
-- 组合图表
-
-```
-# 柱状图+折线图组合
-ax.bar(categories, values1, alpha=0.6, label='Volume')
-ax2 = ax.twinx()  # 共享x轴的新y轴
-ax2.plot(categories, values2, 'ro-', label='Price')
-
-# 创建图例组合
-lines, labels = ax.get_legend_handles_labels()
-lines2, labels2 = ax2.get_legend_handles_labels()
-ax.legend(lines + lines2, labels + labels2, loc='upper left')
-
-# 主图+插图组合
-ax_main = fig.add_axes([0.1, 0.1, 0.8, 0.8])  # 主图
-ax_inset = fig.add_axes([0.65, 0.65, 0.25, 0.25])  # 插图
-ax_inset.plot(x_detail, y_detail, color='red')
-```
-
-### 2. 多子图批量绘制
-
-```
-fig, axs = plt.subplots(2, 2, figsize=(10, 8))
-
-# 统一设置标题
-fig.suptitle('Data Dashboard', fontsize=16)
-
-# 子图1: 折线图
-axs[0,0].plot(x, y, color='blue')
-axs[0,0].set_title('Time Series')
-
-# 子图2: 直方图
-axs[0,1].hist(data, bins=20, color='green')
-axs[0,1].set_title('Distribution')
-
-# 子图3: 散点图
-axs[1,0].scatter(x, y, c=z, cmap='viridis')
-axs[1,0].set_title('Correlation')
-
-# 子图4: 水平柱状图
-axs[1,1].barh(categories, values, color='orange')
-axs[1,1].set_title('Categories')
-
-# 自动调整布局
-plt.tight_layout()
-```
-
-### 3. 动态数据更新
-
-```
-# 实时数据更新范例
-line, = ax.plot([], [])  # 获取line对象引用
-
-def update(frame):
-    x_data.append(x_new)  
-    y_data.append(y_new)
-    line.set_data(x_data, y_data)  # 更新数据
-    ax.relim()  # 重设坐标范围
-    ax.autoscale_view()  # 自动缩放
-    return line,
-
-# 创建动画
-from matplotlib.animation import FuncAnimation
-ani = FuncAnimation(fig, update, frames=100, interval=50)
-```
+    ```python
+    fig, axs = plt.subplots(2, 2)
+    
+    axs[0,0].hist(data1, bins=20)
+    axs[0,1].scatter(data_x, data_y)
+    axs[1,0].boxplot([dataA, dataB])
+    axs[1,1].pie([35,25,40], labels=['A','B','C'])
+    ```
 
 ## 配置项
 
+### 文本
+
+```python
+# 全局标题
+fig.suptitle(
+    "Figure Title", 
+    fontsize=16, 
+    fontweight='bold', 
+    y=0.95
+)
+
+# 子图标题
+ax.set_title(
+    "Title", 
+    loc='left', 
+    pad=20, 
+    color='navy', 
+    fontstyle='italic'
+)
+
+# 坐标轴标签
+ax.set_xlabel(
+    "X axis", 
+    fontdict={'size': 14, 'color': '#333'}, 
+    labelpad=15
+)
+ax.set_ylabel(
+    "Y axis", 
+    rotation=0, 
+    ha='right'
+)
+
+# 添加文字
+ax.text(5, 0.5, "Note", fontsize=12)
+
+# 标注
+ax.annotate("Peak", xy=(3, 1), xytext=(4, 1.5), arrowprops=dict(arrorwstyle="->"))
+```
 
 
-## 显示与保存
+
+### fig相关
+
+```python
+
+# 背景色
+fig.set_facecolor('lightblue')
+# 修改尺寸
+fig.set_size_inches(10,8)
+# 分辨率
+fig.set_dpi(150)
+```
+
+布局
+
+```python
+# 自动调整间距，紧凑布局
+fig.tight_layout(pad=3.0)
+# 手动调整间距
+fig.subplots_adjust(
+    wspace=0.5, 	# 水平间距
+    hspace=0.3, 	# 垂直间距
+    top=0.9, 		# 画布顶部边界
+    bottom=0.1		# 画布底部边界
+)
+```
+
+
+
+### ax相关
+
+文本管理
+
+```python
+
+```
+
+颜色管理
+
+```python
+ax.set_facecolor('whitesmoke')	# 坐标系背景色
+```
+
+布局管理
+
+```python
+ax.set_aspect('equal')	# 坐标比例设为1:1
+
+ax.grid(True, linestyle='--')
+
+# 显示图例
+ax.legend(loc='upper right')
+# 合并图例
+lines1, labels1 = ax1.get_legend_handles_labels()
+lines2, labels2 = ax2.get_legend_handles_labels()
+ax1.legend(lines1 + lines2, labels1 + labels2)
+
+# 多轴系统，是创建了新子图，而不是创建了新轴
+ax2 = ax.twinx()	# 共享x轴
+ax3 = ax.twiny() 	# 共享y轴
+```
+
+轴管理
+
+```python
+# 轴范围
+ax.set_xlim()
+ax.set_ylim()
+
+ax.set_xscale('log')	# 对数坐标
+# 刻度位置
+ax.set_xticks([])
+# 自定义刻度标签
+ax.set_xticklabels([])
+# 刻度旋转
+ax.tick_params(axis='y', rotation=45)
+```
 
 
 
@@ -379,13 +517,11 @@ ani = FuncAnimation(fig, update, frames=100, interval=50)
 
 
 
-### `axes.flatten()`
 
-将二维数组axes转换成一维数组，对子图进行相同的操作时，使用flatten可方便地遍历所有子图的轴对象而不再需要分开处理每一行
 
-### `axes.cla()`
 
-清除当前轴，保留坐标轴、标签、刻度线
+
+
 
 
 
@@ -470,8 +606,6 @@ plt.hist(data_c, bins=40, alpha=0.7, color='green', label='Set C')
 
 
 
-## 配置项
-
 
 
 ## `plt.axis()`​
@@ -487,6 +621,15 @@ plt.hist(data_c, bins=40, alpha=0.7, color='green', label='Set C')
 `cmap`参数：colormap，颜色映射对象，用于将数据的数值映射到特定的颜色值，以便在图形中可视化数据的变化，常用`'viridis'`​、`'plasma'`​、`'RdYlBu'`​
 
 `plt.cm.RdYlBu`​：`plt.cm`​模块提供了所有可用的 colormap，`RdYlBu`​全名Red-Yellow-Blue，表示从红色到黄色再到蓝色的渐变，常用于表示数据变化
+
+
+
+```python
+im = ax.imshow(data, cmap='viridis')
+fig.colorbar(im, ax=ax, orientation='horizontal')  # 添加颜色条
+```
+
+
 
 
 
