@@ -108,10 +108,6 @@ train_features = torch.tensor(
 )
 ```
 
-
-
-
-
 ## 形状与内存布局
 
 **连续张量**：张量在内存中为**连续内存**区域**连续排布**，非连续张量只是索引方式变了
@@ -221,8 +217,6 @@ with torch.no_grad():
     weight -= something
 ```
 
-‍
-
 `.norm()`​：计算张量的范数，支持多种范数，默认为𝐿2范数
 
 ```python
@@ -290,8 +284,6 @@ df.where(cond)
 # 2  3.0
 ```
 
-‍
-
 乘法：
 
 - `torch.matmul()`: 通用矩阵乘法，推荐，支持广播，灵活
@@ -299,11 +291,22 @@ df.where(cond)
 - `torch.mv()`: 局限于矩阵与向量乘法，不支持广播和批量操作
 - `torch.mul()`: 元素级乘法，对应位置的元素相乘
 
-‍
+## 常见操作
+
+`.repeat(*sizes)`：将张量在特定维度上重复，返回新张量
+
+- sizes整数元组，与张量形状相同，指定每个维度的重复次数，维度不匹配时
+- 不是元素复制，返回的新张量用索引方式复制（类似视图），不占额外空间
 
 # 二. 神经网络构建（torch.nn）
 
 提供神经网络层、损失函数和模型基类
+
+## 卷积层
+
+`nn.Conv2d()`：自动初始化权重(He初始化)
+
+
 
 ## 参数管理
 
@@ -556,12 +559,13 @@ train_loader = DataLoader(
 ## 常用方法：
 
 - `.random_split(dataset, [train_size, test_size])`​：划分数据集
-- ‍
 
 ## 模型的保存和加载：
 
 - 保存：`torch.save(model.state_dict(), 'model.pth')`​，只保存模型的参数，加载时需要先定义模型的架构
 - 加载：`model.load_state_dict(torch.load('model.pth'))`​，`torch.load()`​只加载模型参数，需用`.load_state_dict()`​将模型参数加载到模型实例中
+    - 加载前必须复刻相同的网络架构
+
 
 ‍
 
