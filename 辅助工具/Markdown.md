@@ -64,9 +64,8 @@
 
 # 插入图片
 
-- 格式1: `![](图片路径)`
+- 格式1: `![提示文本](图片路径)`
 - 格式2:  使用img标签 ` <img src= '图片路径' >`
-- 注意: 如果图片路径使用的是本地路径  切换机器的话图片就不显示了[原因是切换的机器上没有这个相关路径]
 
 # 超链接
 
@@ -86,4 +85,24 @@
 
 - 行间:`$公式$`
 - 行内: `$$`回车 / option+command+b
+- ````math`
+
+# Jupyter转换与同步
+
+```bash
+# 将md文件转为ipynb文件
+jupytext --to notebook name.md
+
+# 将ipynb文件转为md文件
+jupytext --to md name.ipynb
+
+# 将ipynb文件与md文件配对，修改时自动同步(双向同步)
+jupytext --set-formats ipynb,md name.ipynb	# 自动生成配对md文件
+# 或
+jupytext --set-formats ipynb,md name.md		# 自动生成配对ipynb文件
+```
+
+
+
+
 
