@@ -1,0 +1,10 @@
+{
+  "theme": "moonstone",
+  "cssTheme": "Minimal",
+  "accentColor": "#b83bf1",
+  "interfaceFontFamily": "",
+  "textFontFamily": "Menlo,JetBrainsMono Nerd Font,Courier New,Monaco",
+  "monospaceFontFamily": "Menlo,JetBrainsMono Nerd Font,Monaco,Courier,monospace",
+  "baseFontSize": 20,
+  "baseFontSizeAction": true
+}

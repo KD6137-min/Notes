@@ -47,6 +47,7 @@
   - :zap:`:zap:`
   - :fire:`:fire:`
   - :sunny:`:sunny:`
+  - :label:`:label:`​
 
 
 # 表格
@@ -102,7 +103,36 @@ jupytext --set-formats ipynb,md name.ipynb	# 自动生成配对md文件
 jupytext --set-formats ipynb,md name.md		# 自动生成配对ipynb文件
 ```
 
+# Jupyter Book
 
+支持MyST Markdown
 
+```bash
+# 安装
+pip install jupyter-book
 
+# 创建一个书籍目录结构
+jupyter-book create mybook
+
+# 向mybook文件夹中存放.md和.ipynb文件，不能放文件夹
+
+# 构建书籍
+jupyter-book build mybook	# 输出一个完整的网站，可导出PDF
+```
+
+通过`_toc.yml`进行目录管理，可在其中写出任意层级的树形结构，不推荐超过三层
+
+格式：
+
+```yaml
+format: jb-book
+root: intro		# 设置书籍的首页
+chapters:		# 列出章节，每章节对应一个文件
+  - file: chapter1
+  - file: chapter2
+    sections:	# 子章节
+      - file: chapter2/section1
+      - file: chapter2/section2
+
+```
 
