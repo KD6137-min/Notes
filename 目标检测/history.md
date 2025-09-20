@@ -38,7 +38,7 @@ flowchart LR
 
     - **手工特征（Hand-crafted Features）**：用**人工设计的提取器**对每个窗口提取特征，参数少，提取质量不高
         - V-J 使用**Haar-like**特征
-        - HOG（Histogram of Oriented Gradients）计算图像局部区域的**梯度方向直方图**
+        - [HOG](相关知识.md#HOG)（Histogram of Oriented Gradients）：计算图像局部区域的**梯度方向直方图**
 
     - **分类器（Classifier）**：使用像 **AdaBoost**（V-J）或 **SVM**（HOG）这样的分类器来判断这个窗口里的特征是否属于一个特定物体（如人脸）
 
@@ -151,3 +151,23 @@ flowchart LR
 2. **YOLOv3 / SSD**：一阶段算法的**经典架构**。尤其是YOLO系列，因其速度和精度的完美平衡，**至今仍是工业界应用最广泛、最受欢迎的检测算法家族**
 3. **Anchor机制**：虽然Anchor-Free在发展，但源自Faster R-CNN和SSD的Anchor思想仍是许多主流算法的核心组成部分
 4. **Backbone网络**：从R-CNN使用的AlexNet，到后来成为标准的**VGG、ResNet**，这些分类网络作为特征提取器（Backbone）的设计，是整个目标检测领域性能提升的基础
+
+
+
+# YOLO
+
+You Only Look Once，目标检测模型
+
+| 版本       | 发布年份 | 作者/团队             | 核心改进                                                     | 特点                                                         | 论文                                                         |
+| ---------- | -------- | --------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| **YOLOv1** | 2016     | Joseph Redmon         | 将目标检测变为单个 CNN 回归问题（将图像分成网格，每个网格预测边界框和类别），一步完成预测 | 快，但精度低，不适合小物体                                   | 《You Only Look Once: Unified, Real-Time Object Detection》  |
+| **YOLOv2** | 2017     | Redmon                | 引入 Anchor Boxes、BatchNorm、使用更深的特征网络（Darknet-19）、支持多类别 | 性能高于v1                                                   | 《YOLO9000: Better, Faster, Stronger》                       |
+| **YOLOv3** | 2018     | Redmon                | 使用 ResNet风格的Darknet-53、支持多尺度预测（FPN）、使用logistic回归处理多标签分类 | 性能大幅提升，经典，使用广泛                                 | 《YOLOv3: An Incremental Improvement》                       |
+| **YOLOv4** | 2020     | Alexey Bochkovskiy    | 集成多种工程技巧优化（数据增强：Mosaic、DropBlock，激活函数：Mish，使用CSPDarknet53、CIoU损失），精度和速度进一步提升 | 效果全面超越 YOLOv3                                          | 《YOLOv4: Optimal Speed and Accuracy of Object Detection》   |
+| **YOLOv5** | 2020     | Ultralytics（非官方） | 模型分为 nano、small、medium、large 等级，用 Python 工程化封装良好，支持训练、测试、推理、部署一条龙 | 用 PyTorch 重写，工程化能力强，提供小中大等多种模型，工业界极其流行 | 无正式论文，由 Ultralytics 发布                              |
+| **YOLOv6** | 2022     | 美团（Meituan）       | 更小模型结构、更快推理速度、优化 NMS、训练策略               | 工业级优化，适合边缘设备、手机端等部署                       | [https://github.com/meituan/YOLOv6](https://github.com/meituan/YOLOv6) |
+| **YOLOv7** | 2022     | Wang et al.           | 强调速度和精度的平衡，引入 E-ELAN模块、模块融入RepConv、动态标签分配 | 精度和速度都优于 YOLOv6、YOLOv5                              | 《YOLOv7: Trainable bag-of-freebies sets new state-of-the-art for real-time object detectors》 |
+| **YOLOv8** | 2023     | Ultralytics（官方）   | 完全重构的框架，支持分类、检测、分割，多任务统一，支持ONNX/TensorRT部署 | 不再兼容 YOLOv5 的结构，用法简洁，代码开箱即用               |                                                              |
+
+
+
