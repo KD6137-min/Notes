@@ -45,6 +45,8 @@ You Only Look Once，一种端到端的单阶段目标检测方法
 
 ## 创新点
 
+放弃**漫无目的**的锚框生成，转而使用**有组织、有纪律**的网格化锚框预测
+
 1. 第一次把检测建模为 **端到端单一回归问题**（像素 → bbox + class）
 2. 统一框架：不再依赖 proposal、SVM、分离训练，检测作为一个整体函数近似
 3. 实现了**实时检测**，速度大幅提升（比 R-CNN 系列快一个数量级）
@@ -100,7 +102,7 @@ You Only Look Once，一种端到端的单阶段目标检测方法
 $Pr(Object)$：Cell中包含物体的概率，有则1无则0
 
 - $confidence = Pr(Object) * IoU^{truth}_{pred}$
-    
+  
 - $class scores = Pr(Class_i|Object)$
 
 - 最终的类别置信度（计算得出，不在网络输出中）：$ClassConfidence_i = Pr(Class_i|Object) \times Confidence$，共7\*7\*2=98 个，作为最终分数，传入NMS等后续处理
