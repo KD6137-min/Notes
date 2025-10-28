@@ -31,6 +31,12 @@
 - 属于`\in`, 不属于`\notin`
 - 存在`\exists`, 任意`\forall`
 - 集合括号`\{ a, b, c \}`
+- 因为`\because`，所以`\therefore`
+- 箭头：
+  - 大写为双线：双向`\Leftrightarrow`或`iff`、右箭头`\Rightarrow`、左箭头`\Leftarrow`、长双向`\Longleftrightarrow`
+  - 小写为单线：双向`\leftrightarrow`
+
+- $\$
 
 # 标记符
 
