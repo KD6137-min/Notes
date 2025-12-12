@@ -165,5 +165,3 @@ g(x) &= x^3
 \end{subequations}
 ```
 
-
-
