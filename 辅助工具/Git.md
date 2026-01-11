@@ -734,5 +734,86 @@ APP推荐: Sourcetree、SmartGit
 
 
 
+`git push --set-upstream`是**一次性**的设置
+
+### **方法1：使用 `git branch --set-upstream-to`（推荐）**
+
+```
+# 为当前分支永久设置上游分支
+git branch --set-upstream-to=origin/main
+
+# 或者明确指定本地分支
+git branch --set-upstream-to=origin/main main
+```
+
+### **方法2：修改git配置文件（永久生效）**
+
+编辑项目中的 `.git/config`文件，在 `[branch "main"]`部分添加：
+
+```
+[branch "main"]
+    remote = origin
+    merge = refs/heads/main
+```
+
+### **方法3：推送时设置上游（一次性+永久）**
+
+```
+# 这会设置上游并永久保存
+git push -u origin main
+# 等同于
+git push --set-upstream origin main
+```
+
+------
+
+## 检查当前的上游设置
+
+```
+# 查看所有分支的上游关系
+git branch -vv
+
+# 查看特定分支的上游
+git rev-parse --abbrev-ref main@{upstream}
+```
+
+------
+
+## 如果你想更改默认分支名称（永久解决这个问题）
+
+### **设置全局默认分支为 main**
+
+```
+# 设置新仓库的默认分支为 main
+git config --global init.defaultBranch main
+```
+
+### **对于已存在的仓库**
+
+```
+# 重命名当前分支为 main
+git branch -M main
+
+# 设置上游并推送
+git push -u origin main
+
+# 在GitHub上设置main为默认分支（通过网页界面）
+```
+
+------
+
+## 验证是否成功
+
+```
+# 检查上游分支设置
+git branch -vv
+
+# 输出应该类似：
+# * main 1a2b3c4 [origin/main] Commit message
+```
+
+**总结**：使用 `git branch --set-upstream-to=origin/分支名`是永久绑定的正确方法！
 
 
+
+GitHub自动识别`id_ed25519.pub`密钥，如果改了名字，可能认证失败，需要修改`~/.ssh/config`，指明映射关系

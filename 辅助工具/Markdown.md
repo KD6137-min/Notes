@@ -9,22 +9,48 @@
 # 文字格式
 
 - 加粗: command + b或两对*号包含
+
 - 斜体: command+ i或者一对*号包含
+
 - 预编译: 显示符号本体, 一对反引号[tab键上方]  ``
-- 引用: `> 空格`, 可嵌套
+
 - 分割线`---`: 建议前后添加空行以提高兼容性
+
 - 高亮: `==文本==`
+
+- 改文字颜色：`${\color{red}文字}$`
+
 - 删除线: `～～文本～～`
+
 - 下划线: `<u>文本</u>`
+
 - 上标: `文本^上标^`
+
 - 下标: `文本～下标～`
+
 - 小号字体: `<small>文本</small>`
+
 - 大号字体: `<big>文本</big>`
-- 代码块：````编程语言 + 回车`
+
+- 代码块：````编程语言 + 回车`，
+
   - 纯文本的块用````plaintext/text`
+
+- 引用: `> 空格`, 可嵌套，默认灰色，可用`[!xxx]`改变颜色
+
+  | 语法           | 效果 | 常见含义    |
+  | -------------- | ---- | ----------- |
+  | `[!note]`      | 蓝色 | 说明 / 备注 |
+  | `[!tip]`       | 绿色 | 技巧        |
+  | `[!important]` | 紫色 | 重点        |
+  | `[!warning]`   | 棕色 | 警告        |
+  | `[!caution]`   | 红色 | 注意事项    |
+
 - 选项列表：
+
   - 空白：`- [ ] 选项`
   - 已选：`- [X] 选项`
+
 - 表情符号：`:<表情符号>:`，一对冒号包含；[表情符号网站](https://gist.github.com/rxaviers/7360908)
   -  :bulb:`:bulb:`
   - :white_check_mark:`:white_check_mark:`
@@ -112,7 +138,7 @@ jupytext --set-formats ipynb,md name.md		# 自动生成配对ipynb文件
 pip install jupyter-book
 
 # 创建一个书籍目录结构
-jupyter-book create mybook
+jupyter-book init mybook
 
 # 向mybook文件夹中存放.md和.ipynb文件，不能放文件夹
 
