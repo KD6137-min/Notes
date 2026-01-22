@@ -1210,3 +1210,66 @@ web服务器
     kill -9 $PID 
     echo "jupyter is die"
     ```
+
+
+
+## tmux
+
+终端复用器，**解耦**程序与终端窗口
+
+**三层结构：**Session 会话、Window 窗口、Pane 分屏
+
+- 创建：s 表 session
+
+  ```shell
+  tmux new -s xxx
+  ```
+
+  > tmux中创建用 s，操作已有的用 t
+
+- 脱离：`ctrl+a` d，会话还在，程序继续，回到普通 shell，
+
+- 接回：t 表 target
+
+  ```shell
+  tmux attach -t xxx
+  # 或简写
+  tmux a -t xxx
+  # 若只有一个会话，可直接：
+  tmux attach
+  ```
+  
+- 查看：
+
+  ```shell
+  tmux ls
+  ```
+
+- 关闭：
+
+  ```shell
+  # 杀 session
+  tmux kill-session -t 会话名
+  
+  # 杀 window
+  tmux kill-window -t yolo:2
+  
+  # 杀 pane
+  tmux kill-pane -t yolo:2.1
+  
+  # 杀所有
+  tmux kill-server
+  ```
+
+**快捷键用法：**所有按键加前缀`ctrl + a`
+
+- c：新 window
+- d：脱离
+- q：关 pane
+- Q：关 window
+- v：垂直分屏
+- s：水平分屏
+- h / j / k / l / 方向键：切 pane
+- 数字键：切 windows
+- w：切 windows
+- ，：重命名 windows
