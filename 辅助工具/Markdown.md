@@ -32,8 +32,7 @@
 
 - 大号字体: `<big>文本</big>`
 
-- 代码块：````编程语言 + 回车`，
-
+- 代码块：````编程语言 + 回车`
   - 纯文本的块用````plaintext/text`
 
 - 引用: `> 空格`, 可嵌套，默认灰色，可用`[!xxx]`改变颜色
@@ -159,6 +158,5 @@ chapters:		# 列出章节，每章节对应一个文件
     sections:	# 子章节
       - file: chapter2/section1
       - file: chapter2/section2
-
 ```
 
