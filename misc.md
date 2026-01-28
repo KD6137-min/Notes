@@ -4,9 +4,9 @@ Optimal Transport Assignment，把正负样本分配，建模成一个最优传�
 
 **直观示意：**
 
-![Image](/home/kd6-137/Documents/Notes/assets/1jGJMSXEhwlx8slf_dzJ_vg.png)
+![Image](./assets/1jGJMSXEhwlx8slf_dzJ_vg.png)
 
-![Image](/home/kd6-137/Documents/Notes/assets/assigndetectionstotrack3.png)
+![Image](./assets/assigndetectionstotrack3.png)
 
 **优点：**不靠硬 IoU 阈值、分类 & 回归联合考虑、正样本数量**自适应**、对小目标更友好（能“抢救”一些低 IoU 但语义对的预测）
 
@@ -25,11 +25,11 @@ Optimal Transport Assignment，把正负样本分配，建模成一个最优传�
 
 **示意图：**
 
-![Image](/home/kd6-137/Documents/Notes/assets/0XihTiZxM9l745qox.gif)
+![Image](./assets/0XihTiZxM9l745qox.gif)
 
 
 
-![Image](/home/kd6-137/Documents/Notes/assets/applsci-14-00633-g002.png)
+![Image](./assets/applsci-14-00633-g002.png)
 
 
 
@@ -37,9 +37,9 @@ Optimal Transport Assignment，把正负样本分配，建模成一个最优传�
 
 Chain of Thought，思维链
 
-![Image](/home/kd6-137/Documents/Notes/assets/imageq=75&url=%252F_next%252Fstatic%252Fmedia%252FTOT.3b13bc5e.png)
+![Image](./assets/imageq=75&url=%252F_next%252Fstatic%252Fmedia%252FTOT.3b13bc5e.png)
 
-![Image](/home/kd6-137/Documents/Notes/assets/chain_of_thought_example.webp)
+![Image](./assets/chain_of_thought_example.webp)
 
 让大模型在回答之前，把中间推理过程一步一步写出来，把 **隐含的逻辑显式化**，把 **复杂问题拆成若干小步骤**
 
@@ -53,9 +53,9 @@ Chain of Thought，思维链
 
 # Prompt Engineering
 
-![Image](/home/kd6-137/Documents/Notes/assets/The-prompt-engineering-design-process.jpg)
+![Image](./assets/The-prompt-engineering-design-process.jpg)
 
-![Image](/home/kd6-137/Documents/Notes/assets/664611a5c0fbfec684c1d198_prompt-management-wheel.webp)
+![Image](./assets/664611a5c0fbfec684c1d198_prompt-management-wheel.webp)
 
 通过结构化语言，约束模型的行为空间，本质上 Prompt ≈ **条件概率的条件**
 
