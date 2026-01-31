@@ -1,8 +1,14 @@
 # torchvision
 
-PyTorch的官方扩展库，专为计算机视觉任务设计，提供了预训练模型（如 ResNet、VGG 等）、数据集加载工具（如 ImageNet、CIFAR）和数据增强方法（如 transforms）
+PyTorch专为计算机视觉任务设计的官方扩展库，提供预训练模型、数据集及加载工具和数据增强方法
 
-# `torchvision.datasets`​
+- `torchvision.datasets`
+- `torchvision.models`
+- `torchvision.transforms`
+- `torchvision.utils`
+- 其他
+
+## 1. `torchvision.datasets`​
 
 **包含数据集**：MNIST、COCO、LSUN Classification、ImageFolder、Imagenet-12、CIFAR10 and CIFAR100、STL10，可通过类直接调用：
 
@@ -12,56 +18,56 @@ from torchvision import datasets
 dataset = datasets.MNIST(
     root='./data',          # 数据集存储路径
     train=True,             # 加载训练集（False为测试集）
-    download=True,          # 自动下载数据集
-    transform=transforms.ToTensor()  # 图像预处理
+    download=True,          # 自动从网络下载数据集，放在root目录下
+    transform=transforms.ToTensor(),  # 图像预处理
+    target_transform=...	# 标签的转换函数
 )
 ```
 
-**关键参数**：
+以上Datasets均为`torch.utils.data.Datasets`的子类
 
-- `root`: 数据集存储路径
-- `train`​：True为训练集，False为测试集
-- `download`​：从网上下载数据，并放在root目录下
-- `transform`: 图像预处理（如 `transforms.Compose([...])`​）
-- `target_transform`: 标签的转换函数
 
-## `.ImageFolder()`​
 
-`.ImageFolder()`​专门用于加载图像分类数据集，自动从文件夹结构中加载图像数据（每个子文件夹代表一个类别）
+### `.ImageFolder()`​
 
-- 特点：自动生成标签（基于文件夹名）、内置支持数据预处理（如 `transforms`​）、适用于标准分类数据集（如 ImageNet 结构）
-- **数据组织方式：目录结构**：
+用于加载图像分类数据集，自动从文件夹结构中加载图像数据（每个子文件夹代表一个类别），若数据符合文件夹分类结构，优先使用 `ImageFolder`
 
-  ```plaintext
-  root/
-      class_0/  # 文件夹名即类别名
-          img1.jpg
-          img2.jpg
-      class_1/
-          img1.jpg
-          ...
-  ```
-- **自动标签**：文件夹名映射为整数标签（如 `{"cat": 0, "dog": 1}`​）
-- **预处理与转换：** 直接通过 `transform`​ 参数应用预处理
-- 示例：
+**特点：**自动生成标签（基于文件夹名）、内置支持数据预处理、适用于标准分类数据集
 
-  ```python
-  transform = transforms.Compose([
-      transforms.Resize(256),
-      transforms.ToTensor(),
-      transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-  ])
-  dataset = ImageFolder(root="path/to/data", transform=transform)
-  ```
-- 若数据符合文件夹分类结构，优先使用 `ImageFolder`​
+**目录结构**：
 
-## `.CocoCaptions()`​
+```plaintext
+root/
+    class_0/  # 文件夹名即类别名
+        img1.jpg
+        img2.jpg
+    class_1/
+        img1.jpg
+        ...
+```
 
-`.CocoCaptions()`​用于加载 **MS COCO Caption 数据集**
+**自动标签**：文件夹名映射为整数标签（如 `{"cat": 0, "dog": 1}`​）
 
-- 包含约 33 万张图像，每张图像由人工标注至少 5 句自然语言描述
-- 需指定**图像目录和标注文件路径**加载数据
-- **返回格式**：每张图像返回 `(image, captions)`​，`image`​ 为 PIL Image 对象，`captions`​ 是包含多个描述语句的列表（如 `["A black motorcycle parked...", ...]`​）
+**预处理与转换：** 直接通过 `transform`​ 参数应用预处理
+
+**示例：**
+
+```python
+transform = transforms.Compose([
+    transforms.Resize(256),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+])
+dataset = ImageFolder(root="path/to/data", transform=transform)
+```
+
+
+
+### `.CocoCaptions()`​
+
+用于加载 **MS COCO Caption 数据集**，包含约 33 万张图像，每张图像由人工标注至少 5 句自然语言描述
+
+需指定**图像目录和标注文件路径**加载数据，每张图像返回 `(image, captions)`​，`image`​ 为 PIL Image 对象，`captions`​ 是包含多个描述语句的列表（如 `["A black motorcycle parked...", ...]`​）
 
 ```python
 from torchvision.datasets import CocoCaptions
@@ -82,9 +88,11 @@ for i, caption in enumerate(captions):
 plt.show()
 ```
 
-# `torchvision.models`​
 
-包含AlexNet、VGG、ResNet、SqueezeNet、DenseNet模型结构
+
+## 2. `torchvision.models`​
+
+包含AlexNet、VGG、ResNet、SqueezeNet、DenseNet等预训练模型结构
 
 ```python
 import torchvision.models as models
@@ -94,8 +102,6 @@ resnet18 = models.resnet18()
 squeezenet = models.squeezenet1_0()
 densenet = models.densenet_161()
 ```
-
-提供预训练模型：
 
 - 旧版本：PyTorch 1.10前，**通过** **​`pretrained`​**​ **参数加载，**​`model = models.resnet18(pretrained=True)`​自动下载并加载预训练权重
 
@@ -114,7 +120,7 @@ densenet = models.densenet_161()
 
 `_bn`​表示with batch normalization
 
-# `torchvision.transforms`​
+## `torchvision.transforms`​
 
 支持常见的计算机视觉转换，可用于对不同任务（图像分类、检测、分割、视频分类）的数据进行训练或推理的转换或增强
 
@@ -389,7 +395,7 @@ output = compiled_normalize(input_tensor)   # 自动适配最优内存布局
 
 
 
-# `torchvision.utils`​
+## `torchvision.utils`​
 
 主要用于图像处理和可视化
 
