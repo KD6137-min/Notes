@@ -138,3 +138,21 @@ sudo systemctl restart sshd 	# 重启服务使配置生效
 坑：GitHub默认识别公钥文件名`id_ed25519.pub`，若创建ssh密钥时更改了公钥文件名，可能无法识别
 
 解决：~/.ssh/config中配置密钥映射
+
+
+
+## SSH与Github
+
+**步骤：**
+
+1. 本机 $\rightarrow$ Github服务器：发起SSH连接
+    1. 在`~/.ssh/`中找密钥
+    2. 与`github.com`建立连接
+    3. 告诉Github我拥有哪些公钥
+2. Github服务器 $\rightarrow$ 本机：
+    1. 看发来的公钥fingerprint
+    2. 去数据库中查该公钥绑在哪个Github账号
+    3. 若找到，则Github发起challenge，请本机签名
+3. 本地 $\rightarrow$ Github服务器：用私钥签名，生成一个签名结果，私钥永远不出本机
+4. Github：用公钥验证签名，通过则身份确认完成，授权访问仓库
+
