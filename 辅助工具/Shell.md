@@ -225,6 +225,28 @@ python my_module.py [arg1 arg2...] 	# 传递参数
 
 - **`-W <warning-control>`**：控制警告行为（`ignore`, `error`, `default` 等）
 
+- `- <<EOF...`：推荐，同`-c`，打开一个python进程，将中间几行代码执行，执行后立即退出
+
+    ```shell
+    python3 - <<EOF
+    import torch
+    print(torch.__version__)
+    print("MPS available:", torch.backends.mps.is_available())
+    EOF
+    ```
+
+    - `python - `：从标准输入中读代码，而不是从文件
+
+    - `<<EOF`为shell语法 **here-doc**：
+
+        ```bash
+        命令 << 标记	# 直到遇到下一个标记，中间均作为内容
+        内容
+        内容
+        标记		# 必须顶格写，前后不能有空格
+        ```
+
+    - 不污染目录，适合**装库后快速验证**
 
 
 

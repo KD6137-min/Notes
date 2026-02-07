@@ -10,3 +10,7 @@
 *.iml
 .idea/
 *.xml
+
+# macOS
+.DS_Store
+.localized
