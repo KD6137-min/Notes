@@ -1,6 +1,8 @@
 # TOML
 
-核心规则：
+声明式结构，核心为键值对
+
+**核心规则：**
 
 1. **键值对用 `=`**
 2. **字符串必须加引号**（`"..."` 或 `'...'`）
@@ -137,7 +139,7 @@ name = "yolov8"
 pretrained = true
 ```
 
-等价于一个嵌套对象：`model.name`, `model.pretrained`
+等价于一个嵌套对象：`model.name`, `model.pretrained`，定义了一个字典
 
 ### 嵌套表
 
@@ -149,7 +151,7 @@ type = "resnet50"
 depth = 50
 ```
 
-`model` 是一个表，`model.backbone` 是 `model` 里面的子表
+`model` 是一个表，`model.backbone` 是 `model` 里面的子表，且必须写在`[model]`之外（PEP621标准）
 
 ## 表数组
 
@@ -176,6 +178,8 @@ contrast = 0.2
   ]
 }
 ```
+
+`[[]]`不是列表对象，而是声明，该表**可以重复出现，每次出现append一个dict**，自动追加易于维护
 
 ## 行内表
 
