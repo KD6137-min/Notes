@@ -1273,3 +1273,50 @@ web服务器
 - 数字键：切 windows
 - w：切 windows
 - ，：重命名 windows
+
+
+
+软件下载：
+
+- 有`instal.sh`的：
+
+  ```bash
+  chmod +x install.sh
+  ./install.sh
+  ```
+
+- 有`.deb`的：
+
+  ```bash
+  sudo apt install ./xxx.deb
+  ```
+
+- 有`bin`目录：
+
+  ```bash
+  sudo mv dir /opt/dir
+  vim ~/.local/share/applications/xxx.desktop
+  ```
+
+  写入：
+
+  ```plaintext
+  [Desktop Entry]
+  Version=1.0
+  Type=Application
+  Name=软件名
+  Exec=/opt/软件名/主程序
+  Icon=/opt/软件名/icon.png
+  Terminal=false
+  Categories=Utility;
+  ```
+
+  然后：
+
+  ```bash
+  chmod +x ~/.local/share/applications/xxx.desktop
+  ```
+
+  
+
+  

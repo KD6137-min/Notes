@@ -81,14 +81,14 @@ Chain of Thought，思维链
 
 **常见技巧：**
 
-| 技巧               | 说明         |
-| ------------------ | ------------ |
-| Role Prompt        | 设定模型身份 |
-| Task Decomposition | 拆解任务     |
-| Output Constraint  | 约束输出格式 |
-| Few-shot           | 给示例       |
-| CoT Prompting      | 强制推理     |
-| Self-check         | 让模型自检   |
+| 技巧               | 说明                                                         |
+| ------------------ | ------------------------------------------------------------ |
+| Role Prompt        | 设定模型身份，使其选择合适的知识分布和表达方式，触发更长推理路径 |
+| Task Decomposition | 拆解任务                                                     |
+| Output Constraint  | 约束输出格式，使模型更稳定                                   |
+| Few-shot           | 给示例，非常强的控制方式                                     |
+| CoT Prompting      | 强制推理                                                     |
+| Self-check         | 让模型自检                                                   |
 
 
 
