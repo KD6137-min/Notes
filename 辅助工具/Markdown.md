@@ -111,12 +111,6 @@
 
 
 
-# LaTeX
-
-- 行间:`$公式$`
-- 行内: `$$`回车 / option+command+b
-- ````math`
-
 # Jupyter转换与同步
 
 ```bash

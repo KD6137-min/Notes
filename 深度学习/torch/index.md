@@ -1,3 +1,12 @@
+PyTorch = 张量抽象 + 高性能算子 + 自动求导 + 动态计算图 + 神经网络模块封装 + 设备调度/编译优化生态
+
+不只是“算法库”，而是一个“面向深度学习的张量计算运行时”：
+
+- 底层靠高性能算子干活
+- 上层靠动态图和自动求导把这些算子组织成可训练的模型
+
+
+
 # 顶层模块大类
 
 |                    | 主要子模块/功能                                              |
@@ -11,8 +20,6 @@
 | **I/O 与模型存储** | `torch.save`, `torch.load`, `torch.jit`, `torch.serialization` |
 | **随机与概率**     | `torch.random`, `torch.distributions`                        |
 | **硬件运行时支持** | `torch.cuda`, `torch.backends`, `torch.device`, `torch.dtype` |
-
-
 
 
 

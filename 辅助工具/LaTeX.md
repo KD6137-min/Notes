@@ -524,15 +524,18 @@ section下面必须有内容，至少写一句话
 - 存在`\exists`, 任意`\forall`
 - 集合括号`\{ a, b, c \}`
 - 因为`\because`，所以`\therefore`
-- 箭头：
-  - 大写为双线：双向`\Leftrightarrow`或`iff`、右箭头`\Rightarrow`、左箭头`\Leftarrow`、长双向`\Longleftrightarrow`
-  - 小写为单线：双向`\leftrightarrow`
 
 ### 标记符
 
 - 角标: 上标`a^{b}`, 下标`a_{b}`, 汉字角标`a^\mbox{汉字}` / `a^\text{注释}`
 
 - 标线: 上标线`\overline{a+b}`, 下标线`\underline{a+b}`
+
+- 箭头：
+
+  - `\to`
+  - 大写为双线：双向`\Leftrightarrow`或`iff`、右箭头`\Rightarrow`、左箭头`\Leftarrow`、长双向`\Longleftrightarrow`
+  - 小写为单线：双向`\leftrightarrow`
 
 - 转置：`a^top`更规范，或`a^T`
 
