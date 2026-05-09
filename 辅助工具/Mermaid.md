@@ -151,10 +151,12 @@ stateDiagram-v2
 gantt
   title 项目计划
   dateFormat  YYYY-MM-DD
+  axisFormat %Y
   section 任务
   设计       :a1, 2024-01-01, 7d
-  开发       :a2, after a1, 10d
-  测试       :a3, after a2, 5d
+  开发       :crit, a2, after a1, 10d
+  测试       :done, a3, after a2, 5d
+  改进	   :active, a4, after a3, 3d
 ```
 
 
@@ -165,15 +167,22 @@ gantt
   dateFormat  YYYY-MM-DD
   section 任务
   设计       :a1, 2024-01-01, 7d
-  开发       :a2, after a1, 10d
-  测试       :a3, after a2, 5d
+  开发       :crit,a2, after a1, 10d
+  测试       :done,a3, after a2, 5d
+  改进	   :active, a4, after a3, 3d
 ```
 
 **关键语法**
 
 - `section`：任务分类标题
-- `dateFormat`：日期格式设定
-- `after a1`：任务依赖顺序
+- `dateFormat`：日期格式设定，必须前后一致、完整，不可省略
+-  `axisFormat`：横轴只显示年份
+- 时间：可以是`start, duration`或`start, end`，`start`可以是具体时间或`after xx`等任务依赖顺序
+- 其他标记语法
+  - `crit`：高亮，红色
+  - `done`：已完成，灰色
+  - `active`：进行中，蓝色
+
 
 ------
 

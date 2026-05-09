@@ -499,20 +499,20 @@ section下面必须有内容，至少写一句话
 
 文本: **`\text{}`**
 
-| 小写 | 大写 | LaTeX      | 小写 | 大写 | LaTeX      |
-| ---- | ---- | ---------- | ---- | ---- | ---------- |
-| α    | Α    | `\alpha`   | ν    | Ν    | `\nu`      |
-| β    | Β    | `\beta`    | ξ    | Ξ    | `\xi`      |
-| γ    | Γ    | `\gamma`   | ο    | Ο    | `\omicron` |
-| δ    | Δ    | `\delta`   | π    | Π    | `\pi`      |
-| ε    | Ε    | `\epsilon` | ρ    | Ρ    | `\rho`     |
-| ζ    | Ζ    | `\zeta`    | σ, ς | Σ    | `\sigma`   |
-| η    | Η    | `\eta`     | τ    | Τ    | `\tau`     |
-| θ    | Θ    | `\theta`   | υ    | Υ    | `\upsilon` |
-| ι    | Ι    | `\iota`    | φ    | Φ    | `\phi`     |
-| κ    | Κ    | `\kappa`   | χ    | Χ    | `\chi`     |
-| λ    | Λ    | `\lambda`  | ψ    | Ψ    | `\psi`     |
-| μ    | Μ    | `\mu`      | ω    | Ω    | `\omega`   |
+| 小写                       | 大写       | LaTeX                     | 小写                   | 大写       | LaTeX                   |
+| -------------------------- | ---------- | ------------------------- | ---------------------- | ---------- | ----------------------- |
+| $\alpha$                   | $\Alpha$   | `\alpha`                  | $\nu$                  | $\Nu$      | `\nu`                   |
+| $\beta$                    | $\Beta$    | `\beta`                   | $\xi$                  | $\Xi$      | `\xi`，读“克西”、“可赛” |
+| $\gamma$                   | $\Gamma$   | `\gamma`                  | $\omicron$             | $\Omicron$ | `\omicron`              |
+| $\delta$                   | $\Delta$   | `\delta`                  | $\pi$                  | $\Pi$      | `\pi`                   |
+| $\epsilon$ / $\varepsilon$ | $\Epsilon$ | `\epsilon`或`\varepsilon` | $\rho$                 | $\Rho$     | `\rho`                  |
+| $\zeta$                    | $\Zeta$    | `\zeta`                   | $\sigma$ / $\varsigma$ | $\Sigma$   | `\sigma` 或 `\varsigma` |
+| $\eta$                     | $\Eta$     | `\eta`                    | $\tau$                 | $\Tau$     | `\tau`                  |
+| $\theta$                   | $\Theta$   | `\theta`                  | $\upsilon$             | $\Upsilon$ | `\upsilon`              |
+| $\iota$                    | $\Iota$    | `\iota`                   | $\phi$                 | $\Phi$     | `\phi`                  |
+| $\kappa$                   | $\Kappa$   | `\kappa`                  | $\chi$                 | $\Chi$     | `\chi`                  |
+| $\lambda$                  | $\Lambda$  | `\lambda`                 | $\psi$                 | $\Psi$     | `\psi`，读“普赛”、“赛”  |
+| $\mu$                      | $\Mu$      | `\mu`                     | $\omega$               | $\Omega$   | `\omega`                |
 
 ### 集合&逻辑运算
 

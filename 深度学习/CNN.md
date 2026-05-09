@@ -72,6 +72,23 @@ Feed-Forward Network，常出现在编码器和解码器的注意力层之后，
 
 ‍
 
+# 转置卷积
+
+Transposed Convolution，用于上采样，核心目的是通过特定的计算方式将输入特征图的尺寸放大，同时保留或重建空间信息
+
+数学本质：并非卷积的逆运算，而是通过反向传播卷积的矩阵运算关系实现的结果的含义：
+
+- **形状恢复**：转置卷积的输出尺寸通常大于输入，例如在语义分割中用于将压缩的特征图恢复到原始图像大小
+- **数值关系**：输出值与输入通过卷积核的加权组合相关，但并非精确还原原始数据（仅形状相似）
+- **可学习性**：转置卷积的核参数可通过训练优化，相比插值上采样能更好地适应任务需求
+
+注意事项：
+
+- **棋盘效应**：转置卷积可能导致输出出现网格状伪影，可通过后续卷积层缓解
+- **效率问题**：因需填充大量零值，计算成本较高
+
+
+
 ## 池化
 
 Pooling，对特征图进行降维和压缩，“集中”“汇聚”“汇总”，把很多信息集中到一起
@@ -462,3 +479,49 @@ k_{eff} = k + (k-1)(r-1)
 $$
 
 参数dilation即可控制
+
+
+
+# LSKA
+
+Large-Separable Kernel Attention，大可分离卷积注意力，本质是用低成本的“大卷积核 + 可分离卷积 + 轻量通道融合 + 空间门控”实现的注意力模块
+
+**传统问题：**小卷积核感受野太小、大卷积核太贵、self-attention太重
+
+**核心结构：**LSKA = Large Kernel + Depthwise Separable + Attention-like weighting
+
+**步骤：**
+
+1. **Depthwise Large Kernel Convolution：**先 $F_{dw} = DWConv_{k\times k}(X)$，每个通道独立卷积，kernel 很大（如 7×7 / 11×11 / 21×21），获取大范围空间信息，不增加太多计算
+2. **Pointwise Conv：**通道混合，$F_{pw} = Conv_{1\times1}(F_{dw})$，融合通道信息，增强表达能力
+3. **Attention-like gating：**一般会加一个 sigmoid / softmax 权重或 spatial reweighting，类似 $F_{out} = F_{pw} \cdot \sigma(F_{pw})$，让网络“自己决定哪里重要”，类似 spatial attention，相当于隐式注意力机制，自动强调关键区域，抑制背景噪声
+
+
+
+# DW-Conv
+
+Depthwise Convolution
+
+核心思想：每个通道单独做卷积，不做通道混合
+$$
+Y_c = X_c * K_c
+$$
+
+- 每个 channel 用自己的 kernel
+- 不发生跨通道计算
+
+**特点：**计算量极低、非常适合轻量网络、不做通道信息融合（需要 pointwise conv 补）
+
+
+
+# DW-D-Conv
+
+Depthwise Dilated Convolution，Dilated Convolution + DW-Conv，带空洞率（dilation）的深度可分离卷积
+$$
+Y_c = X_c * K_c^{(d)}
+$$
+
+- $d$ = dilation rate（扩张率）
+
+稀疏全局建模，感受野更大
+
